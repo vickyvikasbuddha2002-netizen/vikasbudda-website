@@ -10,6 +10,8 @@
 <title>Play with Roam | Vikas Budda</title>
 <meta name="description" content="Roam, a desk companion robot by Vikas Budda. Poke it, wave at it, clap, pick it up, and see how it reacts.">
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/exporters/GLTFExporter.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4/dist/model-viewer.min.js"></script>
 </head>
 <body>
 <div class="loader" aria-hidden="true"><div class="in"><div class="nm"><span>Waking Roam</span><span>0%</span></div><div class="bar"><i></i></div></div></div>
@@ -38,6 +40,9 @@
       <div class="edge"></div>
       <div class="bubble" aria-live="polite"><span class="rm"></span><span class="en"></span></div>
       <button class="btn sm snd" type="button" aria-pressed="true">Sound on</button>
+      <button class="btn sm arbtn" type="button">View in AR</button>
+      <span class="armsg" role="status"></span>
+      <model-viewer id="roamar" ar ar-modes="webxr quick-look" ar-scale="auto" ar-placement="floor" alt="Roam in your room" aria-hidden="true"></model-viewer>
       <span class="hint">Drag to turn it. Tap it to pat it.</span>
       <span class="moodtag">Feeling: Calm</span>
     </div>

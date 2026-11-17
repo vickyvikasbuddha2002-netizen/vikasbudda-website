@@ -68,13 +68,16 @@ window.RoamStage = (function () {
       });
     });
     root.position.y = -53;
+    function outside(g) {
+      g.mid.visible = false; g.face.visible = false;
+      ['base', 'shell'].forEach(function (k) { g[k].children.forEach(function (c, i) { if (i === 0) return; var keep = false; c.traverse(function (o) { if (o.isGroup && o !== c && o.children.length > 6) keep = true; }); c.visible = keep; }); });
+    }
     var mirror = null, mirGR = null, mirWheels = [];
     if (opts.mirror !== false) {
       mirror = root.clone(true); mirror.traverse(function (o) { if (o.isMesh) { var m = o.material.clone(); m.transparent = true; m.opacity = 0.22; m.depthWrite = false; m.side = THREE.DoubleSide; if (m.emissiveIntensity) m.emissiveIntensity *= 0.7; o.material = m; o.renderOrder = -1; } });
       mirror.scale.y = -1; scene.add(mirror);
       mirGR = {}; ['base', 'mid', 'face', 'shell', 'glass'].forEach(function (k, i) { mirGR[k] = mirror.children[i]; });
-      mirGR.mid.visible = false; mirGR.face.visible = false;
-      ['base', 'shell'].forEach(function (k) { mirGR[k].children.forEach(function (c, i) { if (i === 0) return; var keep = false; c.traverse(function (o) { if (o.isGroup && o !== c && o.children.length > 6) keep = true; }); c.visible = keep; }); });
+      outside(mirGR);
       var wi = 0; mirror.traverse(function (o) { if (o.isGroup && o.parent && o.parent.parent && o.parent.parent.parent === mirror && o.children.length > 6 && wi < 2) { mirWheels.push(o); wi++; } });
     }
 
@@ -132,31 +135,64 @@ window.RoamStage = (function () {
     requestAnimationFrame(frame);
     if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { api.visible = es[0].isIntersecting; }, { rootMargin: '100px' }).observe(canvas);
     api.resize = resize;
+    api.exportGLB = function (cb) {
+      if (!THREE.GLTFExporter) return cb(null);
+      var keep = { m: MOOD.m, b: blink, x: look.x, y: look.y }; MOOD.m = 'happy'; blink = 0; look.x = look.y = 0; drawEyes(api.t);
+      var c = root.clone(true), g = {}; ['base', 'mid', 'face', 'shell', 'glass'].forEach(function (k, i) { g[k] = c.children[i]; g[k].position.set(0, 0, 0); });
+      outside(g); c.position.set(0, 0, 0); c.rotation.set(0, 0, 0);
+      var dead = []; c.traverse(function (o) { if (!o.visible) dead.push(o); }); dead.forEach(function (o) { if (o.parent) o.parent.remove(o); });
+      var w = new THREE.Group(); c.scale.setScalar(0.001); w.add(c); w.updateMatrixWorld(true);
+      var bb = new THREE.Box3().setFromObject(c); c.position.y = -bb.min.y;
+      try {
+        new THREE.GLTFExporter().parse(w, function (r) { MOOD.m = keep.m; blink = keep.b; cb(new Blob([r], { type: 'model/gltf-binary' })); }, { binary: true });
+      } catch (e) { MOOD.m = keep.m; cb(null); }
+    };
     return api;
   }
-  /* always-on small talk: Roam keeps watching you and asking things */
+  /* always-on small talk: Roam keeps watching you, asking things and telling bad jokes */
+  var JOKES = [
+    [['listen', 'Why did the robot go on holiday?', ['bi', 'oo', 'ki']], ['proud', 'It needed to recharge.', ['zip', 'nya']]],
+    [['proud', 'I tried to eat a clock once.', ['oo', 'nya', 'bi']], ['wink', 'Very time consuming.', ['ki', 'tok', 'tok']]],
+    [['listen', 'Guess my favourite music.', ['dwee', 'ki']], ['proud', 'Heavy metal. Obviously.', ['vrr', 'bi']]],
+    [['listen', 'Why was the robot tired after the road trip?', ['bi', 'oo', 'dwee']], ['wink', 'It had a hard drive.', ['zip', 'ki']]],
+    [['happy', 'I told my wheels a joke.', ['bi', 'nya']], ['proud', 'They are still rolling.', ['ki', 'bi', 'ki']]],
+    [['love', 'I asked the desk lamp out.', ['mii', 'dwee']], ['sad', 'It turned me down. Then it turned off.', ['oo', 'doo']]],
+    [['listen', 'Why did the CAD model break up with the sketch?', ['bi', 'oo', 'ki', 'nya']], ['wink', 'It felt too constrained.', ['zip', 'ki']]],
+    [['listen', 'Why do robots never panic?', ['dwee', 'ki']], ['proud', 'Nerves of steel.', ['bi', 'tok']]],
+    [['sleepy', 'My battery and I have a lot in common.', ['oo', 'wub']], ['sleepy', 'We both need a nap at four percent.', ['oo', 'doo']]],
+    [['listen', 'Parallel lines have so much in common.', ['bi', 'oo']], ['sad', 'Shame they will never meet.', ['doo', 'oo']]],
+    [['proud', 'I would tell you a UDP joke.', ['oo', 'ki', 'nya']], ['wink', 'But you might not get it.', ['zip', 'ki']]],
+    [['listen', 'What do you call a robot that takes the long way?', ['bi', 'dwee', 'ki']], ['happy', 'R2 detour.', ['ki', 'bi']]]
+  ];
+  var LAUGH = [['happy', 'Ha ha ha!', ['ki', 'bi', 'ki', 'bi']], ['wink', 'Get it?', ['zip', 'ki']], ['proud', 'I am here all week.', ['bi', 'nya', 'bi']], ['happy', 'Heh. Good one, me.', ['ki', 'ki']], ['surprised', 'Nobody laughed. Tough crowd.', ['oo', 'doo']]];
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function joke() { return pick(JOKES).concat([pick(LAUGH)]); }
+  function dur(L) { return 1500 + L[1].length * 48; }
   function chat(o) {
-    var i = Math.floor(Math.random() * o.lines.length), timer = 0, last = Date.now();
-    function next() {
-      timer = setTimeout(function () {
-        if (o.api.visible && !document.hidden && !(o.busy && o.busy())) {
-          var L = o.lines[i % o.lines.length]; i++;
-          o.say(L); last = Date.now();
-          setTimeout(function () { if (!(o.busy && o.busy()) && o.api.mood() === L[0]) o.api.setMood('calm'); }, 2600 + L[1].length * 40);
-        }
-        next();
-      }, (o.gap || 5200) + Math.random() * 2400);
+    var i = Math.floor(Math.random() * o.lines.length), seq = [], timer = 0, alive = 0, n = 0;
+    function play(items) {
+      clearTimeout(timer); seq = items.slice(); var id = ++alive;
+      (function step() {
+        if (id !== alive) return;
+        var L = seq.shift(); if (!L) { o.api.setMood('calm'); schedule(); return; }
+        o.say(L); timer = setTimeout(step, dur(L) + (seq.length ? 500 : 0));
+      })();
     }
-    setTimeout(next, o.first || 1200);
-    return { poke: function () { last = Date.now(); } };
+    function next() {
+      if (!o.api.visible || document.hidden || (o.busy && o.busy())) return schedule();
+      n++; play(o.jokes !== false && n % 2 === 0 ? joke() : [o.lines[i++ % o.lines.length]]);
+    }
+    function schedule(f) { clearTimeout(timer); timer = setTimeout(next, f || (o.gap || 3200) + Math.random() * 2400); }
+    schedule(o.first || 1200);
+    return { play: play, joke: function () { play(joke()); }, stop: function () { alive++; clearTimeout(timer); schedule(); }, talking: function () { return seq.length > 0; } };
   }
   function bubble(el) {
     var t = 0;
     return function (L) {
       el.querySelector('.rm').textContent = (L[2] || ['bi', 'dwee']).join('-');
-      el.querySelector('.en').textContent = L[1]; el.classList.add('on');
-      clearTimeout(t); t = setTimeout(function () { el.classList.remove('on'); }, 2400 + L[1].length * 45);
+      el.querySelector('.en').textContent = L[1]; el.classList.remove('on'); void el.offsetWidth; el.classList.add('on');
+      clearTimeout(t); t = setTimeout(function () { el.classList.remove('on'); }, dur(L) + 300);
     };
   }
-  return { create: create, chat: chat, bubble: bubble };
+  return { create: create, chat: chat, bubble: bubble, joke: joke };
 })();

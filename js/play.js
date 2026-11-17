@@ -52,16 +52,16 @@
   function track(e) { var b = cv.getBoundingClientRect(); ptr.x = Math.max(-1, Math.min(1, (e.clientX - b.left) / b.width * 2 - 1)); ptr.y = Math.max(-1, Math.min(1, (e.clientY - b.top) / b.height * 2 - 1)); ptr.t = Date.now(); }
   window.addEventListener('pointermove', track, { passive: true }); window.addEventListener('pointerdown', track, { passive: true });
   var lastAct = Date.now();
-  RoamStage.chat({ api: R, gap: 4200, first: 6000, busy: function () { return !!cur || Q.length > 0 || Date.now() - lastAct < 5000; },
-    say: function (L) { mood(L[0]); say(L[2], L[1]); }, lines: [
+  var chat = RoamStage.chat({ api: R, gap: 2600, first: 5000, busy: function () { return !!cur || Q.length > 0 || Date.now() - lastAct < 4500; },
+    say: function (L) { mood(L[0]); say(L[2], L[1]); if (L[0] === 'happy' && L[1].indexOf('Ha') === 0) run([{ d: .12, to: { bob: 4 } }, { d: .12, to: { bob: 0 } }, { d: .12, to: { bob: 4 } }, { d: .12, to: { bob: 0 } }]); }, lines: [
       ['listen', 'Still there? Try clapping on my left.', ['dwee', 'ki']],
       ['happy', 'Tap my head. I like that.', ['bi', 'mii']],
-      ['wink', 'Want to hear a joke? Press the joke button.', ['zip', 'ki']],
       ['listen', 'What should I call you?', ['doo', 'ki', 'bi']],
       ['scared', 'Please do not pick me up. Or do. I will complain.', ['zip', 'dwee']],
       ['proud', 'Push me to the edge. I dare you.', ['bi', 'nya', 'tok']],
       ['sad', 'You went quiet. Did I do something?', ['oo', 'doo']],
       ['love', 'How many features have you found so far?', ['mii', 'dwee']],
+      ['wink', 'Want to see me on your desk? Tap View in AR.', ['zip', 'ki']],
       ['sleepy', 'Is it bedtime yet? There is a button for that.', ['oo', 'wub']]
     ] });
 
@@ -95,7 +95,7 @@
       s: [{ mood: 'happy', d: .3 }, { d: 1.2, to: { z: 120 } }, { mood: 'scared', say: [['vrr', 'tok', 'tok'], 'Cliff! Not going there.'], d: .12, to: { tilt: .1, bob: 3 } }, { d: .2, to: { tilt: 0, bob: 0 } }, { d: .9, to: { z: 30 } }, { mood: 'proud', d: 1 }, { mood: 'calm', d: .7, to: { z: 0 } }] },
     ignore: { t: 'Ignore it', f: 'Has feelings', d: 'Roam has moods that rise and fall. Ignore it for hours and it sulks a little, then forgives you when you come back.',
       s: [{ mood: 'sad', say: [['wub', 'doo'], 'Ignored. Again.'], d: .7, to: { yaw: 2.6 } }, { d: .5, to: { z: -40 } }, { d: 1.6 }, { mood: 'calm', d: .6, to: { yaw: 0, z: 0 } }, { mood: 'happy', d: .6 }, { mood: 'calm', d: .1 }] },
-    joke: { t: 'Ask for a joke', f: 'Has a personality', d: 'It has a sense of humour, mostly bad. It tells the joke, laughs alone, then pretends it never happened.',
+    joke: { t: 'Ask for a joke', f: 'Has a personality', d: 'It has a sense of humour, mostly bad. It tells the joke, laughs alone, then pretends it never happened.', fn: function () { lastAct = 0; chat.joke(); },
       s: [{ mood: 'proud', say: [['oo', 'ki', 'nya', 'bi'], 'I would tell you a UDP joke, but you might not get it.'], d: 2.6 }, { mood: 'happy', say: [['ki', 'bi', 'ki', 'bi'], 'Ha ha!'], d: .15, to: { bob: 4 } }, { d: .15, to: { bob: 0 } }, { d: .15, to: { bob: 4 } }, { d: .15, to: { bob: 0 } }, { mood: 'wink', d: 1 }, { mood: 'calm', d: .1 }] },
     night: { t: 'Say goodnight', f: 'Sleeps when you do', d: 'Hold the top of its head and it says goodnight, closes its eyes and powers down. A touch wakes it again.',
       s: [{ mood: 'sleepy', say: [['oo', 'wub'], 'Goodnight.'], d: 1, to: { bob: -3, tilt: .04 } }, { d: 2.6 }, { mood: 'surprised', d: .2, to: { bob: 0, tilt: 0 } }, { mood: 'happy', say: [['bi', 'dwee'], 'Morning!'], d: .8 }, { mood: 'calm', d: .1 }] }
@@ -111,7 +111,7 @@
   var feats = []; keys.forEach(function (k) { if (feats.indexOf(A[k].f) < 0) feats.push(A[k].f); });
   feats.forEach(function (f) { var s = document.createElement('span'); s.textContent = f; found.appendChild(s); });
   function act(k) {
-    var a = A[k]; ac(); run(a.s); lastAct = Date.now();
+    var a = A[k]; ac(); lastAct = Date.now(); if (a.fn) { Q = []; cur = null; a.fn(); } else { chat.stop(); run(a.s); }
     $$('.pad').forEach(function (p) { p.classList.toggle('on', p.dataset.k === k); });
     $('.k', card).textContent = a.t; $('h3', card).textContent = a.f; $('p', card).textContent = a.d;
     card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash');
@@ -119,5 +119,22 @@
     $('.count').textContent = Object.keys(seen).length + ' of ' + feats.length;
   }
   $('.count').textContent = '0 of ' + feats.length;
+
+  /* View in AR: the outside of Roam only, at real size */
+  var arb = $('.arbtn'), mv = $('#roamar'), arMsg = $('.armsg'), arReady = false;
+  if (arb && mv) {
+    setTimeout(function () {
+      R.exportGLB(function (blob) {
+        if (!blob) { arb.hidden = true; return; }
+        mv.addEventListener('load', function () { arReady = true; arb.classList.add('ready'); }, { once: true });
+        mv.src = URL.createObjectURL(blob);
+      });
+    }, 1500);
+    arb.addEventListener('click', function () {
+      if (arReady && mv.canActivateAR) { mv.activateAR(); return; }
+      arMsg.textContent = arReady ? 'AR needs a phone. Open this page in Safari on iPhone or Chrome on Android.' : 'Getting Roam ready. Try again in a second.';
+      arMsg.classList.add('on'); clearTimeout(arMsg.t); arMsg.t = setTimeout(function () { arMsg.classList.remove('on'); }, 3600);
+    });
+  }
   setTimeout(function () { run([{ mood: 'happy', say: [['bi', 'dwee'], 'Hello! Poke me.'], d: .3, to: { bob: 4 } }, { d: .3, to: { bob: 0 } }, { d: 1.2 }, { mood: 'calm', d: .1 }]); }, 900);
 })();

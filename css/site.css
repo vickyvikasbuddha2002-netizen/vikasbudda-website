@@ -350,7 +350,7 @@ dialog.viewer .hint{position:absolute;left:24px;bottom:18px;font-size:13px;color
 .found span{font:600 12.5px var(--f-b);padding:7px 11px;border-radius:999px;border:1px solid var(--line2);color:var(--mute);transition:all .4s var(--ease)}
 .found span.got{color:#fff;border-color:rgba(142,160,255,.5);background:rgba(59,91,255,.16)}
 @media (max-width:900px){.learn{grid-template-columns:1fr;gap:24px}.arena{border-radius:22px}}
-@media (max-width:700px){.bubble{top:64px}.arena{height:62svh;min-height:380px}}
+@media (max-width:700px){.arena{height:62svh;min-height:380px}}
 
 /* reflection fade under the robots */
 .stage:after,.rview:after,.arena:after{content:"";position:absolute;left:0;right:0;bottom:0;height:30%;background:linear-gradient(to bottom,rgba(5,5,6,0),rgba(5,5,6,.92));pointer-events:none;z-index:2}
@@ -358,13 +358,18 @@ dialog.viewer .hint{position:absolute;left:24px;bottom:18px;font-size:13px;color
 .arena:after{height:22%;background:linear-gradient(to bottom,rgba(7,8,11,0),rgba(7,8,11,.9))}
 .stage .floor{z-index:3}.arena .hint,.arena .moodtag{z-index:4}.tapme{z-index:4}
 
-.stage .bubble,.rview .bubble{z-index:5;top:6%}
-.stage .bubble .en,.rview .bubble .en{font-size:16px}
-@media (max-width:700px){.stage .bubble,.rview .bubble{top:4%;max-width:92%;padding:11px 15px}.stage .bubble .en,.rview .bubble .en{font-size:14px}}
-/* captions sit low like subtitles, never over the face */
-.bubble,.stage .bubble,.rview .bubble{top:auto;bottom:64px;transform:translate(-50%,8px);padding:10px 16px;border-radius:14px;max-width:min(520px,90%)}
-.bubble.on,.stage .bubble.on,.rview .bubble.on{transform:translate(-50%,0)}
-.bubble .en,.stage .bubble .en,.rview .bubble .en{font-size:15px;line-height:1.35}
-.bubble .rm{font-size:12px;margin-bottom:4px}
+/* subtitles sit under Roam, over the reflection, never over the face */
+.bubble{top:auto;bottom:46px;transform:translate(-50%,8px);padding:10px 16px;border-radius:14px;background:rgba(8,9,12,.72);max-width:min(520px,90%)}
+.bubble.on{transform:translate(-50%,0)}
+.bubble .rm{font-size:11px;margin-bottom:4px}
+.bubble .en{font-size:15px;line-height:1.35}
+.stage .bubble,.rview .bubble{z-index:5}
+.stage{cursor:pointer}
 .rview .bubble{bottom:70px}
-@media (max-width:700px){.bubble,.stage .bubble,.rview .bubble{top:auto;bottom:52px;padding:8px 13px}.bubble .en,.stage .bubble .en,.rview .bubble .en{font-size:13.5px}.rview .bubble{bottom:62px}}
+.arena .bubble{z-index:5}
+.arena .arbtn{position:absolute;left:16px;top:16px;z-index:4}
+.arena .arbtn:not(.ready){opacity:.55}
+.armsg{position:absolute;left:16px;top:64px;max-width:min(320px,80%);font-size:13px;line-height:1.4;padding:10px 14px;border-radius:12px;background:rgba(8,9,12,.85);border:1px solid var(--line2);opacity:0;transform:translateY(-6px);transition:opacity .3s,transform .3s;pointer-events:none;z-index:5}
+.armsg.on{opacity:1;transform:none}
+#roamar{position:absolute;width:1px;height:1px;left:0;top:0;opacity:0;pointer-events:none}
+@media (max-width:700px){.bubble{top:auto;bottom:44px;padding:8px 13px}.bubble .en{font-size:14px}.rview .bubble{bottom:62px}}
