@@ -361,3 +361,10 @@ dialog.viewer .hint{position:absolute;left:24px;bottom:18px;font-size:13px;color
 .stage .bubble,.rview .bubble{z-index:5;top:6%}
 .stage .bubble .en,.rview .bubble .en{font-size:16px}
 @media (max-width:700px){.stage .bubble,.rview .bubble{top:4%;max-width:92%;padding:11px 15px}.stage .bubble .en,.rview .bubble .en{font-size:14px}}
+/* captions sit low like subtitles, never over the face */
+.bubble,.stage .bubble,.rview .bubble{top:auto;bottom:64px;transform:translate(-50%,8px);padding:10px 16px;border-radius:14px;max-width:min(520px,90%)}
+.bubble.on,.stage .bubble.on,.rview .bubble.on{transform:translate(-50%,0)}
+.bubble .en,.stage .bubble .en,.rview .bubble .en{font-size:15px;line-height:1.35}
+.bubble .rm{font-size:12px;margin-bottom:4px}
+.rview .bubble{bottom:70px}
+@media (max-width:700px){.bubble,.stage .bubble,.rview .bubble{top:auto;bottom:52px;padding:8px 13px}.bubble .en,.stage .bubble .en,.rview .bubble .en{font-size:13.5px}.rview .bubble{bottom:62px}}
