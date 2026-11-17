@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#050506">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/site.css">
+<title>Vikas Budda, Mechanical Design Engineer</title>
+<meta name="description" content="Mechanical design engineer in Bengaluru. Siemens NX, PMI and MBD, GD&T, manufacturing drawings. Projects: Roam desk robot and Hydration Puck.">
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4/dist/model-viewer.min.js"></script>
+</head>
+<body>
+<div class="loader" aria-hidden="true"><div class="in"><div class="nm"><span>Vikas Budda</span><span>0%</span></div><div class="bar"><i></i></div></div></div>
+<a class="skip" href="#main">Skip to content</a>
+<div class="progress" aria-hidden="true"></div><div class="cglow" aria-hidden="true"></div>
+<header class="nav"><div class="bar">
+  <a class="brand" href="index.html">Vikas Budda</a>
+  <nav class="links" aria-label="Main"><a href="index.html#projects">Projects</a><a href="index.html#cad">CAD practice</a><a href="index.html#experience">Experience</a><a href="notes.html">Notes</a><a href="index.html#contact">Contact</a></nav>
+  <a class="btn sm pri" href="assets/vikas-budda-resume.pdf" target="_blank" rel="noopener">Resume</a>
+  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
+</div></header>
+<div class="menu" id="menu"><a href="index.html#projects">Projects</a><a href="index.html#cad">CAD practice</a><a href="index.html#experience">Experience</a><a href="notes.html">Notes</a><a href="index.html#contact">Contact</a><a class="small" href="assets/vikas-budda-resume.pdf" target="_blank" rel="noopener">Download resume</a></div>
+<main id="main">
+
+<section class="hero" id="top">
+  <div class="grain"></div>
+  <div class="copy">
+    <h1 class="d split">Vikas Budda</h1>
+    <p class="tag" data-r style="--dl:.35s">Mechanical design engineer. Siemens NX, PMI and MBD, GD&amp;T.</p>
+    <div class="actions" data-r style="--dl:.5s">
+      <a class="btn pri" href="#projects">View projects <span class="ar">&rarr;</span></a>
+      <a class="btn" href="assets/vikas-budda-resume.pdf" target="_blank" rel="noopener">Download resume</a>
+    </div>
+  </div>
+  <div class="stage" data-r="scale" style="--dl:.25s">
+    <div class="halo"></div><canvas id="hero3d" aria-label="Roam, a small desk robot, in 3D"></canvas><div class="floor"></div>
+  </div>
+  <a class="cue" href="#projects" aria-label="Scroll to projects">SCROLL<i></i></a>
+</section>
+
+<div class="marquee" aria-hidden="true"><div class="t">
+  <span>Siemens NX</span><span>PMI and MBD</span><span>GD&amp;T</span><span>Manufacturing drawings</span><span>Teamcenter</span><span>CATIA V5</span><span>SolidWorks</span><span>3D printing</span>
+  <span>Siemens NX</span><span>PMI and MBD</span><span>GD&amp;T</span><span>Manufacturing drawings</span><span>Teamcenter</span><span>CATIA V5</span><span>SolidWorks</span><span>3D printing</span>
+</div></div>
+
+<section class="puck roamp" id="projects" aria-label="Project 01, Roam">
+  <div class="wrap">
+    <div>
+      <p class="kicker" data-r>Project 01</p>
+      <h2 class="d h2 split">Roam</h2>
+      <p class="sub" data-r style="--dl:.15s">A desk companion robot with a mind of its own. It notices you, talks in its own language and grows with you.</p>
+      <span class="chip" data-r style="--dl:.25s"><i></i>Build in progress</span>
+      <div class="feats" data-stagger=".1">
+        <div><b data-count="37">0</b><span>Behaviours it can perform</span></div>
+        <div><b>Roamish</b><span>Its own language, with English captions</span></div>
+        <div><b>Grows</b><span>Changes the longer it knows you</span></div>
+      </div>
+      <div class="actions" data-r style="--dl:.2s">
+        <a class="btn pri" href="roam.html">Play with Roam <span class="ar">&rarr;</span></a>
+      </div>
+    </div>
+    <a class="view rview" href="roam.html" data-r="right" aria-label="Play with Roam">
+      <canvas id="roam3d" aria-label="Roam in 3D"></canvas>
+      <span class="tapme">Tap to play</span>
+    </a>
+  </div>
+</section>
+
+<section class="puck" aria-label="Project 02, Hydration Puck">
+  <div class="wrap">
+    <div class="view" data-r="left">
+      <model-viewer id="puckmv" src="assets/hydration-puck.glb" alt="3D model of the Hydration Puck" camera-controls disable-zoom interaction-prompt="none" environment-image="neutral" exposure="1.15" shadow-intensity="1" camera-orbit="-60deg 62deg auto" loading="lazy"></model-viewer>
+    </div>
+    <div>
+      <p class="kicker" data-r>Project 02</p>
+      <h2 class="d h2 split">Hydration Puck</h2>
+      <p class="sub" data-r style="--dl:.15s">A smart hydration tracker, designed in Siemens NX, wired and built by hand.</p>
+      <div class="feats" data-stagger=".1">
+        <div><b>Siemens NX</b><span>Enclosure designed for fit and DFM</span></div>
+        <div><b>Electronics</b><span>Sensor and display integrated</span></div>
+        <div><b>Prototypes</b><span>Several 3D-printed rounds</span></div>
+      </div>
+      <div class="actions" data-r style="--dl:.2s">
+        <button class="btn pri" type="button" data-open-model="assets/hydration-puck.glb" data-title="Hydration Puck">Explore in 3D <span class="ar">&rarr;</span></button>
+        <a class="btn" href="assets/hydration-puck.pdf" target="_blank" rel="noopener">Read the case study</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="practice" id="cad">
+  <div class="wrap">
+    <div class="shead"><div><p class="kicker" data-r>Practice</p><h2 class="d h2 split">CAD practice</h2></div><p class="sub" data-r style="margin:0;max-width:30ch">Parts and assemblies I model to sharpen my skills. Drag to explore, tap to open in 3D.</p></div>
+    <div class="track" id="track"></div>
+    <div class="trackbar"><i></i></div>
+    <p class="legal">Shown to demonstrate personal skill. Rights to original components, concepts and proprietary data remain with their owners.</p>
+  </div>
+</section>
+
+<section class="xp" id="experience">
+  <div class="wrap">
+    <div>
+      <p class="kicker" data-r>Career</p>
+      <h2 class="d h2 split" style="font-size:clamp(40px,5vw,72px)">Experience</h2>
+      <div class="tl">
+        <div class="rail"></div><div class="fill"></div>
+        <div class="job" data-r>
+          <h3>Mechanical Engineer</h3>
+          <p class="when">Dec 2025 to present</p>
+          <p class="org">Source Engineering Services and Technology, Bengaluru</p>
+          <ul>
+            <li>1:1 parametric parts and assemblies in Siemens NX, true to design intent.</li>
+            <li>PMI in NX for model-based definition: 3D dimensions, GD&amp;T, datums, finish.</li>
+            <li>Manufacturing drawings with full GD&amp;T and BOM tables, released to the shop.</li>
+            <li>Customer STEP files remastered into native parametric NX models.</li>
+            <li>BOM and DiaBOM updates, ECRs and ECNs with full traceability.</li>
+            <li>Special purpose machine taken from concept to layout in SolidWorks.</li>
+          </ul>
+          <div class="tags"><span>Siemens NX</span><span>PMI / MBD</span><span>GD&amp;T</span><span>Teamcenter</span><span>ECR / ECN</span></div>
+        </div>
+        <div class="job" data-r>
+          <h3>Design Engineer</h3>
+          <p class="when">Jun 2023 to Sep 2025</p>
+          <p class="org">Taal Tech, Bengaluru</p>
+          <ul>
+            <li>Aircraft interior components in CATIA V5 and SolidWorks, fit-checked to FAA standards.</li>
+            <li>Sheet metal and machined parts in Part Design and Generative Sheet Metal.</li>
+            <li>Manufacturing and assembly drawings with GD&amp;T for production.</li>
+            <li>Part data, revisions and configuration in Enovia SmarTeam.</li>
+            <li>Material, additive manufacturing and fire containment reports for FAA flammability.</li>
+            <li>Excel VBA automation that cut documentation time by 30%.</li>
+          </ul>
+          <div class="tags"><span>CATIA V5</span><span>SolidWorks</span><span>Sheet metal</span><span>SmarTeam</span><span>Excel VBA</span></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <p class="kicker" data-r>Toolkit</p>
+      <h2 class="d h2 split" style="font-size:clamp(40px,5vw,72px)">Skills</h2>
+      <dl class="spec" data-stagger=".06">
+        <div><dt>Primary CAD</dt><dd>Siemens NX: parametric parts, assemblies, drafting, PMI</dd></div>
+        <div><dt>Other CAD</dt><dd>SolidWorks, CATIA V5, AutoCAD, Blender</dd></div>
+        <div><dt>MBD and drawings</dt><dd>PMI, model-based definition, GD&amp;T to ASME Y14.5</dd></div>
+        <div><dt>PLM and BOM</dt><dd>Teamcenter, Enovia SmarTeam, 3DEXPERIENCE, ECR and ECN</dd></div>
+        <div><dt>Manufacturing</dt><dd>DFM, 3D printing on a Bambu Lab A1, ANSYS structural</dd></div>
+        <div><dt>Automation</dt><dd>NX macros, CATIA VBA, Excel VBA</dd></div>
+      </dl>
+      <div class="edu" data-r>
+        <h4>Education</h4>
+        <ul>
+          <li><span>B.Tech, Mechanical Engineering, NSRIT Visakhapatnam</span><span>2020 to 2023</span></li>
+          <li><span>Diploma, Mechanical Engineering, Sai Ganapathi Polytechnic</span><span>2017 to 2020</span></li>
+        </ul>
+      </div>
+      <div class="edu" data-r>
+        <h4>Certificates</h4>
+        <ul id="certs"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="notes" id="notes">
+  <div class="wrap">
+    <div class="shead"><div><p class="kicker" data-r>Writing</p><h2 class="d h2 split">Notes</h2></div><a class="link" href="notes.html" data-r>View all notes <span class="ar">&rarr;</span></a></div>
+    <div class="ngrid" id="ngrid" data-limit="3"></div>
+  </div>
+</section>
+
+<section class="cta" id="contact">
+  <div class="wrap">
+    <h2 class="d h2 split">Let's build something.</h2>
+    <a class="mail" href="mailto:vickyvikasbuddha2002@gmail.com" data-r>vickyvikasbuddha2002@gmail.com</a>
+    <div class="actions" data-r style="--dl:.15s">
+      <a class="btn pri" href="https://www.linkedin.com/in/vikas-budda" target="_blank" rel="noopener">LinkedIn <span class="ar">&rarr;</span></a>
+      <a class="btn" href="assets/vikas-budda-resume.pdf" target="_blank" rel="noopener">Resume</a>
+    </div>
+  </div>
+  <div class="horizon" aria-hidden="true"></div>
+</section>
+</main>
+<footer><div class="wrap"><span><b>Vikas Budda</b></span><span>Mechanical design engineer, Bengaluru</span><span>© <span id="year">2026</span> Vikas Budda</span></div></footer>
+<dialog class="viewer" id="viewer" aria-label="3D model viewer">
+  <header><h3></h3><button class="btn sm close" type="button">Close</button></header>
+  <model-viewer camera-controls auto-rotate rotation-per-second="12deg" environment-image="neutral" exposure="1.1" shadow-intensity="1"></model-viewer>
+  <span class="hint">Drag to rotate. Pinch or scroll to zoom.</span>
+</dialog>
+<script src="js/roam-model.js"></script>
+<script src="js/robot.js"></script>
+<script src="js/data.js"></script>
+<script src="js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+{
+    "asset": {
+        "version": "2.0"
+    },
+    "accessors": [
+        {
+            "componentType": 5123,
+            "count": 1716,
+            "type": "SCALAR"
+        },
+        {
+            "componentType": 5126,
+            "count": 604,
+            "type": "VEC3",
+            "max": [
+                0.0,
+                4.320000171661377,
+                2.9749999046325685
+            ],
+            "min": [
+                -20.6200008392334,
+                -4.320000171661377,
+                -2.9749999046325685
+            ]
+        },
+        {
+            "componentType": 5126,
+            "count": 604,
+            "type": "VEC3",
+            "max": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "min": [
+                -1.0,
+                -1.0,
+                -1.0
+            ]
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 28,
+            "byteLength": 6967
+        }
+    ],
+    "buffers": [
+        {
+            "byteLength": 6995,
+            "uri": "connector housing0.bin"
+        }
+    ],
+    "materials": [
+        {
+            "pbrMetallicRoughness": {
+                "baseColorFactor": [
+                    0.6117647290229797,
+                    0.6588234901428223,
+                    0.6705881953239441,
+                    1.0
+                ],
+                "metallicFactor": 0.589519739151001,
+                "roughnessFactor": 0.6324555277824402
+            },
+            "name": "face1290",
+            "doubleSided": true
+        }
+    ],
+    "meshes": [
+        {
+            "primitives": [
+                {
+                    "attributes": {
+                        "NORMAL": 2,
+                        "POSITION": 1
+                    },
+                    "indices": 0,
+                    "material": 0,
+                    "extensions": {
+                        "KHR_draco_mesh_compression": {
+                            "bufferView": 0,
+                            "attributes": {
+                                "POSITION": 0,
+                                "NORMAL": 1
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "mesh": 0
+        },
+        {
+            "children": [
+                0
+            ]
+        },
+        {
+            "children": [
+                1
+            ],
+            "scale": [
+                0.0010000000474974514,
+                0.0010000000474974514,
+                0.0010000000474974514
+            ],
+            "name": "model1"
+        }
+    ],
+    "scenes": [
+        {
+            "nodes": [
+                2
+            ]
+        }
+    ],
+    "scene": 0,
+    "extensionsUsed": [
+        "KHR_draco_mesh_compression"
+    ],
+    "extensionsRequired": [
+        "KHR_draco_mesh_compression"
+    ]
+}
