@@ -155,12 +155,24 @@
           var sy = window.scrollY / innerHeight;
           var tr = (RM ? 0.5 : Math.sin(t * 0.45) * 0.38 + 0.35) + mouse.nx * 0.35;
           hrot += (tr - hrot) * 0.05; heroApi.root.rotation.y = hrot;
-          heroApi.root.position.y = -53 + (RM ? 0 : Math.sin(t * 1.4) * 2.2);
-          heroApi.wheels.forEach(function (w) { w.rotation.x = t * 0.6; });
+          heroApi.root.position.y = -53;
           var d = innerWidth < 700 ? 480 : 400;
           heroApi.camera.position.set(0, 40 + sy * 60, d + sy * 120); heroApi.camera.lookAt(0, -14 + sy * 30, 0);
           heroApi.look.tx = mouse.nx * 0.9; heroApi.look.ty = mouse.ny * 0.7;
         };
+        var hb = $('.stage .bubble');
+        if (hb) RoamStage.chat({ api: heroApi, say: function (L) { heroApi.setMood(L[0]); RoamStage.bubble(hb)(L); }, first: 2600, lines: [
+          ['happy', 'Hi there. What brings you here?', ['bi', 'dwee']],
+          ['listen', 'Are you hiring? I know a good engineer.', ['ki', 'bi', 'oo']],
+          ['wink', 'Scroll down. I have a page where you can play with me.', ['zip', 'ki']],
+          ['love', 'You have a nice face. I can tell.', ['mii', 'mii']],
+          ['listen', 'What are you building these days?', ['dwee', 'ki']],
+          ['proud', 'Vikas designed me from scratch. Want to see?', ['bi', 'nya', 'bi']],
+          ['surprised', 'Wait, did you just smile?', ['zip', 'dwee']],
+          ['happy', 'Is it day or night where you are?', ['oo', 'ki']],
+          ['sleepy', 'If you stop moving, I might take a nap.', ['oo', 'wub']],
+          ['listen', 'Cats or robots? Think carefully.', ['ki', 'tok', 'ki']]
+        ] });
       }
     }
     var rc = $('#roam3d');
@@ -172,13 +184,22 @@
           var r = rsec.getBoundingClientRect(), p = clamp(1 - (r.top + r.height / 2) / (innerHeight + r.height / 2), 0, 1);
           rr0 += ((RM ? 0.4 : -0.9 + p * 1.9) - rr0) * 0.08;
           roamApi.root.rotation.y = rr0 + Math.sin(t * 0.6) * 0.04;
-          roamApi.root.position.y = -53 + (RM ? 0 : Math.sin(t * 1.3) * 2);
+          roamApi.root.position.y = -53;
           roamApi.camera.position.set(0, 52, 430); roamApi.camera.lookAt(0, -12, 0);
           var b = rc.getBoundingClientRect(); roamApi.look.tx = clamp((mouse.x - b.left - b.width / 2) / b.width * 2, -1, 1); roamApi.look.ty = clamp((mouse.y - b.top - b.height / 2) / b.height * 2, -1, 1);
           roamApi.wheels.forEach(function (w) { w.rotation.x = p * 9; });
         };
-        rc.parentNode.addEventListener('pointerenter', function () { roamApi.setMood('happy'); });
-        rc.parentNode.addEventListener('pointerleave', function () { roamApi.setMood('calm'); });
+        var rb = rc.parentNode.querySelector('.bubble'), rbusy = false;
+        if (rb) RoamStage.chat({ api: roamApi, busy: function () { return rbusy; }, say: function (L) { roamApi.setMood(L[0]); RoamStage.bubble(rb)(L); }, first: 1500, lines: [
+          ['happy', 'Hey, you. Want to play?', ['bi', 'dwee']],
+          ['listen', 'Tap me. I will show you what I can do.', ['ki', 'bi']],
+          ['wink', 'I can hear which side you clap from. Try me.', ['zip', 'ki']],
+          ['proud', 'I never fall off a desk. Ever.', ['bi', 'nya']],
+          ['love', 'Do you have a desk I could live on?', ['mii', 'dwee']],
+          ['listen', 'Do you know my name yet? It is Roam.', ['doo', 'ki']]
+        ] });
+        rc.parentNode.addEventListener('pointerenter', function () { rbusy = true; roamApi.setMood('happy'); });
+        rc.parentNode.addEventListener('pointerleave', function () { rbusy = false; roamApi.setMood('calm'); });
       }
     }
   }

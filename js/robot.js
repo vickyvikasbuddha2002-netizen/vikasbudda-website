@@ -134,5 +134,29 @@ window.RoamStage = (function () {
     api.resize = resize;
     return api;
   }
-  return { create: create };
+  /* always-on small talk: Roam keeps watching you and asking things */
+  function chat(o) {
+    var i = Math.floor(Math.random() * o.lines.length), timer = 0, last = Date.now();
+    function next() {
+      timer = setTimeout(function () {
+        if (o.api.visible && !document.hidden && !(o.busy && o.busy())) {
+          var L = o.lines[i % o.lines.length]; i++;
+          o.say(L); last = Date.now();
+          setTimeout(function () { if (!(o.busy && o.busy()) && o.api.mood() === L[0]) o.api.setMood('calm'); }, 2600 + L[1].length * 40);
+        }
+        next();
+      }, (o.gap || 5200) + Math.random() * 2400);
+    }
+    setTimeout(next, o.first || 1200);
+    return { poke: function () { last = Date.now(); } };
+  }
+  function bubble(el) {
+    var t = 0;
+    return function (L) {
+      el.querySelector('.rm').textContent = (L[2] || ['bi', 'dwee']).join('-');
+      el.querySelector('.en').textContent = L[1]; el.classList.add('on');
+      clearTimeout(t); t = setTimeout(function () { el.classList.remove('on'); }, 2400 + L[1].length * 45);
+    };
+  }
+  return { create: create, chat: chat, bubble: bubble };
 })();

@@ -41,15 +41,29 @@
     }
     view += (dragV - view) * 0.12;
     var idle = !cur && !Q.length;
-    R.root.position.set(S.x, -53 + S.lift + (RM ? 0 : Math.sin(t * 1.5) * (idle ? 2 : 0.8)) + S.bob, S.z);
-    R.root.rotation.set(S.tilt * 0.6, S.yaw + view, S.tilt);
+    R.root.position.set(S.x, -53 + S.lift, S.z);
+    R.root.rotation.set(S.tilt * 0.6 - S.bob * 0.012, S.yaw + view, S.tilt);
     var dist = Math.hypot(S.x - lastX, S.z - lastZ); R.wheels.forEach(function (w) { w.rotation.x += dist / 26; }); lastX = S.x; lastZ = S.z;
     var mob = cv.clientWidth < 700;
     R.camera.position.set(0, 64, mob ? 600 : 470); R.camera.lookAt(0, -8, 0);
-    if (idle && R.mood() === 'calm') { R.look.tx = ptr.x; R.look.ty = ptr.y; }
+    if (idle) { var away = Date.now() - ptr.t > 3500; R.look.tx = away ? Math.sin(t * 0.7) * 0.15 : ptr.x; R.look.ty = away ? 0 : ptr.y; }
   };
-  var ptr = { x: 0, y: 0 };
-  cv.addEventListener('pointermove', function (e) { var b = cv.getBoundingClientRect(); ptr.x = (e.clientX - b.left) / b.width * 2 - 1; ptr.y = (e.clientY - b.top) / b.height * 2 - 1; });
+  var ptr = { x: 0, y: 0, t: 0 };
+  function track(e) { var b = cv.getBoundingClientRect(); ptr.x = Math.max(-1, Math.min(1, (e.clientX - b.left) / b.width * 2 - 1)); ptr.y = Math.max(-1, Math.min(1, (e.clientY - b.top) / b.height * 2 - 1)); ptr.t = Date.now(); }
+  window.addEventListener('pointermove', track, { passive: true }); window.addEventListener('pointerdown', track, { passive: true });
+  var lastAct = Date.now();
+  RoamStage.chat({ api: R, gap: 4200, first: 6000, busy: function () { return !!cur || Q.length > 0 || Date.now() - lastAct < 5000; },
+    say: function (L) { mood(L[0]); say(L[2], L[1]); }, lines: [
+      ['listen', 'Still there? Try clapping on my left.', ['dwee', 'ki']],
+      ['happy', 'Tap my head. I like that.', ['bi', 'mii']],
+      ['wink', 'Want to hear a joke? Press the joke button.', ['zip', 'ki']],
+      ['listen', 'What should I call you?', ['doo', 'ki', 'bi']],
+      ['scared', 'Please do not pick me up. Or do. I will complain.', ['zip', 'dwee']],
+      ['proud', 'Push me to the edge. I dare you.', ['bi', 'nya', 'tok']],
+      ['sad', 'You went quiet. Did I do something?', ['oo', 'doo']],
+      ['love', 'How many features have you found so far?', ['mii', 'dwee']],
+      ['sleepy', 'Is it bedtime yet? There is a button for that.', ['oo', 'wub']]
+    ] });
 
   /* drag to turn it, tap it to pat it */
   var down = null;
@@ -97,7 +111,7 @@
   var feats = []; keys.forEach(function (k) { if (feats.indexOf(A[k].f) < 0) feats.push(A[k].f); });
   feats.forEach(function (f) { var s = document.createElement('span'); s.textContent = f; found.appendChild(s); });
   function act(k) {
-    var a = A[k]; ac(); run(a.s);
+    var a = A[k]; ac(); run(a.s); lastAct = Date.now();
     $$('.pad').forEach(function (p) { p.classList.toggle('on', p.dataset.k === k); });
     $('.k', card).textContent = a.t; $('h3', card).textContent = a.f; $('p', card).textContent = a.d;
     card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash');

@@ -357,3 +357,7 @@ dialog.viewer .hint{position:absolute;left:24px;bottom:18px;font-size:13px;color
 .rview:after{background:linear-gradient(to bottom,rgba(8,9,12,0),rgba(8,9,12,.9))}
 .arena:after{height:22%;background:linear-gradient(to bottom,rgba(7,8,11,0),rgba(7,8,11,.9))}
 .stage .floor{z-index:3}.arena .hint,.arena .moodtag{z-index:4}.tapme{z-index:4}
+
+.stage .bubble,.rview .bubble{z-index:5;top:6%}
+.stage .bubble .en,.rview .bubble .en{font-size:16px}
+@media (max-width:700px){.stage .bubble,.rview .bubble{top:4%;max-width:92%;padding:11px 15px}.stage .bubble .en,.rview .bubble .en{font-size:14px}}
