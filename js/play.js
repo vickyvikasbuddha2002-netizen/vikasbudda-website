@@ -123,13 +123,8 @@
   /* View in AR: the outside of Roam only, at real size */
   var arb = $('.arbtn'), mv = $('#roamar'), arMsg = $('.armsg'), arReady = false;
   if (arb && mv) {
-    setTimeout(function () {
-      R.exportGLB(function (blob) {
-        if (!blob) { arb.hidden = true; return; }
-        mv.addEventListener('load', function () { arReady = true; arb.classList.add('ready'); }, { once: true });
-        mv.src = URL.createObjectURL(blob);
-      });
-    }, 1500);
+    mv.addEventListener('load', function () { arReady = true; arb.classList.add('ready'); });
+    if (mv.loaded) { arReady = true; arb.classList.add('ready'); }
     arb.addEventListener('click', function () {
       if (arReady && mv.canActivateAR) { mv.activateAR(); return; }
       arMsg.textContent = arReady ? 'AR needs a phone. Open this page in Safari on iPhone or Chrome on Android.' : 'Getting Roam ready. Try again in a second.';

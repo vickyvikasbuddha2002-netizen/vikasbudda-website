@@ -373,3 +373,77 @@ dialog.viewer .hint{position:absolute;left:24px;bottom:18px;font-size:13px;color
 .armsg.on{opacity:1;transform:none}
 #roamar{position:absolute;width:1px;height:1px;left:0;top:0;opacity:0;pointer-events:none}
 @media (max-width:700px){.bubble{top:auto;bottom:44px;padding:8px 13px}.bubble .en{font-size:14px}.rview .bubble{bottom:62px}}
+
+/* ---------- page transitions (Chrome, Edge, Safari 18+) ---------- */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:vtOut .32s cubic-bezier(.4,0,.2,1) both}
+::view-transition-new(root){animation:vtIn .6s var(--ease) both}
+@keyframes vtOut{to{opacity:0;transform:translateY(-16px) scale(.99);filter:blur(6px)}}
+@keyframes vtIn{from{opacity:0;transform:translateY(28px);filter:blur(6px)}}
+.nav{view-transition-name:topnav}
+::view-transition-group(topnav){animation-duration:.4s}
+.quick .loader{transition:none;display:none}
+@media (prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
+
+/* ---------- Roam build log ---------- */
+.blog{padding:6vh 0 10vh}
+.blog .wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:60px;align-items:start}
+.log{list-style:none;margin:0;padding:0 0 0 30px;position:relative}
+.log:before,.log:after{content:"";position:absolute;left:7px;top:10px;bottom:10px;width:2px;background:var(--line)}
+.log:after{bottom:auto;height:var(--fill,0%);background:var(--acc);box-shadow:0 0 12px var(--glow)}
+.log .li{position:relative;display:grid;grid-template-columns:110px 1fr;gap:18px;padding:18px 0;border-bottom:1px solid var(--line)}
+.log .li:last-child{border-bottom:0}
+.log .li:before{content:"";position:absolute;left:-29px;top:26px;width:14px;height:14px;border-radius:50%;background:var(--bg);border:2px solid var(--line2);z-index:1}
+.log .li.done:before{background:var(--acc);border-color:var(--acc);box-shadow:0 0 12px var(--glow)}
+.log .li.now:before{border-color:var(--acc2);animation:lpulse 1.8s ease-in-out infinite}
+@keyframes lpulse{50%{box-shadow:0 0 0 7px rgba(142,160,255,.16)}}
+.log .st{font:600 13px/1 var(--f-b);color:var(--mute);padding-top:7px}
+.log .done .st{color:var(--acc2)}.log .now .st{color:#fff}
+.log h3{font:800 clamp(19px,1.8vw,24px)/1.15 var(--f-d);font-stretch:108%;letter-spacing:-.02em;margin:0 0 6px}
+.log p{margin:0;color:var(--ink2);font-size:15.5px;line-height:1.5}
+.log .next h3{color:var(--ink2)}
+@media (max-width:900px){.blog .wrap{grid-template-columns:1fr;gap:30px}.log .li{grid-template-columns:1fr;gap:6px}.log .st{padding-top:0}}
+
+/* ---------- Hydration Puck story ---------- */
+.puck.story{padding:12vh 0 10vh;overflow:visible}
+.puck.story .wrap{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);align-items:start}
+.story .stick{position:sticky;top:12vh;height:76vh}
+.story .stick .view{height:100%;aspect-ratio:auto}
+.story .chap{padding:4vh 0}
+.story .intro{min-height:44vh;display:flex;flex-direction:column;justify-content:center}
+.story .pstep{min-height:62vh;display:flex;flex-direction:column;justify-content:center;opacity:.22;transform:translateY(10px);transition:opacity .6s var(--ease),transform .8s var(--ease)}
+.story .pstep.on{opacity:1;transform:none}
+.story .pstep .n{font:600 14px/1 var(--f-b);color:var(--acc2);margin-bottom:16px}
+.story .pstep h3{font:800 clamp(30px,3.6vw,54px)/1.02 var(--f-d);font-stretch:110%;letter-spacing:-.03em;margin:0 0 16px;max-width:16ch}
+.story .pstep p{margin:0;color:var(--ink2);font-size:clamp(16px,1.4vw,19px);line-height:1.5;max-width:40ch}
+.story .outro{padding-top:4vh}
+@media (max-width:900px){
+  .puck.story .wrap{grid-template-columns:1fr;gap:0}
+  .story .stick{top:0;height:calc(40svh + 88px);z-index:3;margin:0 calc(var(--pad)*-1);padding:76px var(--pad) 12px;background:linear-gradient(var(--bg) 85%,rgba(5,5,6,0))}
+  .story .stick .view{order:0;border-radius:22px}
+  .story .intro{min-height:0;padding:30px 0 10px}
+  .story .pstep{min-height:54svh}
+}
+
+/* ---------- Hire card ---------- */
+.hsub{margin:0 auto 30px;max-width:40ch}
+.hire{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;max-width:1040px;margin:0 auto;text-align:left}
+.hcard{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;gap:26px;min-height:132px;padding:22px;border-radius:20px;background:var(--card);border:1px solid var(--line);transition:border-color .3s,background .3s,transform .5s var(--ease)}
+.hcard b{font:800 21px/1.1 var(--f-d);font-stretch:108%;letter-spacing:-.02em}
+.hcard span{font-size:13.5px;color:var(--mute);word-break:break-all}
+.hcard:hover{border-color:var(--acc);background:#10132a;transform:translateY(-4px)}
+.hcard:focus-visible{outline:2px solid var(--acc2);outline-offset:3px}
+.hcard.done{border-color:var(--acc2)}
+.hcard.done b:after{content:" ✓";color:var(--acc2);font-weight:600;font-family:var(--f-b);font-size:14px;letter-spacing:0}
+@media (max-width:900px){.hire{grid-template-columns:repeat(2,minmax(0,1fr))}.hcard{min-height:112px;padding:18px}.hcard b{font-size:18px}}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);padding:12px 20px;border-radius:999px;background:var(--acc);color:#fff;font:600 15px/1 var(--f-b);box-shadow:0 10px 40px var(--glow);opacity:0;pointer-events:none;transition:opacity .3s,transform .5s var(--ease);z-index:150}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- Roam's eyes cursor (mouse only) ---------- */
+.eyecur{position:fixed;left:0;top:0;z-index:300;pointer-events:none;display:flex;gap:6px;margin:-9px 0 0 -10px;opacity:0;transition:opacity .25s}
+.eyecur.on{opacity:1}
+.eyecur i{display:block;width:7px;height:18px;border-radius:5px;background:#8fb4ff;box-shadow:0 0 10px #8fb4ff,0 0 2px #fff inset;transition:height .12s,transform .12s,border-radius .2s,background .2s,width .2s}
+.eyecur.blink i{transform:scaleY(.12)}
+.eyecur.hov i{width:10px;height:6px;margin-top:4px;background:transparent;border:3px solid #8fb4ff;border-bottom:0;border-radius:10px 10px 0 0;box-shadow:0 -2px 8px rgba(143,180,255,.7)}
+html.eyes,html.eyes *{cursor:none!important}
+html.eyes input,html.eyes textarea{cursor:text!important}

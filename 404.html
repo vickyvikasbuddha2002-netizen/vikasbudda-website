@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#050506">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/site.css">
+<link rel="icon" type="image/png" sizes="64x64" href="/assets/favicon.png">
+<title>Lost | Vikas Budda</title>
+<style>
+.lost{min-height:100svh;display:grid;grid-template-rows:auto 1fr;padding:22px var(--pad) 40px}
+.lost .top{display:flex;justify-content:space-between;align-items:center}
+.lost .brand{font:800 20px/1 var(--f-d);font-stretch:112%;letter-spacing:-.02em}
+.lost .mid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:center;gap:40px;max-width:1240px;width:100%;margin:0 auto}
+.lost .big{font-size:clamp(110px,18vw,260px);margin:0;background:linear-gradient(180deg,#fff,#5b6280);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lost h1{font:800 clamp(28px,3.4vw,46px)/1.05 var(--f-d);font-stretch:110%;letter-spacing:-.03em;margin:8px 0 14px;max-width:16ch}
+.lost p{color:var(--ink2);margin:0 0 28px;max-width:36ch;font-size:18px}
+.lost .arena{height:min(62svh,560px);min-height:340px}
+.lost .arena canvas{cursor:pointer}
+@media (max-width:860px){.lost .mid{grid-template-columns:1fr;gap:10px}.lost .arena{order:-1;height:44svh}}
+</style>
+</head>
+<body>
+<main class="lost">
+  <div class="top"><a class="brand" href="/">Vikas Budda</a><a class="btn sm" href="/">Home</a></div>
+  <div class="mid">
+    <div>
+      <p class="big d">404</p>
+      <h1>Roam drove off the map.</h1>
+      <p>This page does not exist. It may have moved, or someone typed the link wrong.</p>
+      <div class="actions"><a class="btn pri" href="/">Take me home <span class="ar">&rarr;</span></a><a class="btn" href="/roam.html">Play with Roam</a></div>
+    </div>
+    <div class="arena">
+      <canvas id="lost3d" aria-label="Roam, looking lost"></canvas>
+      <div class="bubble" aria-live="polite"><span class="rm"></span><span class="en"></span></div>
+    </div>
+  </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="/js/roam-model.js"></script>
+<script src="/js/robot.js"></script>
+<script>
+(function () {
+  var cv = document.getElementById('lost3d'); if (!window.THREE || !window.RoamStage) return;
+  var R = RoamStage.create(cv, { fov: 22 }); if (!R) return;
+  var mob = function () { return cv.clientWidth < 520; }, yaw = 0, ty = 0, nt = 0;
+  R.setMood('dizzy');
+  R.update = function (dt, t) {
+    nt -= dt; if (nt < 0) { ty = (Math.random() - 0.5) * 2.2; nt = 1.6 + Math.random() * 2; }
+    yaw += (ty - yaw) * 0.04; R.root.rotation.y = yaw; R.root.position.y = -53;
+    R.wheels.forEach(function (w) { w.rotation.x += (ty - yaw) * 0.05; });
+    R.look.tx = Math.sin(t * 0.9) * 0.8; R.look.ty = Math.sin(t * 0.6) * 0.3;
+    R.camera.position.set(0, 60, mob() ? 560 : 470); R.camera.lookAt(0, -10, 0);
+  };
+  var say = RoamStage.bubble(document.querySelector('.lost .bubble'));
+  var chat = RoamStage.chat({ api: R, first: 900, gap: 2600, say: function (L) { R.setMood(L[0]); say(L); }, lines: [
+    ['dizzy', 'I think I drove off the map.', ['oo', 'wub', 'oo']],
+    ['sad', 'This page does not exist. Or I ate it.', ['doo', 'oo']],
+    ['listen', 'Home is that way. Probably.', ['dwee', 'ki']],
+    ['scared', 'Is this the edge of the internet?', ['zip', 'dwee']],
+    ['proud', 'I never fall off desks. Websites are different.', ['bi', 'nya']]
+  ] });
+  cv.addEventListener('click', function () { chat.play([['surprised', 'Oh, hi. Can you take me home?', ['zip', 'ki']]]); });
+})();
+</script>
+</body>
+</html>

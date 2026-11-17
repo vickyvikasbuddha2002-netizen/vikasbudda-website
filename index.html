@@ -7,6 +7,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/site.css">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Vikas Budda">
+<meta property="og:title" content="Vikas Budda, Mechanical Design Engineer">
+<meta property="og:description" content="Mechanical design engineer in Bengaluru. Siemens NX, PMI and MBD, GD&T. Projects: Roam the desk robot and the Hydration Puck.">
+<meta property="og:url" content="https://buddavikasportfolio.com/">
+<meta property="og:image" content="https://buddavikasportfolio.com/assets/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Roam the robot next to the name Vikas Budda">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://buddavikasportfolio.com/assets/og.png">
+<link rel="icon" type="image/png" sizes="64x64" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script>try{if(sessionStorage.getItem('vbs'))document.documentElement.classList.add('ready','quick')}catch(e){}</script>
 <title>Vikas Budda, Mechanical Design Engineer</title>
 <meta name="description" content="Mechanical design engineer in Bengaluru. Siemens NX, PMI and MBD, GD&T, manufacturing drawings. Projects: Roam desk robot and Hydration Puck.">
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
@@ -15,7 +28,7 @@
 <body>
 <div class="loader" aria-hidden="true"><div class="in"><div class="nm"><span>Vikas Budda</span><span>0%</span></div><div class="bar"><i></i></div></div></div>
 <a class="skip" href="#main">Skip to content</a>
-<div class="progress" aria-hidden="true"></div><div class="cglow" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"></div><div class="eyecur" aria-hidden="true"><i></i><i></i></div><div class="cglow" aria-hidden="true"></div>
 <header class="nav"><div class="bar">
   <a class="brand" href="index.html">Vikas Budda</a>
   <nav class="links" aria-label="Main"><a href="index.html#projects">Projects</a><a href="index.html#cad">CAD practice</a><a href="index.html#experience">Experience</a><a href="notes.html">Notes</a><a href="index.html#contact">Contact</a></nav>
@@ -71,23 +84,43 @@
   </div>
 </section>
 
-<section class="puck" aria-label="Project 02, Hydration Puck">
+<section class="blog" id="build" aria-label="Roam build log">
   <div class="wrap">
-    <div class="view" data-r="left">
-      <model-viewer id="puckmv" src="assets/hydration-puck.glb" alt="3D model of the Hydration Puck" camera-controls disable-zoom interaction-prompt="none" environment-image="neutral" exposure="1.15" shadow-intensity="1" camera-orbit="-60deg 62deg auto" loading="lazy"></model-viewer>
+    <div class="bhead">
+      <p class="kicker" data-r>Roam build log</p>
+      <h2 class="d h2 split">Now building.</h2>
+      <p class="sub" data-r style="--dl:.15s">Roam is a real robot I am building at my desk. This is where it stands today.</p>
     </div>
-    <div>
-      <p class="kicker" data-r>Project 02</p>
-      <h2 class="d h2 split">Hydration Puck</h2>
-      <p class="sub" data-r style="--dl:.15s">A smart hydration tracker, designed in Siemens NX, wired and built by hand.</p>
-      <div class="feats" data-stagger=".1">
-        <div><b>Siemens NX</b><span>Enclosure designed for fit and DFM</span></div>
-        <div><b>Electronics</b><span>Sensor and display integrated</span></div>
-        <div><b>Prototypes</b><span>Several 3D-printed rounds</span></div>
+    <ol class="log"></ol>
+  </div>
+</section>
+
+<section class="puck story" id="puck" aria-label="Project 02, Hydration Puck">
+  <div class="wrap">
+    <div class="stick"><div class="view">
+      <model-viewer id="puckmv" src="assets/hydration-puck.glb" alt="3D model of the Hydration Puck" camera-controls disable-zoom interaction-prompt="none" environment-image="neutral" exposure="1.15" shadow-intensity="1" camera-orbit="-60deg 62deg auto" interpolation-decay="140" loading="lazy"></model-viewer>
+    </div></div>
+    <div class="chap">
+      <div class="intro">
+        <p class="kicker" data-r>Project 02</p>
+        <h2 class="d h2 split">Hydration Puck</h2>
+        <p class="sub" data-r style="--dl:.15s">A smart hydration tracker, designed in Siemens NX, wired and built by hand.</p>
       </div>
-      <div class="actions" data-r style="--dl:.2s">
-        <button class="btn pri" type="button" data-open-model="assets/hydration-puck.glb" data-title="Hydration Puck">Explore in 3D <span class="ar">&rarr;</span></button>
-        <a class="btn" href="assets/hydration-puck.pdf" target="_blank" rel="noopener">Read the case study</a>
+      <div class="pstep" data-orbit="-60deg 62deg auto"><span class="n">The problem</span><h3>People forget to drink water.</h3><p>Apps and wearables ask for too much. Most people already keep a bottle on the desk.</p></div>
+      <div class="pstep" data-orbit="25deg 72deg auto"><span class="n">The idea</span><h3>Turn any bottle into a smart one.</h3><p>Put the bottle on the puck. That is the whole setup.</p></div>
+      <div class="pstep" data-orbit="110deg 52deg auto"><span class="n">How it works</span><h3>Lift, sip, set it down.</h3><p>The puck weighs the bottle before and after. Lighter means a sip. Heavier means a refill, so nothing is counted.</p></div>
+      <div class="pstep" data-orbit="190deg 76deg auto"><span class="n">The build</span><h3>Designed in Siemens NX. Printed on a Bambu Lab A1. Wired by hand.</h3><p>Every enclosure part and internal mount was modelled for fit and printing, then assembled and tested.</p></div>
+      <div class="pstep" data-orbit="270deg 64deg auto"><span class="n">The result</span><h3>Every sip, logged.</h3><p>Daily intake, sips and achievements on its own screen, plus a phone dashboard over its own Wi-Fi.</p></div>
+      <div class="outro">
+        <div class="feats" data-stagger=".1">
+          <div><b>Siemens NX</b><span>Enclosure designed for fit and DFM</span></div>
+          <div><b>Electronics</b><span>Sensor and display integrated</span></div>
+          <div><b>Prototypes</b><span>Several 3D-printed rounds</span></div>
+        </div>
+        <div class="actions" data-r style="--dl:.2s">
+          <button class="btn pri" type="button" data-open-model="assets/hydration-puck.glb" data-title="Hydration Puck">Explore in 3D <span class="ar">&rarr;</span></button>
+          <a class="btn" href="assets/hydration-puck.pdf" target="_blank" rel="noopener">Read the case study</a>
+        </div>
       </div>
     </div>
   </div>
@@ -176,14 +209,18 @@
   <div class="wrap">
     <h2 class="d h2 split">Let's build something.</h2>
     <a class="mail" href="mailto:vickyvikasbuddha2002@gmail.com" data-r>vickyvikasbuddha2002@gmail.com</a>
-    <div class="actions" data-r style="--dl:.15s">
-      <a class="btn pri" href="https://www.linkedin.com/in/vikas-budda" target="_blank" rel="noopener">LinkedIn <span class="ar">&rarr;</span></a>
-      <a class="btn" href="assets/vikas-budda-resume.pdf" target="_blank" rel="noopener">Resume</a>
+    <p class="sub hsub" data-r>Open to mechanical design roles. Pick whatever is easiest for you.</p>
+    <div class="hire" data-stagger=".08">
+      <button class="hcard" type="button" data-copy="vickyvikasbuddha2002@gmail.com"><b>Copy email</b><span>vickyvikasbuddha2002@gmail.com</span></button>
+      <a class="hcard" href="assets/vikas-budda-resume.pdf" download="Vikas-Budda-Resume.pdf"><b>Download resume</b><span>One page PDF</span></a>
+      <a class="hcard" href="https://wa.me/916303375509?text=Hi%20Vikas%2C%20I%20saw%20your%20portfolio." target="_blank" rel="noopener"><b>WhatsApp</b><span>+91 63033 75509</span></a>
+      <a class="hcard" href="https://www.linkedin.com/in/vikas-budda" target="_blank" rel="noopener"><b>LinkedIn</b><span>in/vikas-budda</span></a>
     </div>
   </div>
   <div class="horizon" aria-hidden="true"></div>
 </section>
 </main>
+<div class="toast" role="status" aria-live="polite"></div>
 <footer><div class="wrap"><span><b>Vikas Budda</b></span><span>Mechanical design engineer, Bengaluru</span><span>© <span id="year">2026</span> Vikas Budda</span></div></footer>
 <dialog class="viewer" id="viewer" aria-label="3D model viewer">
   <header><h3></h3><button class="btn sm close" type="button">Close</button></header>

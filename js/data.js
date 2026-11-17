@@ -146,3 +146,13 @@ window.DATA = {
   }
  ]
 };
+
+/* Roam build log. Newest status at the bottom. status: done, now, next */
+window.DATA.roamlog = [
+  { "status": "done", "title": "Character and behaviours", "text": "37 behaviours planned, from patting to sulking, plus its own sound language, Roamish." },
+  { "status": "done", "title": "Industrial design", "text": "A seamless white shell with no visible screws, modelled in CAD." },
+  { "status": "done", "title": "Face and moods", "text": "Eye animations for 12 moods, prototyped first right here on this site." },
+  { "status": "now", "title": "Electronics", "text": "Choosing and ordering parts one by one, so every choice is locked before the build." },
+  { "status": "next", "title": "First assembly and drive test", "text": "Print the shell, put it together and make it roll across a desk on its own." },
+  { "status": "next", "title": "Learning over time", "text": "Teach it to remember routines and slowly grow its own personality." }
+];

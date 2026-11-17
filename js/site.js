@@ -9,7 +9,7 @@
   var ld = $('.loader'), pct = 0;
   function setL(p) { pct = Math.max(pct, p); if (ld) { $('.bar i', ld).style.width = pct + '%'; $('.nm span:last-child', ld).textContent = Math.round(pct) + '%'; } }
   var ramp = setInterval(function () { setL(Math.min(90, pct + 4 + Math.random() * 8)); }, 90);
-  function done() { clearInterval(ramp); setL(100); setTimeout(function () { doc.documentElement.classList.add('ready'); kick(); }, 260); }
+  function done() { try { sessionStorage.setItem('vbs', '1'); } catch (e) {} clearInterval(ramp); setL(100); setTimeout(function () { doc.documentElement.classList.add('ready'); kick(); }, 260); }
   if (doc.readyState === 'complete') done(); else window.addEventListener('load', done);
   setTimeout(done, 4500);
   var kicked = false;
@@ -138,8 +138,9 @@
 
   /* hydration puck: turn with scroll */
   var pmv = $('#puckmv'), puck = pmv ? pmv.closest('section') : null;
+  var story = puck && puck.classList.contains('story');
   function puckUpdate() {
-    if (!pmv || !puck || RM) return; var r = puck.getBoundingClientRect(), p = clamp(1 - (r.top + r.height / 2) / (innerHeight + r.height / 2), 0, 1);
+    if (!pmv || !puck || RM || story) return; var r = puck.getBoundingClientRect(), p = clamp(1 - (r.top + r.height / 2) / (innerHeight + r.height / 2), 0, 1);
     pmv.setAttribute('camera-orbit', (-60 + p * 160).toFixed(1) + 'deg ' + (62 + p * 10).toFixed(1) + 'deg auto');
   }
 
@@ -209,6 +210,52 @@
     }
   }
   if (!heroApi) { var hs = $('#hero3d'); if (hs) hs.parentNode.classList.add('nogl'); }
+
+  /* Hydration Puck story: each step turns the model */
+  if (story) {
+    var steps = $$('.pstep', puck);
+    var sio = 'IntersectionObserver' in window ? new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (!e.isIntersecting) return; steps.forEach(function (s) { s.classList.toggle('on', s === e.target); }); if (pmv && e.target.dataset.orbit) pmv.setAttribute('camera-orbit', e.target.dataset.orbit); });
+    }, { rootMargin: innerWidth < 900 ? '-58% 0px -22% 0px' : '-42% 0px -42% 0px' }) : null;
+    steps.forEach(function (s) { if (sio) sio.observe(s); else s.classList.add('on'); });
+  }
+
+  /* Roam build log */
+  var log = $('.log');
+  if (log && D && D.roamlog) {
+    var LBL = { done: 'Done', now: 'In progress', next: 'Next' };
+    D.roamlog.forEach(function (x, i) {
+      var li = el('li', 'li ' + x.status); li.setAttribute('data-r', ''); li.style.setProperty('--dl', (i * 0.06) + 's');
+      li.appendChild(el('span', 'st', LBL[x.status] || x.status)); var b = el('div'); b.appendChild(el('h3', '', x.title)); b.appendChild(el('p', '', x.text)); li.appendChild(b); log.appendChild(li);
+    });
+    var lnow = D.roamlog.filter(function (x) { return x.status === 'done'; }).length; log.style.setProperty('--fill', (lnow / D.roamlog.length * 100) + '%');
+  }
+
+  /* hire card: copy email */
+  var toast = $('.toast'), tt = 0;
+  function say(m) { if (!toast) return; toast.textContent = m; toast.classList.add('on'); clearTimeout(tt); tt = setTimeout(function () { toast.classList.remove('on'); }, 2200); }
+  $$('[data-copy]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var v = b.dataset.copy;
+      function ok() { say('Email copied'); b.classList.add('done'); setTimeout(function () { b.classList.remove('done'); }, 1600); }
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(v).then(ok, function () { location.href = 'mailto:' + v; });
+      else { var t = el('textarea'); t.value = v; doc.body.appendChild(t); t.select(); try { doc.execCommand('copy'); ok(); } catch (e) { location.href = 'mailto:' + v; } t.remove(); }
+    });
+  });
+
+  /* Roam's eyes as the cursor (mouse only) */
+  var ec = $('.eyecur');
+  if (ec && FINE && !RM) {
+    doc.documentElement.classList.add('eyes');
+    var ex = mouse.x, ey = mouse.y, vx = 0, shown = false;
+    window.addEventListener('pointermove', function (e) { if (e.pointerType !== 'mouse') return; if (!shown) { shown = true; ec.classList.add('on'); ex = e.clientX; ey = e.clientY; } var t = e.target; ec.classList.toggle('hov', !!(t.closest && t.closest('a,button,[data-open-model],.pad,.card,.hcard,summary,label'))); }, { passive: true });
+    doc.addEventListener('pointerleave', function () { ec.classList.remove('on'); shown = false; });
+    doc.addEventListener('mouseout', function (e) { if (!e.relatedTarget) { ec.classList.remove('on'); shown = false; } });
+    window.addEventListener('pointerdown', function () { ec.classList.add('blink'); setTimeout(function () { ec.classList.remove('blink'); }, 160); });
+    (function eloop() { var nx = ex + (mouse.x - ex) * 0.5, ny = ey + (mouse.y - ey) * 0.5; vx += ((nx - ex) - vx) * 0.25; ex = nx; ey = ny;
+      ec.style.transform = 'translate(' + ex + 'px,' + ey + 'px) skewX(' + clamp(-vx * 1.2, -18, 18) + 'deg)'; requestAnimationFrame(eloop); })();
+    var bl = function () { setTimeout(function () { ec.classList.add('blink'); setTimeout(function () { ec.classList.remove('blink'); }, 140); bl(); }, 2500 + Math.random() * 3500); }; bl();
+  }
 
   function tick() { tlUpdate(); puckUpdate(); }
   window.addEventListener('scroll', tick, { passive: true }); window.addEventListener('resize', tick); tick();
