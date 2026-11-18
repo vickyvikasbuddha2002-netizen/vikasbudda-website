@@ -165,18 +165,18 @@
         if (hb) {
           var hchat = RoamStage.chat({ api: heroApi, say: function (L) { heroApi.setMood(L[0]); hsay(L); }, first: 2400, lines: [
             ['happy', 'Hi there. What brings you here?', ['bi', 'dwee'], 'wave'],
-            ['wink', 'Are you hiring? I know a good engineer.', ['ki', 'bi', 'oo'], 'thumbs'],
+            ['cheeky', 'Are you hiring? I know a good engineer.', ['ki', 'bi', 'oo'], 'thumbs'],
             ['happy', 'Scroll down. There is a page where you can play with me.', ['zip', 'ki'], 'pointR'],
             ['love', 'You have a nice face. I can tell.', ['mii', 'mii'], 'heart'],
-            ['listen', 'What are you building these days?', ['dwee', 'ki'], 'think'],
-            ['proud', 'Vikas designed me from scratch.', ['bi', 'nya', 'bi'], 'cheer'],
+            ['curious', 'What are you building these days?', ['dwee', 'ki'], 'think'],
+            ['proud', 'Vikas designed me from scratch.', ['bi', 'nya', 'bi'], 'victory'],
             ['surprised', 'Wait, did you just smile?', ['zip', 'dwee'], 'peek'],
             ['listen', 'Is it day or night where you are?', ['oo', 'ki'], 'think'],
             ['sleepy', 'If you stop scrolling, I might take a nap.', ['oo', 'wub'], 'yawn'],
             ['listen', 'Cats or robots? Think carefully.', ['ki', 'tok', 'ki'], 'shrug'],
             ['happy', 'Tap me. I dare you.', ['bi', 'ki'], 'wave']
           ] });
-          var TAPS = [['happy', 'Hey, that tickles.', ['mii', 'ki'], 'laugh'], ['surprised', 'Oh! Hello to you too.', ['zip', 'dwee'], 'wave'], ['happy', 'Do that again.', ['bi', 'bi'], 'clap'], ['angry', 'Personal space, please.', ['vrr', 'pah'], 'cover'], ['love', 'Okay, I like you.', ['mii', 'mii'], 'heart'], ['dizzy', 'Whoa. Everything is spinning.', ['oo', 'wub', 'oo']]], tn = 0;
+          var TAPS = [['laughing', 'Hey, that tickles.', ['mii', 'ki'], 'laugh'], ['surprised', 'Oh! Hello to you too.', ['zip', 'dwee'], 'wave'], ['excited', 'Do that again.', ['bi', 'bi'], 'clap'], ['angry', 'Personal space, please.', ['vrr', 'pah'], 'cover'], ['embarrassed', 'Okay, I like you.', ['mii', 'mii'], 'hug'], ['dizzy', 'Whoa. Everything is spinning.', ['oo', 'wub', 'oo']]], tn = 0;
           $('.stage').addEventListener('click', function () { tn++; hchat.play(tn % 3 === 0 ? RoamStage.joke() : [TAPS[(tn - 1) % TAPS.length]]); });
         }
       }
@@ -200,7 +200,7 @@
           ['happy', 'Hey, you. Want to play?', ['bi', 'dwee'], 'wave'],
           ['listen', 'Tap me. I will show you what I can do.', ['ki', 'bi'], 'pointL'],
           ['wink', 'I can hear which side you clap from.', ['zip', 'ki'], 'clap'],
-          ['proud', 'I never fall off a desk. Ever.', ['bi', 'nya'], 'thumbs'],
+          ['proud', 'I never fall off a desk. Ever.', ['bi', 'nya'], 'dthumbs'],
           ['love', 'Do you have a desk I could live on?', ['mii', 'dwee'], 'heart'],
           ['happy', 'You can put me in your room. Tap and try AR.', ['doo', 'ki'], 'cheer']
         ] });
