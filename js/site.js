@@ -164,19 +164,19 @@
         var hb = $('.stage .bubble'), hsay = hb ? RoamStage.bubble(hb) : null;
         if (hb) {
           var hchat = RoamStage.chat({ api: heroApi, say: function (L) { heroApi.setMood(L[0]); hsay(L); }, first: 2400, lines: [
-            ['happy', 'Hi there. What brings you here?', ['bi', 'dwee']],
-            ['listen', 'Are you hiring? I know a good engineer.', ['ki', 'bi', 'oo']],
-            ['wink', 'Scroll down. There is a page where you can play with me.', ['zip', 'ki']],
-            ['love', 'You have a nice face. I can tell.', ['mii', 'mii']],
-            ['listen', 'What are you building these days?', ['dwee', 'ki']],
-            ['proud', 'Vikas designed me from scratch.', ['bi', 'nya', 'bi']],
-            ['surprised', 'Wait, did you just smile?', ['zip', 'dwee']],
-            ['listen', 'Is it day or night where you are?', ['oo', 'ki']],
-            ['sleepy', 'If you stop scrolling, I might take a nap.', ['oo', 'wub']],
-            ['listen', 'Cats or robots? Think carefully.', ['ki', 'tok', 'ki']],
-            ['happy', 'Tap me. I dare you.', ['bi', 'ki']]
+            ['happy', 'Hi there. What brings you here?', ['bi', 'dwee'], 'wave'],
+            ['wink', 'Are you hiring? I know a good engineer.', ['ki', 'bi', 'oo'], 'thumbs'],
+            ['happy', 'Scroll down. There is a page where you can play with me.', ['zip', 'ki'], 'pointR'],
+            ['love', 'You have a nice face. I can tell.', ['mii', 'mii'], 'heart'],
+            ['listen', 'What are you building these days?', ['dwee', 'ki'], 'think'],
+            ['proud', 'Vikas designed me from scratch.', ['bi', 'nya', 'bi'], 'cheer'],
+            ['surprised', 'Wait, did you just smile?', ['zip', 'dwee'], 'peek'],
+            ['listen', 'Is it day or night where you are?', ['oo', 'ki'], 'think'],
+            ['sleepy', 'If you stop scrolling, I might take a nap.', ['oo', 'wub'], 'yawn'],
+            ['listen', 'Cats or robots? Think carefully.', ['ki', 'tok', 'ki'], 'shrug'],
+            ['happy', 'Tap me. I dare you.', ['bi', 'ki'], 'wave']
           ] });
-          var TAPS = [['love', 'Hey, that tickles.', ['mii', 'ki']], ['surprised', 'Oh! Hello to you too.', ['zip', 'dwee']], ['happy', 'Do that again.', ['bi', 'bi']], ['angry', 'Personal space, please.', ['vrr', 'pah']], ['dizzy', 'Whoa. Everything is spinning.', ['oo', 'wub', 'oo']]], tn = 0;
+          var TAPS = [['happy', 'Hey, that tickles.', ['mii', 'ki'], 'laugh'], ['surprised', 'Oh! Hello to you too.', ['zip', 'dwee'], 'wave'], ['happy', 'Do that again.', ['bi', 'bi'], 'clap'], ['angry', 'Personal space, please.', ['vrr', 'pah'], 'cover'], ['love', 'Okay, I like you.', ['mii', 'mii'], 'heart'], ['dizzy', 'Whoa. Everything is spinning.', ['oo', 'wub', 'oo']]], tn = 0;
           $('.stage').addEventListener('click', function () { tn++; hchat.play(tn % 3 === 0 ? RoamStage.joke() : [TAPS[(tn - 1) % TAPS.length]]); });
         }
       }
@@ -197,12 +197,12 @@
         };
         var rb = rc.parentNode.querySelector('.bubble'), rbusy = false, rsay = rb ? RoamStage.bubble(rb) : null;
         if (rb) RoamStage.chat({ api: roamApi, busy: function () { return rbusy; }, say: function (L) { roamApi.setMood(L[0]); rsay(L); }, first: 1500, lines: [
-          ['happy', 'Hey, you. Want to play?', ['bi', 'dwee']],
-          ['listen', 'Tap me. I will show you what I can do.', ['ki', 'bi']],
-          ['wink', 'I can hear which side you clap from.', ['zip', 'ki']],
-          ['proud', 'I never fall off a desk. Ever.', ['bi', 'nya']],
-          ['love', 'Do you have a desk I could live on?', ['mii', 'dwee']],
-          ['listen', 'You can put me in your room. Tap and try AR.', ['doo', 'ki']]
+          ['happy', 'Hey, you. Want to play?', ['bi', 'dwee'], 'wave'],
+          ['listen', 'Tap me. I will show you what I can do.', ['ki', 'bi'], 'pointL'],
+          ['wink', 'I can hear which side you clap from.', ['zip', 'ki'], 'clap'],
+          ['proud', 'I never fall off a desk. Ever.', ['bi', 'nya'], 'thumbs'],
+          ['love', 'Do you have a desk I could live on?', ['mii', 'dwee'], 'heart'],
+          ['happy', 'You can put me in your room. Tap and try AR.', ['doo', 'ki'], 'cheer']
         ] });
         rc.parentNode.addEventListener('pointerenter', function () { rbusy = true; roamApi.setMood('happy'); });
         rc.parentNode.addEventListener('pointerleave', function () { rbusy = false; roamApi.setMood('calm'); });

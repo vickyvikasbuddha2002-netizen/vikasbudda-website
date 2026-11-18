@@ -84,31 +84,98 @@ window.RoamStage = (function () {
     // eyes: one face engine, many moods
     var look = { x: 0, y: 0, tx: 0, ty: 0 }, blink = 0, nextBlink = 2, MOOD = { m: 'calm', t: 0 };
     var COL = { calm: '#8fb4ff', happy: '#8fb4ff', love: '#ff7aa8', sleepy: '#6f86c9', surprised: '#a9c4ff', angry: '#ff6a4a', sad: '#7ea2ff', wink: '#8fb4ff', dizzy: '#c39bff', scared: '#a9c4ff', listen: '#8fe8ff', proud: '#ffd36b' };
+    /* gestures: hands drawn on the face screen, plus a mouth when it talks */
+    var G = null, TALK = 0, FX = [], lastT = 0, DT = 1 / 60, HA = 1;
+    var GD = { wave: 2.2, clap: 1.8, peek: 2.6, facepalm: 2.2, thumbs: 1.8, heart: 2.4, shrug: 1.8, think: 2.4, rub: 2.2, pointL: 1.8, pointR: 1.8, cheer: 2, yawn: 2.2, cover: 2, laugh: 2, dance: 2.4 };
+    function ease(p) { var e = Math.min(1, p / 0.16, (1 - p) / 0.16); e = Math.max(0, e); return e * e * (3 - 2 * e); }
+    function rrp(x, y, w, h, r) { r = Math.min(r, h / 2, w / 2); eg.moveTo(x + r, y); eg.arcTo(x + w, y, x + w, y + h, r); eg.arcTo(x + w, y + h, x, y + h, r); eg.arcTo(x, y + h, x, y, r); eg.arcTo(x, y, x + w, y, r); eg.closePath(); }
+    function hand(x, y, rot, pose, flip, col) {
+      eg.save(); eg.translate(x, y); eg.rotate(rot); eg.scale(flip ? -1 : 1, 1);
+      eg.beginPath();
+      if (pose === 'open') { rrp(-17, -48, 34, 46, 16); rrp(10, -30, 22, 12, 6); }
+      else { rrp(-18, -34, 36, 32, 12); if (pose === 'thumb') rrp(-6, -58, 13, 28, 6.5); if (pose === 'point') rrp(12, -30, 30, 11, 5.5); }
+      eg.shadowColor = col; eg.shadowBlur = 18; eg.lineWidth = 11; eg.strokeStyle = col; eg.stroke();
+      eg.shadowBlur = 0; eg.fillStyle = '#000'; eg.fill();
+      if (pose === 'open') { eg.lineWidth = 3; eg.strokeStyle = col; eg.globalAlpha = 0.55; eg.beginPath(); [-7, 1, 9].forEach(function (fx) { eg.moveTo(fx, -44); eg.lineTo(fx, -34); }); eg.stroke(); eg.globalAlpha = 1; }
+      eg.restore();
+    }
+    function gest(W, H, t, ex) {
+      if (!G) return null; G.t += DT; var p = G.t / G.d; if (p >= 1) { G = null; return null; }
+      var e = ease(p), off = (1 - e) * 36; HA = e; var L = [], o = { ox: 0, oy: 0, mouth: null, hide: [] }, n = G.n, ty;
+      if (n === 'wave') { L.push([W * 0.8, H * 0.9 + off, Math.sin(G.t * 11) * 0.45, 'open', 0]); o.mouth = 'smile'; }
+      if (n === 'clap') { var c = Math.abs(Math.sin(G.t * 9)); L.push([W / 2 - 24 - c * 40, H * 0.97 + off, 0.5, 'open', 1]); L.push([W / 2 + 24 + c * 40, H * 0.97 + off, -0.5, 'open', 0]); o.mouth = 'open'; }
+      if (n === 'peek') { var sp = p > 0.5 ? Math.min(1, (p - 0.5) * 5) * 46 : 0; L.push([ex[0] - sp, H * 0.62 + off, 0, 'open', 1]); L.push([ex[1] + sp, H * 0.62 + off, 0, 'open', 0]); if (sp < 30) o.hide = [0, 1]; o.mouth = 'smile'; }
+      if (n === 'facepalm') { L.push([ex[1] + 4, H * 0.66 + off + Math.sin(G.t * 3) * 3, -0.25, 'open', 0]); o.hide = [1]; o.mouth = 'flat'; }
+      if (n === 'thumbs') { L.push([W * 0.8, H * 0.95 + off - Math.abs(Math.sin(G.t * 6)) * 8, -0.1, 'thumb', 0]); o.mouth = 'smile'; }
+      if (n === 'heart') { L.push([W * 0.2, H * 0.92 + off, 0.35, 'open', 1]); L.push([W * 0.8, H * 0.92 + off, -0.35, 'open', 0]); o.mouth = 'small'; if (Math.random() < DT * 5) FX.push({ k: 'h', x: W / 2 + (Math.random() - 0.5) * 120, y: H * 0.95, v: 0 }); }
+      if (n === 'shrug') { ty = Math.abs(Math.sin(G.t * 4)) * 10; L.push([W * 0.17, H * 0.86 + off - ty, 0.9, 'open', 1]); L.push([W * 0.83, H * 0.86 + off - ty, -0.9, 'open', 0]); o.mouth = 'flat'; o.oy = -0.3; }
+      if (n === 'think') { L.push([W / 2 + 44, H * 0.97 + off + Math.abs(Math.sin(G.t * 5)) * 4, -0.2, 'fist', 0]); o.ox = -0.6; o.oy = -0.6; o.mouth = 'side'; }
+      if (n === 'rub') { L.push([ex[0] + Math.sin(G.t * 12) * 8, H * 0.6 + off + Math.cos(G.t * 12) * 5, 0.2, 'fist', 1]); L.push([ex[1] - Math.sin(G.t * 12) * 8, H * 0.6 + off - Math.cos(G.t * 12) * 5, -0.2, 'fist', 0]); o.hide = [0, 1]; }
+      if (n === 'pointL' || n === 'pointR') { var d = n === 'pointR' ? 1 : -1, j = Math.sin(G.t * 10) * 4; L.push([W / 2 + d * 92 + d * j, H * 0.9 + off, 0, 'point', d < 0]); o.ox = d; o.mouth = 'o'; }
+      if (n === 'cheer') { ty = Math.sin(G.t * 12) * 6; L.push([W * 0.15, H * 0.5 + off + ty, -0.35, 'open', 1]); L.push([W * 0.85, H * 0.5 + off - ty, 0.35, 'open', 0]); o.mouth = 'open'; o.oy = -0.2; }
+      if (n === 'dance') { var dd = Math.sin(G.t * 8); L.push([W * 0.18 + dd * 8, H * 0.62 + off + dd * 16, -0.4 + dd * 0.3, 'open', 1]); L.push([W * 0.82 + dd * 8, H * 0.8 + off - dd * 16, 0.4 + dd * 0.3, 'open', 0]); o.ox = dd * 0.5; o.mouth = 'open'; }
+      if (n === 'yawn') { L.push([W / 2 + 6, H * 0.97 + off, 0.1, 'open', 0]); o.mouth = 'yawn'; }
+      if (n === 'cover') { ty = Math.sin(G.t * 40) * 2; L.push([W / 2 - 40 + ty, H * 0.97 + off, 0.25, 'open', 1]); L.push([W / 2 + 40 + ty, H * 0.97 + off, -0.25, 'open', 0]); }
+      if (n === 'laugh') { ty = Math.abs(Math.sin(G.t * 14)) * 7; L.push([W / 2 - 70, H * 0.97 + off - ty, 0.3, 'fist', 1]); L.push([W / 2 + 70, H * 0.97 + off - ty, -0.3, 'fist', 0]); o.mouth = 'laugh'; o.oy = -ty / 30; }
+      o.hands = L; return o;
+    }
+    function mouth(kind, x, y, t, col) {
+      eg.save(); eg.lineWidth = 8; eg.strokeStyle = col; eg.fillStyle = col; eg.beginPath();
+      if (kind === 'talk') { var h = 4 + Math.abs(Math.sin(t * 17) * Math.sin(t * 6.3 + 1)) * 16; eg.ellipse(x, y, 15, h / 2 + 2, 0, 0, 6.283); eg.fill(); }
+      else if (kind === 'smile') { eg.arc(x, y - 12, 18, 0.25 * Math.PI, 0.75 * Math.PI); eg.stroke(); }
+      else if (kind === 'small') { eg.arc(x, y - 6, 9, 0.2 * Math.PI, 0.8 * Math.PI); eg.stroke(); }
+      else if (kind === 'side') { eg.moveTo(x - 4, y + 2); eg.quadraticCurveTo(x + 8, y + 6, x + 18, y - 4); eg.stroke(); }
+      else if (kind === 'frown') { eg.arc(x, y + 14, 16, 1.25 * Math.PI, 1.75 * Math.PI); eg.stroke(); }
+      else if (kind === 'flat') { eg.moveTo(x - 14, y); eg.lineTo(x + 14, y); eg.stroke(); }
+      else if (kind === 'o') { eg.lineWidth = 6; eg.ellipse(x, y, 8, 10, 0, 0, 6.283); eg.stroke(); }
+      else if (kind === 'open' || kind === 'laugh') { eg.moveTo(x - 20, y - 6); eg.quadraticCurveTo(x, y - 8, x + 20, y - 6); eg.quadraticCurveTo(x, y + 26 + (kind === 'laugh' ? Math.sin(t * 28) * 4 : 0), x - 20, y - 6); eg.fill(); }
+      else if (kind === 'yawn') { var k = 0.7 + 0.3 * Math.sin(t * 3); eg.ellipse(x, y + 2, 13 * k, 17 * k, 0, 0, 6.283); eg.fill(); }
+      else if (kind === 'wavy') { eg.lineWidth = 6; for (var i = 0; i <= 24; i++) { var xx = x - 18 + i * 1.5; eg[i ? 'lineTo' : 'moveTo'](xx, y + Math.sin(i * 0.8 + t * 10) * 3.5); } eg.stroke(); }
+      eg.restore();
+    }
+    var MOUTH = { happy: 'smile', proud: 'side', wink: 'side', love: 'small', surprised: 'o', sad: 'frown', angry: 'flat', scared: 'wavy', dizzy: 'wavy' };
     function drawEyes(t) {
-      var W = 320, H = 240, m = MOOD.m, col = COL[m] || COL.calm; MOOD.t += 1 / 60;
+      var W = 320, H = 240, m = MOOD.m, col = COL[m] || COL.calm; DT = Math.min(0.05, Math.max(0, t - lastT)) || 1 / 60; lastT = t; MOOD.t += DT; if (TALK > 0) TALK -= DT; HA = 1;
       eg.fillStyle = '#000'; eg.fillRect(0, 0, W, H);
       look.x += (look.tx - look.x) * 0.08; look.y += (look.ty - look.y) * 0.08;
+      var ex = [W / 2 - 58 + look.x * 24, W / 2 + 58 + look.x * 24], gs = gest(W, H, t, ex) || { ox: 0, oy: 0, hide: [], hands: [] };
+      var gx = gs.ox * 22, gy = gs.oy * 16;
       var b = (blink > 0 && m !== 'sleepy' && m !== 'happy') ? Math.abs(Math.cos(blink * Math.PI)) : 1;
       eg.save(); eg.shadowColor = col; eg.shadowBlur = 30; eg.fillStyle = col; eg.strokeStyle = col; eg.lineCap = 'round'; eg.lineJoin = 'round';
-      [-1, 1].forEach(function (s) {
-        var cx = W / 2 + s * 58 + look.x * 24, cy = H * 0.47 + look.y * 16, ew = 50, eh = 104 * b;
-        if (m === 'scared') { cx += Math.sin(t * 60) * 2; ew = 36; eh = 70 * b; }
+      [-1, 1].forEach(function (s, si) {
+        if (gs.hide.indexOf(si) >= 0) return;
+        var cx = W / 2 + s * 58 + look.x * 24 + gx, cy = H * 0.42 + look.y * 16 + gy, ew = 48, eh = 98 * b;
+        if (m === 'scared') { cx += Math.sin(t * 60) * 2; ew = 36; eh = 68 * b; }
         if (m === 'happy' || (m === 'wink' && s > 0) || m === 'proud') { eg.lineWidth = 18; eg.beginPath(); eg.arc(cx, cy + 14, 26, Math.PI * 1.1, Math.PI * 1.9); eg.stroke(); return; }
-        if (m === 'love') { var k = 1 + 0.08 * Math.sin(t * 8); eg.save(); eg.translate(cx, cy); eg.scale(k, k); heart(0, 0, 34); eg.fill(); eg.restore(); return; }
+        if (m === 'love') { var k = 1 + 0.08 * Math.sin(t * 8); eg.save(); eg.translate(cx, cy); eg.scale(k, k); heart(0, 0, 32); eg.fill(); eg.restore(); return; }
         if (m === 'sleepy') { eg.lineWidth = 14; eg.beginPath(); eg.moveTo(cx - 24, cy + 10); eg.quadraticCurveTo(cx, cy + 22, cx + 24, cy + 10); eg.stroke(); return; }
         if (m === 'surprised') { eg.beginPath(); eg.arc(cx, cy, 34 * Math.max(0.2, b), 0, 6.283); eg.fill(); return; }
-        if (m === 'dizzy') { eg.lineWidth = 8; eg.beginPath(); for (var i = 0; i < 60; i++) { var a = i / 60 * 12 + t * 6 * s, r = i / 60 * 32; eg[i ? 'lineTo' : 'moveTo'](cx + Math.cos(a) * r, cy + Math.sin(a) * r); } eg.stroke(); return; }
+        if (m === 'dizzy') { eg.lineWidth = 8; eg.beginPath(); for (var i = 0; i < 60; i++) { var a = i / 60 * 12 + t * 6 * s, r = i / 60 * 30; eg[i ? 'lineTo' : 'moveTo'](cx + Math.cos(a) * r, cy + Math.sin(a) * r); } eg.stroke(); return; }
         rr(cx - ew / 2, cy - eh / 2, ew, Math.max(4, eh), ew / 2); eg.fill();
-        if (m === 'angry' || m === 'sad') { eg.save(); eg.shadowBlur = 0; eg.fillStyle = '#000'; eg.beginPath(); var dir = (m === 'angry' ? 1 : -1) * s; eg.moveTo(cx - 40, cy - 70 + dir * 26); eg.lineTo(cx + 40, cy - 70 - dir * 26); eg.lineTo(cx + 40, cy - 30 - dir * 26); eg.lineTo(cx - 40, cy - 30 + dir * 26); eg.fill(); eg.restore(); }
+        if (m === 'angry' || m === 'sad') { eg.save(); eg.shadowBlur = 0; eg.fillStyle = '#000'; eg.beginPath(); var dir = (m === 'angry' ? 1 : -1) * s; eg.moveTo(cx - 40, cy - 66 + dir * 24); eg.lineTo(cx + 40, cy - 66 - dir * 24); eg.lineTo(cx + 40, cy - 28 - dir * 24); eg.lineTo(cx - 40, cy - 28 + dir * 24); eg.fill(); eg.restore(); }
         if (m === 'calm' || m === 'listen') { eg.save(); eg.shadowBlur = 0; eg.fillStyle = 'rgba(255,255,255,.75)'; rr(cx - ew / 2 + 8, cy - eh / 2 + 8, 12, Math.max(2, eh * 0.28), 6); eg.fill(); eg.restore(); }
       });
+      // little extras that make it feel alive
+      var mx = W / 2 + look.x * 18 + gx * 0.6, my = H * 0.8 + look.y * 6;
+      if (m === 'love' || (G && G.n === 'peek')) { eg.save(); eg.shadowBlur = 20; eg.shadowColor = '#ff7aa8'; eg.fillStyle = 'rgba(255,122,168,.38)'; [-1, 1].forEach(function (s) { eg.beginPath(); eg.ellipse(W / 2 + s * 104 + look.x * 24, H * 0.68, 22, 11, 0, 0, 6.283); eg.fill(); }); eg.restore(); }
+      if (m === 'sad' && MOOD.t % 2.2 < 1.4) { var tp = (MOOD.t % 2.2) / 1.4; eg.save(); eg.globalAlpha = 1 - tp; eg.beginPath(); var tx = ex[0] + gx - 10, tyy = H * 0.58 + tp * 60; eg.moveTo(tx, tyy - 12); eg.quadraticCurveTo(tx + 9, tyy + 2, tx, tyy + 6); eg.quadraticCurveTo(tx - 9, tyy + 2, tx, tyy - 12); eg.fill(); eg.restore(); }
+      if (m === 'scared' || m === 'surprised') { eg.save(); eg.globalAlpha = 0.85; var sy = H * 0.12 + (MOOD.t * 22) % 30; eg.beginPath(); eg.moveTo(W * 0.86, sy - 12); eg.quadraticCurveTo(W * 0.86 + 9, sy + 2, W * 0.86, sy + 6); eg.quadraticCurveTo(W * 0.86 - 9, sy + 2, W * 0.86, sy - 12); eg.fill(); eg.restore(); }
+      if (m === 'proud') { eg.save(); eg.lineWidth = 4; [[W * 0.12, H * 0.2, 0], [W * 0.88, H * 0.26, 1.7], [W * 0.82, H * 0.08, 3.1]].forEach(function (q) { var k = 6 + 5 * Math.abs(Math.sin(t * 3 + q[2])); eg.beginPath(); eg.moveTo(q[0] - k, q[1]); eg.lineTo(q[0] + k, q[1]); eg.moveTo(q[0], q[1] - k); eg.lineTo(q[0], q[1] + k); eg.stroke(); }); eg.restore(); }
+      if (m === 'listen') { eg.save(); eg.lineWidth = 5; eg.globalAlpha = 0.7; for (var w = 0; w < 2; w++) { var ph = (t * 1.2 + w * 0.5) % 1; eg.globalAlpha = 0.8 * (1 - ph); eg.beginPath(); eg.arc(W * 0.83, H * 0.42, 8 + ph * 18, -0.7, 0.7); eg.stroke(); } eg.restore(); }
+      if (m === 'angry') { eg.save(); eg.lineWidth = 5; var a2 = Math.sin(t * 10) * 0.1; eg.translate(W * 0.88, H * 0.12); eg.rotate(a2); [[-1, -1], [1, -1], [1, 1], [-1, 1]].forEach(function (q) { eg.beginPath(); eg.moveTo(q[0] * 4, q[1] * 12); eg.quadraticCurveTo(q[0] * 4, q[1] * 4, q[0] * 12, q[1] * 4); eg.stroke(); }); eg.restore(); }
+      FX = FX.filter(function (f) { f.y -= 84 * DT; f.v += DT; if (f.v > 1.6) return false; eg.save(); eg.globalAlpha = 1 - f.v / 1.6; eg.fillStyle = '#ff7aa8'; eg.shadowColor = '#ff7aa8'; heart(f.x + Math.sin(f.v * 6) * 6, f.y, 10); eg.fill(); eg.restore(); return true; });
+      var mk = TALK > 0 ? 'talk' : (gs.mouth || MOUTH[m]); if (mk && !(G && G.n === 'yawn' && false)) mouth(mk, mx, my, t, col);
+      eg.save(); eg.globalAlpha = HA; gs.hands.forEach(function (h) { hand(h[0], h[1], h[2], h[3], h[4], col); }); eg.restore();
       if (m === 'sleepy') { eg.shadowBlur = 12; eg.font = '700 28px sans-serif'; var z = (t * 0.6) % 1; eg.globalAlpha = 1 - z; eg.fillText('z', W * 0.78 + z * 20, H * 0.3 - z * 40); eg.globalAlpha = 1; }
-      eg.restore(); eyeTex.needsUpdate = true;
+      eg.restore();
+      // keep the edges black: the screen texture stretches its border pixels
+      eg.fillStyle = '#000'; eg.fillRect(0, 0, W, 4); eg.fillRect(0, H - 4, W, 4); eg.fillRect(0, 0, 4, H); eg.fillRect(W - 4, 0, 4, H);
+      eyeTex.needsUpdate = true;
     }
     function heart(x, y, s) { eg.beginPath(); eg.moveTo(x, y + s * 0.75); eg.bezierCurveTo(x - s * 1.3, y - s * 0.1, x - s * 0.6, y - s * 1.1, x, y - s * 0.35); eg.bezierCurveTo(x + s * 0.6, y - s * 1.1, x + s * 1.3, y - s * 0.1, x, y + s * 0.75); eg.closePath(); }
     function rr(x, y, w, h, r) { r = Math.min(r, h / 2, w / 2); eg.beginPath(); eg.moveTo(x + r, y); eg.arcTo(x + w, y, x + w, y + h, r); eg.arcTo(x + w, y + h, x, y + h, r); eg.arcTo(x, y + h, x, y, r); eg.arcTo(x, y, x + w, y, r); eg.closePath(); }
 
-    var api = { setMood: function (m) { MOOD.m = m; MOOD.t = 0; }, mood: function () { return MOOD.m; }, scene: scene, camera: camera, root: root, GR: GR, look: look, wheels: wheels, explode: 0, renderer: renderer, visible: true, t: 0 };
+    var api = { setMood: function (m) { MOOD.m = m; MOOD.t = 0; }, gesture: function (n) { if (GD[n]) G = { n: n, t: 0, d: GD[n] }; }, talk: function (sec) { TALK = sec; }, gesturing: function () { return !!G; }, mood: function () { return MOOD.m; }, scene: scene, camera: camera, root: root, GR: GR, look: look, wheels: wheels, explode: 0, renderer: renderer, visible: true, t: 0 };
     function resize() {
       var w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return;
       renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
@@ -164,9 +231,9 @@ window.RoamStage = (function () {
     [['proud', 'I would tell you a UDP joke.', ['oo', 'ki', 'nya']], ['wink', 'But you might not get it.', ['zip', 'ki']]],
     [['listen', 'What do you call a robot that takes the long way?', ['bi', 'dwee', 'ki']], ['happy', 'R2 detour.', ['ki', 'bi']]]
   ];
-  var LAUGH = [['happy', 'Ha ha ha!', ['ki', 'bi', 'ki', 'bi']], ['wink', 'Get it?', ['zip', 'ki']], ['proud', 'I am here all week.', ['bi', 'nya', 'bi']], ['happy', 'Heh. Good one, me.', ['ki', 'ki']], ['surprised', 'Nobody laughed. Tough crowd.', ['oo', 'doo']]];
+  var LAUGH = [['happy', 'Ha ha ha!', ['ki', 'bi', 'ki', 'bi'], 'laugh'], ['wink', 'Get it?', ['zip', 'ki'], 'thumbs'], ['proud', 'I am here all week.', ['bi', 'nya', 'bi'], 'cheer'], ['happy', 'Heh. Good one, me.', ['ki', 'ki'], 'clap'], ['sad', 'Nobody laughed. Tough crowd.', ['oo', 'doo'], 'facepalm']];
   function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
-  function joke() { return pick(JOKES).concat([pick(LAUGH)]); }
+  function joke() { var j = pick(JOKES); return [j[0].slice(0, 3).concat(['think']), j[1].slice(0, 3).concat([pick(['shrug', 'pointR', 'thumbs'])]), pick(LAUGH)]; }
   function dur(L) { return 1500 + L[1].length * 48; }
   function chat(o) {
     var i = Math.floor(Math.random() * o.lines.length), seq = [], timer = 0, alive = 0, n = 0;
@@ -175,7 +242,8 @@ window.RoamStage = (function () {
       (function step() {
         if (id !== alive) return;
         var L = seq.shift(); if (!L) { o.api.setMood('calm'); schedule(); return; }
-        o.say(L); timer = setTimeout(step, dur(L) + (seq.length ? 500 : 0));
+        o.say(L); if (o.api.talk) o.api.talk(0.5 + L[1].length * 0.045); if (L[3] && o.api.gesture) o.api.gesture(L[3]);
+        timer = setTimeout(step, dur(L) + (seq.length ? 500 : 0));
       })();
     }
     function next() {

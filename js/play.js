@@ -20,6 +20,7 @@
   }
   var bub = $('.bubble'), bt = 0;
   function say(syl, en) {
+    if (R && R.talk) R.talk(0.5 + (en || '').length * 0.045);
     $('.rm', bub).textContent = syl.join('-'); $('.en', bub).textContent = en; bub.classList.add('on');
     chirp(syl); clearTimeout(bt); bt = setTimeout(function () { bub.classList.remove('on'); }, 1800 + en.length * 45);
   }
@@ -33,7 +34,7 @@
   function ease(k) { return k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2; }
   var lastX = 0, lastZ = 0;
   R.update = function (dt, t) {
-    if (!cur && Q.length) { cur = Q.shift(); cur.k = 0; cur.from = {}; Object.keys(cur.to || {}).forEach(function (k) { cur.from[k] = S[k]; }); if (cur.mood) mood(cur.mood); if (cur.say) say(cur.say[0], cur.say[1]); if (cur.fn) cur.fn(); }
+    if (!cur && Q.length) { cur = Q.shift(); cur.k = 0; cur.from = {}; Object.keys(cur.to || {}).forEach(function (k) { cur.from[k] = S[k]; }); if (cur.mood) mood(cur.mood); if (cur.g) R.gesture(cur.g); if (cur.say) say(cur.say[0], cur.say[1]); if (cur.fn) cur.fn(); }
     if (cur) {
       cur.k = Math.min(1, cur.k + dt / (RM ? 0.05 : cur.d || 0.4)); var e = ease(cur.k);
       Object.keys(cur.to || {}).forEach(function (k) { S[k] = cur.from[k] + (cur.to[k] - cur.from[k]) * e; });
@@ -54,15 +55,15 @@
   var lastAct = Date.now();
   var chat = RoamStage.chat({ api: R, gap: 2600, first: 5000, busy: function () { return !!cur || Q.length > 0 || Date.now() - lastAct < 4500; },
     say: function (L) { mood(L[0]); say(L[2], L[1]); if (L[0] === 'happy' && L[1].indexOf('Ha') === 0) run([{ d: .12, to: { bob: 4 } }, { d: .12, to: { bob: 0 } }, { d: .12, to: { bob: 4 } }, { d: .12, to: { bob: 0 } }]); }, lines: [
-      ['listen', 'Still there? Try clapping on my left.', ['dwee', 'ki']],
-      ['happy', 'Tap my head. I like that.', ['bi', 'mii']],
-      ['listen', 'What should I call you?', ['doo', 'ki', 'bi']],
-      ['scared', 'Please do not pick me up. Or do. I will complain.', ['zip', 'dwee']],
-      ['proud', 'Push me to the edge. I dare you.', ['bi', 'nya', 'tok']],
-      ['sad', 'You went quiet. Did I do something?', ['oo', 'doo']],
-      ['love', 'How many features have you found so far?', ['mii', 'dwee']],
-      ['wink', 'Want to see me on your desk? Tap View in AR.', ['zip', 'ki']],
-      ['sleepy', 'Is it bedtime yet? There is a button for that.', ['oo', 'wub']]
+      ['listen', 'Still there? Try clapping on my left.', ['dwee', 'ki'], 'pointL'],
+      ['happy', 'Tap my head. I like that.', ['bi', 'mii'], 'thumbs'],
+      ['listen', 'What should I call you?', ['doo', 'ki', 'bi'], 'think'],
+      ['scared', 'Please do not pick me up. Or do. I will complain.', ['zip', 'dwee'], 'cover'],
+      ['proud', 'Push me to the edge. I dare you.', ['bi', 'nya', 'tok'], 'shrug'],
+      ['sad', 'You went quiet. Did I do something?', ['oo', 'doo'], 'facepalm'],
+      ['love', 'How many features have you found so far?', ['mii', 'dwee'], 'heart'],
+      ['wink', 'Want to see me on your desk? Tap View in AR.', ['zip', 'ki'], 'pointL'],
+      ['sleepy', 'Is it bedtime yet? There is a button for that.', ['oo', 'wub'], 'rub']
     ] });
 
   /* drag to turn it, tap it to pat it */
@@ -80,25 +81,29 @@
   /* what you can do to it, and what each one shows */
   var A = {
     pat: { t: 'Pat its head', f: 'Feels touch', d: 'Roam feels a touch on its head. A pat makes its day, and over time it learns that you are the one who pats it.',
-      s: [{ mood: 'surprised', d: .15, to: { bob: -4 } }, { mood: 'love', say: [['mii', 'mii', 'dwee'], 'This is nice. Do it again.'], d: .25, to: { bob: 3 } }, { d: .3, to: { yaw: .25, bob: 0 } }, { d: .3, to: { yaw: -.25 } }, { d: .3, to: { yaw: 0 } }, { d: 1.2 }, { mood: 'calm', d: .1 }] },
+      s: [{ mood: 'surprised', d: .15, to: { bob: -4 } }, { mood: 'love', g: 'heart', say: [['mii', 'mii', 'dwee'], 'This is nice. Do it again.'], d: .25, to: { bob: 3 } }, { d: .3, to: { yaw: .25, bob: 0 } }, { d: .3, to: { yaw: -.25 } }, { d: .3, to: { yaw: 0 } }, { d: 1.2 }, { mood: 'calm', d: .1 }] },
     wave: { t: 'Wave at it', f: 'Sees you', d: 'Roam can see you. It spots a waving hand, tells your face from a stranger, and waves back with its whole body.',
-      s: [{ mood: 'listen', d: .3 }, { mood: 'happy', say: [['bi', 'dwee'], 'Hello! Waving back.'], d: .22, to: { yaw: .35, tilt: .06 } }, { d: .22, to: { yaw: -.35, tilt: -.06 } }, { d: .22, to: { yaw: .35, tilt: .06 } }, { d: .22, to: { yaw: -.35, tilt: -.06 } }, { d: .3, to: { yaw: 0, tilt: 0 } }, { d: .9 }, { mood: 'calm', d: .1 }] },
+      s: [{ mood: 'listen', d: .3 }, { mood: 'happy', g: 'wave', say: [['bi', 'dwee'], 'Hello! Waving back.'], d: .22, to: { yaw: .35, tilt: .06 } }, { d: .22, to: { yaw: -.35, tilt: -.06 } }, { d: .22, to: { yaw: .35, tilt: .06 } }, { d: .22, to: { yaw: -.35, tilt: -.06 } }, { d: .3, to: { yaw: 0, tilt: 0 } }, { d: .9 }, { mood: 'calm', d: .1 }] },
     clapL: { t: 'Clap on the left', f: 'Hears direction', d: 'Roam can tell which side a sound came from. Clap and it turns to look.',
-      s: [{ mood: 'surprised', d: .15, to: { bob: 4 } }, { mood: 'listen', say: [['dwee', 'ki'], 'Hm? Over there?'], d: .55, to: { yaw: -1.1, bob: 0 }, fn: function () { R.look.tx = -1; } }, { d: 1.3 }, { mood: 'calm', d: .6, to: { yaw: 0 } }] },
+      s: [{ mood: 'surprised', d: .15, to: { bob: 4 } }, { mood: 'listen', g: 'pointL', say: [['dwee', 'ki'], 'Hm? Over there?'], d: .55, to: { yaw: -1.1, bob: 0 }, fn: function () { R.look.tx = -1; } }, { d: 1.3 }, { mood: 'calm', d: .6, to: { yaw: 0 } }] },
     clapR: { t: 'Clap on the right', f: 'Hears direction', d: 'Roam can tell which side a sound came from. Clap and it turns to look.',
-      s: [{ mood: 'surprised', d: .15, to: { bob: 4 } }, { mood: 'listen', say: [['dwee', 'ki'], 'Hm? Over there?'], d: .55, to: { yaw: 1.1, bob: 0 }, fn: function () { R.look.tx = 1; } }, { d: 1.3 }, { mood: 'calm', d: .6, to: { yaw: 0 } }] },
+      s: [{ mood: 'surprised', d: .15, to: { bob: 4 } }, { mood: 'listen', g: 'pointR', say: [['dwee', 'ki'], 'Hm? Over there?'], d: .55, to: { yaw: 1.1, bob: 0 }, fn: function () { R.look.tx = 1; } }, { d: 1.3 }, { mood: 'calm', d: .6, to: { yaw: 0 } }] },
     name: { t: 'Say "Roam"', f: 'Knows its name', d: 'Roam listens for its own name on the device itself, no internet needed. Call it and it turns to you, ready.',
-      s: [{ mood: 'surprised', d: .2, to: { bob: 5 } }, { d: .2, to: { bob: 0 } }, { mood: 'listen', say: [['bi', 'zip'], 'Yes? I am here.'], d: .4, to: { yaw: 0, tilt: .08 } }, { d: 1.6 }, { mood: 'happy', d: .3, to: { tilt: 0 } }, { d: .8 }, { mood: 'calm', d: .1 }] },
+      s: [{ mood: 'surprised', d: .2, to: { bob: 5 } }, { d: .2, to: { bob: 0 } }, { mood: 'listen', g: 'wave', say: [['bi', 'zip'], 'Yes? I am here.'], d: .4, to: { yaw: 0, tilt: .08 } }, { d: 1.6 }, { mood: 'happy', d: .3, to: { tilt: 0 } }, { d: .8 }, { mood: 'calm', d: .1 }] },
     lift: { t: 'Pick it up', f: 'Knows when it is lifted', d: 'It feels the moment its wheels leave the desk, stops the motors straight away, and makes its feelings clear.',
-      s: [{ mood: 'scared', say: [['zip', 'dwee', 'ki'], 'Whoa! I did not agree to this.'], d: .5, to: { lift: 90 } }, { d: .35, to: { tilt: .12 } }, { d: .35, to: { tilt: -.12 } }, { mood: 'dizzy', d: .35, to: { tilt: 0 } }, { d: .7, to: { lift: 0 } }, { mood: 'angry', say: [['vrr', 'pah', 'tok'], 'Hmph.'], d: 1.2 }, { mood: 'calm', d: .1 }] },
+      s: [{ mood: 'scared', g: 'cover', say: [['zip', 'dwee', 'ki'], 'Whoa! I did not agree to this.'], d: .5, to: { lift: 90 } }, { d: .35, to: { tilt: .12 } }, { d: .35, to: { tilt: -.12 } }, { mood: 'dizzy', d: .35, to: { tilt: 0 } }, { d: .7, to: { lift: 0 } }, { mood: 'angry', g: 'shrug', say: [['vrr', 'pah', 'tok'], 'Hmph.'], d: 1.2 }, { mood: 'calm', d: .1 }] },
     edge: { t: 'Drive to the edge', f: 'Never falls off', d: 'Roam watches the desk as it drives. The moment the desk ends, it stops, backs away and remembers where the edge is.',
-      s: [{ mood: 'happy', d: .3 }, { d: 1.2, to: { z: 120 } }, { mood: 'scared', say: [['vrr', 'tok', 'tok'], 'Cliff! Not going there.'], d: .12, to: { tilt: .1, bob: 3 } }, { d: .2, to: { tilt: 0, bob: 0 } }, { d: .9, to: { z: 30 } }, { mood: 'proud', d: 1 }, { mood: 'calm', d: .7, to: { z: 0 } }] },
+      s: [{ mood: 'happy', d: .3 }, { d: 1.2, to: { z: 120 } }, { mood: 'scared', g: 'cover', say: [['vrr', 'tok', 'tok'], 'Cliff! Not going there.'], d: .12, to: { tilt: .1, bob: 3 } }, { d: .2, to: { tilt: 0, bob: 0 } }, { d: .9, to: { z: 30 } }, { mood: 'proud', g: 'thumbs', d: 1 }, { mood: 'calm', d: .7, to: { z: 0 } }] },
     ignore: { t: 'Ignore it', f: 'Has feelings', d: 'Roam has moods that rise and fall. Ignore it for hours and it sulks a little, then forgives you when you come back.',
-      s: [{ mood: 'sad', say: [['wub', 'doo'], 'Ignored. Again.'], d: .7, to: { yaw: 2.6 } }, { d: .5, to: { z: -40 } }, { d: 1.6 }, { mood: 'calm', d: .6, to: { yaw: 0, z: 0 } }, { mood: 'happy', d: .6 }, { mood: 'calm', d: .1 }] },
+      s: [{ mood: 'sad', g: 'facepalm', say: [['wub', 'doo'], 'Ignored. Again.'], d: .7, to: { yaw: 2.6 } }, { d: .5, to: { z: -40 } }, { d: 1.6 }, { mood: 'calm', d: .6, to: { yaw: 0, z: 0 } }, { mood: 'happy', g: 'cheer', say: [['bi', 'dwee'], 'Oh, you are back!'], d: .6 }, { d: 1.2 }, { mood: 'calm', d: .1 }] },
     joke: { t: 'Ask for a joke', f: 'Has a personality', d: 'It has a sense of humour, mostly bad. It tells the joke, laughs alone, then pretends it never happened.', fn: function () { lastAct = 0; chat.joke(); },
       s: [{ mood: 'proud', say: [['oo', 'ki', 'nya', 'bi'], 'I would tell you a UDP joke, but you might not get it.'], d: 2.6 }, { mood: 'happy', say: [['ki', 'bi', 'ki', 'bi'], 'Ha ha!'], d: .15, to: { bob: 4 } }, { d: .15, to: { bob: 0 } }, { d: .15, to: { bob: 4 } }, { d: .15, to: { bob: 0 } }, { mood: 'wink', d: 1 }, { mood: 'calm', d: .1 }] },
+    nice: { t: 'Say something nice', f: 'Gets shy', d: 'Roam blushes, hides behind its hands, then peeks out. Compliments go straight to its memory.',
+      s: [{ mood: 'love', g: 'peek', say: [['mii', 'mii'], 'Stop it. You are making me blush.'], d: .4, to: { tilt: .06 } }, { d: 2.2 }, { mood: 'happy', d: .4, to: { tilt: 0 } }, { mood: 'calm', d: .1 }] },
+    music: { t: 'Play some music', f: 'Dances to a beat', d: 'Roam hears the beat through its microphone and moves to it, wheels and all.',
+      s: [{ mood: 'surprised', d: .3 }, { mood: 'happy', g: 'dance', say: [['bi', 'bi', 'dwee'], 'Is that music? I have moves.'], d: .25, to: { yaw: .4, tilt: .05 } }, { d: .25, to: { yaw: -.4, tilt: -.05 } }, { d: .25, to: { yaw: .4, tilt: .05 } }, { d: .25, to: { yaw: -.4, tilt: -.05 } }, { d: .25, to: { yaw: .4, tilt: .05 } }, { d: .25, to: { yaw: -.4, tilt: -.05 } }, { d: .3, to: { yaw: 0, tilt: 0 } }, { mood: 'proud', g: 'cheer', d: 1 }, { mood: 'calm', d: .1 }] },
     night: { t: 'Say goodnight', f: 'Sleeps when you do', d: 'Hold the top of its head and it says goodnight, closes its eyes and powers down. A touch wakes it again.',
-      s: [{ mood: 'sleepy', say: [['oo', 'wub'], 'Goodnight.'], d: 1, to: { bob: -3, tilt: .04 } }, { d: 2.6 }, { mood: 'surprised', d: .2, to: { bob: 0, tilt: 0 } }, { mood: 'happy', say: [['bi', 'dwee'], 'Morning!'], d: .8 }, { mood: 'calm', d: .1 }] }
+      s: [{ mood: 'sleepy', g: 'yawn', say: [['oo', 'wub'], 'Goodnight.'], d: 1, to: { bob: -3, tilt: .04 } }, { d: 2.6 }, { mood: 'surprised', d: .2, to: { bob: 0, tilt: 0 } }, { mood: 'happy', g: 'cheer', say: [['bi', 'dwee'], 'Morning!'], d: .8 }, { mood: 'calm', d: .1 }] }
   };
   var keys = Object.keys(A), seen = {}, pads = $('.pads'), card = $('.lcard'), found = $('.found');
   keys.forEach(function (k) {
