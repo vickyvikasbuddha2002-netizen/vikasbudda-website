@@ -16,7 +16,7 @@ window.RoamStage = (function () {
     opts = opts || {};
     var renderer;
     try { renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true, powerPreference: 'high-performance' }); } catch (e) { return null; }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.outputEncoding = THREE.sRGBEncoding; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.3;
     renderer.setClearColor(0x000000, 0);
     var scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(opts.fov || 24, 1, 10, 6000);
@@ -28,21 +28,21 @@ window.RoamStage = (function () {
       panel(1000, 800, 0, 690, 100, new THREE.Color(9, 9, 9.5), Math.PI / 2, 0);
       panel(260, 1100, -990, 200, 260, new THREE.Color(7, 7, 7.4), 0, Math.PI / 2);
       panel(260, 1100, 990, 200, 260, new THREE.Color(5, 5, 5.4), 0, -Math.PI / 2);
-      panel(500, 900, -700, 200, -900, new THREE.Color(0.8, 1.2, 6), 0, Math.PI / 4);
+      panel(500, 900, -700, 200, -900, new THREE.Color(4.2, 4.1, 3.9), 0, Math.PI / 4);
       panel(1400, 220, 0, 300, 990, new THREE.Color(2.2, 2.2, 2.4), 0, Math.PI);
       panel(2000, 2000, 0, -300, 0, new THREE.Color(0.02, 0.02, 0.03), -Math.PI / 2, 0);
       try { var pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(es, 0.04).texture; pm.dispose(); } catch (e) {}
     })();
-    scene.add(new THREE.HemisphereLight(0xdfe6ff, 0x05060a, 0.25));
+    scene.add(new THREE.HemisphereLight(0xf6f2ea, 0x050506, 0.28));
     var key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(-240, 520, 420); scene.add(key);
-    var fill = new THREE.DirectionalLight(0xdfe6ff, 0.5); fill.position.set(320, 200, 300); scene.add(fill);
-    var rim = new THREE.PointLight(0x4a68ff, 3.2, 900, 1.5); rim.position.set(120, 140, -220); scene.add(rim);
-    var rim2 = new THREE.PointLight(0x6f86ff, 1.2, 700, 1.6); rim2.position.set(-200, 60, -160); scene.add(rim2);
+    var fill = new THREE.DirectionalLight(0xfff6ea, 0.55); fill.position.set(320, 200, 300); scene.add(fill);
+    var rim = new THREE.PointLight(0xfff1dd, 1.6, 900, 1.5); rim.position.set(120, 140, -220); scene.add(rim);
+    var rim2 = new THREE.PointLight(0xffffff, 0.7, 700, 1.6); rim2.position.set(-200, 60, -160); scene.add(rim2);
 
     var G = geos();
     var mShell = new THREE.MeshPhysicalMaterial({ color: 0xf3f3f5, roughness: 0.2, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.05, reflectivity: 0.6, side: THREE.DoubleSide, envMapIntensity: 1.7 });
     var mTub = new THREE.MeshPhysicalMaterial({ color: 0xe6e6e9, roughness: 0.24, clearcoat: 1, clearcoatRoughness: 0.08, side: THREE.DoubleSide, envMapIntensity: 1.6 });
-    var eye = document.createElement('canvas'); eye.width = 320; eye.height = 240; var eg = eye.getContext('2d'), eyeTex = new THREE.CanvasTexture(eye); eyeTex.encoding = THREE.sRGBEncoding;
+    var eye = document.createElement('canvas'); eye.width = 640; eye.height = 480; var eg = eye.getContext('2d'), eyeTex = new THREE.CanvasTexture(eye); eyeTex.encoding = THREE.sRGBEncoding;
     var mVisor = new THREE.MeshPhysicalMaterial({ color: 0x030304, roughness: 0.02, clearcoat: 1, clearcoatRoughness: 0.0, envMapIntensity: 2.2, emissive: 0xffffff, emissiveMap: eyeTex, emissiveIntensity: 1.6, side: THREE.DoubleSide });
     var root = new THREE.Group(), GR = { base: new THREE.Group(), mid: new THREE.Group(), face: new THREE.Group(), shell: new THREE.Group(), glass: new THREE.Group() };
     Object.keys(GR).forEach(function (k) { root.add(GR[k]); }); scene.add(root);
@@ -129,7 +129,7 @@ window.RoamStage = (function () {
     // solid glowing hands, origin at the wrist, fingers pointing up
     function hand(x, y, rot, pose, flip, col) {
       eg.save(); eg.translate(x, y); eg.rotate(rot); eg.scale(flip ? -1 : 1, 1);
-      eg.fillStyle = col; eg.strokeStyle = col; eg.lineCap = 'round'; eg.lineJoin = 'round'; eg.shadowColor = col; eg.shadowBlur = 14;
+      eg.fillStyle = col; eg.strokeStyle = col; eg.lineCap = 'round'; eg.lineJoin = 'round'; eg.shadowColor = col; eg.shadowBlur = 28;
       if (pose === 'open') {
         eg.beginPath(); rrp(-14, -30, 28, 30, 9); eg.fill();
         cap(-10.5, -26, -11.5, -45, 6.2); cap(-3.5, -26, -3.8, -50, 6.2); cap(3.5, -26, 3.8, -49, 6.2); cap(10.5, -26, 11.5, -43, 6.2); cap(12, -10, 24, -24, 7);
@@ -190,13 +190,14 @@ window.RoamStage = (function () {
     }
     var MOUTH = { happy: 'smile', proud: 'side', wink: 'side', love: 'small', surprised: 'o', sad: 'frown', angry: 'flat', scared: 'wavy', dizzy: 'wavy', laughing: 'laugh', excited: 'open', amazed: 'o', curious: 'side', cheeky: 'tongue', tired: 'flat', bored: 'flat', sick: 'wavy', overheated: 'flat', embarrassed: 'small', grateful: 'smile', heartbroken: 'frown', oops: 'wavy', celebration: 'open', thinking: 'side' };
     function drawEyes(t) {
+      eg.setTransform(2, 0, 0, 2, 0, 0);
       var W = 320, H = 240, m = MOOD.m, col = COL[m] || COL.calm; DT = Math.min(0.05, Math.max(0, t - lastT)) || 1 / 60; lastT = t; MOOD.t += DT; if (TALK > 0) TALK -= DT; HA = 1;
       eg.fillStyle = '#000'; eg.fillRect(0, 0, W, H);
       look.x += (look.tx - look.x) * 0.08; look.y += (look.ty - look.y) * 0.08;
       var ex = [W / 2 - 58 + look.x * 24, W / 2 + 58 + look.x * 24], gs = gest(W, H, t, ex) || { ox: 0, oy: 0, hide: [], hands: [] };
       var gx = gs.ox * 22, gy = gs.oy * 16;
       var b = (blink > 0 && m !== 'sleepy' && m !== 'happy') ? Math.abs(Math.cos(blink * Math.PI)) : 1;
-      eg.save(); eg.shadowColor = col; eg.shadowBlur = 30; eg.fillStyle = col; eg.strokeStyle = col; eg.lineCap = 'round'; eg.lineJoin = 'round';
+      eg.save(); eg.shadowColor = col; eg.shadowBlur = 60; eg.fillStyle = col; eg.strokeStyle = col; eg.lineCap = 'round'; eg.lineJoin = 'round';
       var ICON = { processing: 1, loading: 1, charging: 1, lowbattery: 1, connected: 1 };
       if (ICON[m]) { icon(m, W, H, t, col); }
       [-1, 1].forEach(function (s, si) {
@@ -226,7 +227,7 @@ window.RoamStage = (function () {
       });
       // little extras that make it feel alive
       var mx = W / 2 + look.x * 18 + gx * 0.6, my = H * 0.8 + look.y * 6;
-      if (m === 'love' || (G && G.n === 'peek')) { eg.save(); eg.shadowBlur = 20; eg.shadowColor = '#ff7aa8'; eg.fillStyle = 'rgba(255,122,168,.38)'; [-1, 1].forEach(function (s) { eg.beginPath(); eg.ellipse(W / 2 + s * 104 + look.x * 24, H * 0.68, 22, 11, 0, 0, 6.283); eg.fill(); }); eg.restore(); }
+      if (m === 'love' || (G && G.n === 'peek')) { eg.save(); eg.shadowBlur = 40; eg.shadowColor = '#ff7aa8'; eg.fillStyle = 'rgba(255,122,168,.38)'; [-1, 1].forEach(function (s) { eg.beginPath(); eg.ellipse(W / 2 + s * 104 + look.x * 24, H * 0.68, 22, 11, 0, 0, 6.283); eg.fill(); }); eg.restore(); }
       if (m === 'sad' && MOOD.t % 2.2 < 1.4) { var tp = (MOOD.t % 2.2) / 1.4; eg.save(); eg.globalAlpha = 1 - tp; eg.beginPath(); var tx = ex[0] + gx - 10, tyy = H * 0.58 + tp * 60; eg.moveTo(tx, tyy - 12); eg.quadraticCurveTo(tx + 9, tyy + 2, tx, tyy + 6); eg.quadraticCurveTo(tx - 9, tyy + 2, tx, tyy - 12); eg.fill(); eg.restore(); }
       if (m === 'scared' || m === 'surprised') { eg.save(); eg.globalAlpha = 0.85; var sy = H * 0.12 + (MOOD.t * 22) % 30; eg.beginPath(); eg.moveTo(W * 0.86, sy - 12); eg.quadraticCurveTo(W * 0.86 + 9, sy + 2, W * 0.86, sy + 6); eg.quadraticCurveTo(W * 0.86 - 9, sy + 2, W * 0.86, sy - 12); eg.fill(); eg.restore(); }
       if (m === 'proud') { eg.save(); eg.lineWidth = 4; [[W * 0.12, H * 0.2, 0], [W * 0.88, H * 0.26, 1.7], [W * 0.82, H * 0.08, 3.1]].forEach(function (q) { var k = 6 + 5 * Math.abs(Math.sin(t * 3 + q[2])); eg.beginPath(); eg.moveTo(q[0] - k, q[1]); eg.lineTo(q[0] + k, q[1]); eg.moveTo(q[0], q[1] - k); eg.lineTo(q[0], q[1] + k); eg.stroke(); }); eg.restore(); }
@@ -245,7 +246,7 @@ window.RoamStage = (function () {
         if (f.k === 't') { f.y += 50 * DT; f.v += DT; if (f.v > 1.2) return false; eg.save(); eg.globalAlpha = 1 - f.v / 1.2; eg.beginPath(); eg.moveTo(f.x, f.y - 10); eg.quadraticCurveTo(f.x + 8, f.y + 2, f.x, f.y + 6); eg.quadraticCurveTo(f.x - 8, f.y + 2, f.x, f.y - 10); eg.fill(); eg.restore(); return true; } f.y -= 84 * DT; f.v += DT; if (f.v > 1.6) return false; eg.save(); eg.globalAlpha = 1 - f.v / 1.6; eg.fillStyle = '#ff7aa8'; eg.shadowColor = '#ff7aa8'; heart(f.x + Math.sin(f.v * 6) * 6, f.y, 10); eg.fill(); eg.restore(); return true; });
       var mk = TALK > 0 ? 'talk' : (gs.mouth || MOUTH[m]); if (mk && !(G && G.n === 'yawn' && false)) mouth(mk, mx, my, t, col);
       eg.save(); eg.globalAlpha = HA; gs.hands.forEach(function (h) { hand(h[0], h[1], h[2], h[3], h[4], col); }); eg.restore();
-      if (m === 'sleepy') { eg.shadowBlur = 12; eg.font = '700 28px sans-serif'; var z = (t * 0.6) % 1; eg.globalAlpha = 1 - z; eg.fillText('z', W * 0.78 + z * 20, H * 0.3 - z * 40); eg.globalAlpha = 1; }
+      if (m === 'sleepy') { eg.shadowBlur = 24; eg.font = '700 28px sans-serif'; var z = (t * 0.6) % 1; eg.globalAlpha = 1 - z; eg.fillText('z', W * 0.78 + z * 20, H * 0.3 - z * 40); eg.globalAlpha = 1; }
       eg.restore();
       // keep the edges black: the screen texture stretches its border pixels
       eg.fillStyle = '#000'; eg.fillRect(0, 0, W, 4); eg.fillRect(0, H - 4, W, 4); eg.fillRect(0, 0, 4, H); eg.fillRect(W - 4, 0, 4, H);
