@@ -155,5 +155,6 @@ window.DATA.roamlog = [
   { "status": "now", "title": "Electronics", "text": "Every part chosen and ordered. Soldering and first power-on come next." },
   { "status": "next", "title": "First assembly and drive test", "text": "Print the shell, put it together and make it roll across a desk on its own." },
   { "status": "next", "title": "Knows its owner", "text": "Recognise its owner's face, greet them by name and keep checking on them through the day." },
+  { "status": "next", "title": "Desk guard", "text": "Keep watch while its owner is away and report who stopped by. Counts and times only, no photos." },
   { "status": "next", "title": "Learning over time", "text": "Teach it to remember routines and slowly grow its own personality." }
 ];
