@@ -154,5 +154,6 @@ window.DATA.roamlog = [
   { "status": "done", "title": "Face and personality", "text": "12 moods, 16 hand gestures drawn on its screen, a talking mouth and its own sound language, prototyped first right here on this site." },
   { "status": "now", "title": "Electronics", "text": "Every part chosen and ordered. Soldering and first power-on come next." },
   { "status": "next", "title": "First assembly and drive test", "text": "Print the shell, put it together and make it roll across a desk on its own." },
+  { "status": "next", "title": "Knows its owner", "text": "Recognise its owner's face, greet them by name and keep checking on them through the day." },
   { "status": "next", "title": "Learning over time", "text": "Teach it to remember routines and slowly grow its own personality." }
 ];
