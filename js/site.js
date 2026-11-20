@@ -20,6 +20,7 @@
     var words = h.textContent.trim().split(/\s+/), base = parseFloat(h.dataset.dl || 0); h.textContent = '';
     words.forEach(function (w, i) { var o = el('span', 'w'), s = el('span', '', w); s.style.setProperty('--dl', (base + i * 0.08) + 's'); o.appendChild(s); h.appendChild(o); if (i < words.length - 1) h.appendChild(doc.createTextNode(' ')); });
   });
+  $$('[data-glow]').forEach(function (c) { c.addEventListener('pointermove', function (e) { var r = c.getBoundingClientRect(); c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px'); }); });
   $$('[data-stagger]').forEach(function (p) { var st = parseFloat(p.dataset.stagger) || 0.08; Array.prototype.forEach.call(p.children, function (c, i) { if (!c.hasAttribute('data-r')) c.setAttribute('data-r', ''); c.style.setProperty('--dl', (i * st) + 's'); }); });
 
   /* reveal on scroll */

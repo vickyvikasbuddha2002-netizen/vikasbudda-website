@@ -52,6 +52,14 @@ window.RoamStage = (function () {
       if (!mc[col]) { var metal = [0xb9bdc4, 0xd4d6da, 0xb08d3c, 0xc9a24a, 0xc98a4b].indexOf(col) >= 0; mc[col] = new THREE.MeshPhysicalMaterial({ color: col, roughness: metal ? 0.22 : (col < 0x303030 ? 0.6 : 0.3), metalness: metal ? 0.95 : 0, clearcoat: metal || col < 0x303030 ? 0 : 0.6, clearcoatRoughness: 0.15, envMapIntensity: 1.4 }); }
       return mc[col];
     }
+    var mRubber = new THREE.MeshPhysicalMaterial({ color: 0x060607, roughness: 0.78, metalness: 0, envMapIntensity: 0.45 });
+    var HUB = { 0x9a9ca0: new THREE.MeshPhysicalMaterial({ color: 0xeeeef1, roughness: 0.2, clearcoat: 1, clearcoatRoughness: 0.06, envMapIntensity: 1.6 }),
+      0x86888c: new THREE.MeshPhysicalMaterial({ color: 0xc9cbd0, roughness: 0.45, clearcoat: 0.3, envMapIntensity: 1.2 }),
+      0x5a5c60: new THREE.MeshPhysicalMaterial({ color: 0x1e1f22, roughness: 0.3, clearcoat: 0.8, envMapIntensity: 1 }) };
+    function tread(m, q) {
+      var tg = new THREE.BoxGeometry(0.55, q.h * 0.7, 1.1);
+      for (var i = 0; i < 64; i++) { var a = i / 64 * Math.PI * 2, b = new THREE.Mesh(tg, mRubber); b.position.set(Math.cos(a) * (q.r + 0.15), 0, Math.sin(a) * (q.r + 0.15)); b.rotation.y = -a; m.add(b); }
+    }
     var wheels = [], WH = window.ROAMB.wheel;
     window.ROAMB.parts.forEach(function (p) {
       var g = new THREE.Group(); g.position.fromArray(p.o); g.rotation.x = -(p.tilt || 0) * Math.PI / 180; GR[p.grp].add(g);
@@ -62,16 +70,43 @@ window.RoamStage = (function () {
         else if (q.t === 'sph') geo = new THREE.SphereGeometry(q.r, 24, 16);
         else if (q.tyre) { var tp = arc(q.r - 2, -q.h / 2 + 2, 2, -Math.PI / 2, 0, 6).concat(arc(q.r - 2, q.h / 2 - 2, 2, 0, Math.PI / 2, 6)); tp.unshift(new THREE.Vector2(q.r - 3.4, -q.h / 2)); tp.push(new THREE.Vector2(q.r - 3.4, q.h / 2)); geo = new THREE.LatheGeometry(tp, 56); }
         else geo = new THREE.CylinderGeometry(q.cone ? q.r * 0.55 : q.r, q.r, q.h, 36);
-        var m = new THREE.Mesh(geo, mat(q.col));
+        var m = new THREE.Mesh(geo, q.tyre ? mRubber : (p.spin && HUB[q.col]) || mat(q.col));
+        if (q.tyre) tread(m, q);
         if (q.t === 'cyl') { if (q.ax === 'x') m.rotation.z = -Math.PI / 2; if (q.ax === 'z') m.rotation.x = Math.PI / 2; }
         m.position.fromArray(q.c); if (p.spin) m.position.sub(piv.position); piv.add(m);
       });
     });
     root.position.y = -53;
+    // product details: a designed reveal at the split line, a smoked sensor window, the name on the back
+    (function () {
+      function rr(sh, w, d, r, hole) {
+        var x = -w / 2, y = -d / 2, P = hole ? new THREE.Path() : sh;
+        P.moveTo(x + r, y); P.lineTo(x + w - r, y); P.absarc(x + w - r, y + r, r, -Math.PI / 2, 0, false); P.lineTo(x + w, y + d - r); P.absarc(x + w - r, y + d - r, r, 0, Math.PI / 2, false);
+        P.lineTo(x + r, y + d); P.absarc(x + r, y + d - r, r, Math.PI / 2, Math.PI, false); P.lineTo(x, y + r); P.absarc(x + r, y + r, r, Math.PI, Math.PI * 1.5, false);
+        if (hole) sh.holes.push(P); return sh;
+      }
+      var D = new THREE.Group(); D.name = 'detail'; root.add(D);
+      var ring = rr(rr(new THREE.Shape(), 95.7, 91.7, 11.85), 93.6, 89.6, 10.8, true);
+      var seam = new THREE.Mesh(new THREE.ExtrudeGeometry(ring, { depth: 1.1, bevelEnabled: false, curveSegments: 10 }), new THREE.MeshPhysicalMaterial({ color: 0x0d0d10, roughness: 0.35, clearcoat: 0.6, envMapIntensity: 0.9 }));
+      seam.rotation.x = -Math.PI / 2; seam.position.y = 29.45; D.add(seam);
+      var win = new THREE.Mesh(new THREE.ExtrudeGeometry(rr(new THREE.Shape(), 18.5, 6, 2.6), { depth: 0.5, bevelEnabled: true, bevelThickness: 0.25, bevelSize: 0.25, bevelSegments: 2, curveSegments: 8 }),
+        new THREE.MeshPhysicalMaterial({ color: 0x050507, roughness: 0.04, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 2 }));
+      win.position.set(0, 21.5, 45.75); D.add(win);
+      var nc = document.createElement('canvas'); nc.width = 512; nc.height = 128; var nx = nc.getContext('2d');
+      nx.fillStyle = '#9a9ca3'; nx.font = '600 76px Archivo, Arial, sans-serif'; nx.textAlign = 'center'; nx.textBaseline = 'middle';
+      if (nx.letterSpacing !== undefined) nx.letterSpacing = '22px'; nx.fillText('ROAM', 266, 66);
+      var nt = new THREE.CanvasTexture(nc); nt.encoding = THREE.sRGBEncoding; nt.anisotropy = 4;
+      var name = new THREE.Mesh(new THREE.PlaneGeometry(22, 5.5), new THREE.MeshStandardMaterial({ map: nt, transparent: true, roughness: 0.55, depthWrite: false }));
+      name.position.set(0, 46, -46.08); name.rotation.y = Math.PI; D.add(name);
+    })();
     function outside(g) {
       g.mid.visible = false; g.face.visible = false;
       ['base', 'shell'].forEach(function (k) { g[k].children.forEach(function (c, i) { if (i === 0) return; var keep = false; c.traverse(function (o) { if (o.isGroup && o !== c && o.children.length > 6) keep = true; }); c.visible = keep; }); });
     }
+    var sc = document.createElement('canvas'); sc.width = sc.height = 128; var sx = sc.getContext('2d'), sgr = sx.createRadialGradient(64, 64, 4, 64, 64, 64);
+    sgr.addColorStop(0, 'rgba(0,0,0,0.75)'); sgr.addColorStop(0.45, 'rgba(0,0,0,0.42)'); sgr.addColorStop(1, 'rgba(0,0,0,0)'); sx.fillStyle = sgr; sx.fillRect(0, 0, 128, 128);
+    var shadow = new THREE.Mesh(new THREE.PlaneGeometry(190, 170), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), transparent: true, depthWrite: false, opacity: 0.9 }));
+    shadow.rotation.x = -Math.PI / 2; shadow.renderOrder = 2; scene.add(shadow);
     var mirror = null, mirGR = null, mirWheels = [];
     if (opts.mirror !== false) {
       mirror = root.clone(true); mirror.traverse(function (o) { if (o.isMesh) { var m = o.material.clone(); m.transparent = true; m.opacity = 0.22; m.depthWrite = false; m.side = THREE.DoubleSide; if (m.emissiveIntensity) m.emissiveIntensity *= 0.7; o.material = m; o.renderOrder = -1; } });
@@ -247,6 +282,7 @@ window.RoamStage = (function () {
       var e = api.explode;
       GR.shell.position.y = 190 * e; GR.glass.position.set(0, 150 * e, 120 * e); GR.face.position.set(0, 108 * e, 64 * e); GR.mid.position.y = 54 * e;
       if (api.update) api.update(dt, api.t);
+      var lift = Math.max(0, root.position.y + 53); shadow.position.set(root.position.x, -52.8, root.position.z); shadow.material.opacity = 0.9 * Math.max(0.15, 1 - lift / 70); shadow.scale.setScalar(1 + lift / 160);
       if (mirror) {
         mirror.position.set(root.position.x, -106 - root.position.y, root.position.z);
         mirror.rotation.set(-root.rotation.x, root.rotation.y, -root.rotation.z);

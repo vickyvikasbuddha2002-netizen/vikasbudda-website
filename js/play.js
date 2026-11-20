@@ -100,8 +100,14 @@
       s: [{ mood: 'heartbroken', say: [['wub', 'doo'], 'Ignored. Again.'], d: .7, to: { yaw: 2.6 } }, { d: .5, to: { z: -40 } }, { d: 1.6 }, { mood: 'calm', d: .6, to: { yaw: 0, z: 0 } }, { mood: 'excited', g: 'hug', say: [['bi', 'dwee'], 'Oh, you are back!'], d: .6 }, { d: 1.2 }, { mood: 'calm', d: .1 }] },
     guard: { t: 'Step away from your desk', f: 'Guards your desk', d: 'When you leave for a meeting, Roam turns to face your chair and keeps watch. Anyone who walks up gets a stare, and when you are back it tells you who came by. It keeps only counts and times, never photos.',
       s: [{ mood: 'focused', say: [['tok', 'tok'], 'Guard mode. Go, I have this.'], d: 1.6 }, { mood: 'scanning', d: 1.1, to: { yaw: .6 } }, { d: 1.1, to: { yaw: -.6 } }, { mood: 'angry', g: 'pointR', say: [['vrr', 'pah'], 'Not your desk. I am watching you.'], d: 2.2, to: { yaw: 0, tilt: .06 } }, { mood: 'excited', g: 'cheer', say: [['bi', 'dwee', 'ki'], 'You are back! Two visitors. One looked at your snacks.'], d: 3.2, to: { tilt: 0 } }, { mood: 'proud', g: 'dthumbs', d: 1.2 }, { mood: 'calm', d: .1 }] },
+    focus: { t: 'Turn on focus mode', f: 'Shields your focus', d: 'Hold its head and Roam guards your focus. It turns to face the aisle with a do not disturb face, and anyone who walks up is asked, politely, to come back later or leave a message.',
+      s: [{ mood: 'focused', g: 'think', say: [['tok', 'bi'], 'Focus mode. I will handle visitors.'], d: 1.8 }, { mood: 'scanning', d: 1, to: { yaw: 2.4 } }, { mood: 'attention', g: 'cover', say: [['pah', 'tok'], 'Shh. My human is focusing. Come back at four?'], d: 2.8 }, { mood: 'calm', d: .8, to: { yaw: 0 } }, { mood: 'proud', g: 'dthumbs', d: 1 }, { mood: 'calm', d: .1 }] },
+    message: { t: 'Stop by while they are out', f: 'Takes messages', d: 'If someone visits while you are away, Roam offers to take a short voice message and plays it back the moment you return.',
+      s: [{ mood: 'listen', say: [['bi', 'doo'], 'They are out. Want to leave a message?'], d: 2.2 }, { mood: 'processing', d: 1.4, to: { tilt: .05 } }, { mood: 'happy', g: 'thumbs', say: [['bi', 'dwee'], 'Got it. I will tell them.'], d: 1.8, to: { tilt: 0 } }, { mood: 'excited', g: 'wave', say: [['bi', 'ki', 'bi'], 'Welcome back! You have one message.'], d: 2.4 }, { mood: 'calm', d: .1 }] },
     work: { t: 'Work for two hours', f: 'Checks on you', d: 'Roam keeps an eye on you while you work. After a long stretch it rolls over, peeks at you and suggests a break.',
       s: [{ mood: 'focused', d: 1.2 }, { mood: 'curious', d: .9, to: { z: 50, tilt: .06 } }, { g: 'peek', say: [['ki', 'doo', 'ki'], 'Still working? Take a break.'], d: 2.4 }, { mood: 'happy', g: 'thumbs', say: [['bi', 'dwee'], 'Water first. Then me.'], d: 1.6, to: { tilt: 0 } }, { mood: 'calm', d: .6, to: { z: 0 } }] },
+    water: { t: 'Forget to drink water', f: 'Works with the Puck', d: 'Roam talks to the Hydration Puck, my other project. If your bottle has not moved in an hour, Roam rolls over and reminds you to drink.',
+      s: [{ mood: 'thinking', d: 1 }, { mood: 'curious', d: .8, to: { z: 50 } }, { g: 'pointR', say: [['ki', 'oo', 'ki'], 'Your bottle has not moved in an hour.'], d: 2.4 }, { mood: 'happy', g: 'thumbs', say: [['bi', 'dwee'], 'Drink some water. I will wait.'], d: 2 }, { mood: 'calm', d: .6, to: { z: 0 } }] },
     laugh: { t: 'Laugh out loud', f: 'Laughs with you', d: 'Roam hears you laugh and joins in, even when it has no idea what was funny.',
       s: [{ mood: 'surprised', d: .2 }, { mood: 'laughing', g: 'laugh', say: [['ki', 'bi', 'ki', 'bi', 'ki'], 'Ha ha! What are we laughing at?'], d: .15, to: { bob: 4 } }, { d: .15, to: { bob: 0 } }, { d: .15, to: { bob: 4 } }, { d: .15, to: { bob: 0 } }, { d: 1.4 }, { mood: 'calm', d: .1 }] },
     joke: { t: 'Ask for a joke', f: 'Has a personality', d: 'It has a sense of humour, mostly bad. It tells the joke, laughs alone, then pretends it never happened.', fn: function () { lastAct = 0; chat.joke(); },
@@ -113,7 +119,9 @@
     battery: { t: 'Let the battery run low', f: 'Asks for a charge', d: 'When its battery runs low, Roam shows it on its face and asks for a charge. On the charger it watches itself fill up.',
       s: [{ mood: 'lowbattery', say: [['oo', 'doo'], 'Running low. Feed me?'], d: 2.2, to: { tilt: .04 } }, { mood: 'charging', say: [['bi', 'dwee'], 'Ahh. Charging.'], d: 2.4, to: { tilt: 0 } }, { mood: 'excited', g: 'fistpump', say: [['bi', 'bi', 'dwee'], 'Full power!'], d: 1.6 }, { mood: 'calm', d: .1 }] },
     night: { t: 'Say goodnight', f: 'Sleeps when you do', d: 'Hold the top of its head and it says goodnight, closes its eyes and powers down. A touch wakes it again.',
-      s: [{ mood: 'sleepy', g: 'yawn', say: [['oo', 'wub'], 'Goodnight.'], d: 1, to: { bob: -3, tilt: .04 } }, { d: 2.6 }, { mood: 'loading', d: 1.2, to: { bob: 0, tilt: 0 } }, { mood: 'happy', g: 'cheer', say: [['bi', 'dwee'], 'Morning!'], d: .8 }, { mood: 'calm', d: .1 }] }
+      s: [{ mood: 'sleepy', g: 'yawn', say: [['oo', 'wub'], 'Goodnight.'], d: 1, to: { bob: -3, tilt: .04 } }, { d: 2.6 }, { mood: 'loading', d: 1.2, to: { bob: 0, tilt: 0 } }, { mood: 'happy', g: 'cheer', say: [['bi', 'dwee'], 'Morning!'], d: .8 }, { mood: 'calm', d: .1 }] },
+    recap: { t: 'Pack up for the day', f: 'Sums up your day', d: 'When you pack up, Roam gives you a short recap of your day, from focus time to visitors, messages and water, then says goodnight.',
+      s: [{ mood: 'proud', say: [['bi', 'nya', 'bi'], 'Today: three hours of focus.'], d: 2.2 }, { mood: 'happy', say: [['ki', 'bi'], 'Two visitors, one message, six sips of water.'], d: 2.4 }, { mood: 'love', g: 'wave', say: [['mii', 'dwee'], 'Good day. See you tomorrow.'], d: 2.2 }, { mood: 'sleepy', g: 'yawn', d: 1.6, to: { bob: -3 } }, { mood: 'calm', d: .4, to: { bob: 0 } }] }
   };
   var keys = Object.keys(A), seen = {}, pads = $('.pads'), card = $('.lcard'), found = $('.found');
   keys.forEach(function (k) {
@@ -134,6 +142,10 @@
     $('.count').textContent = Object.keys(seen).length + ' of ' + feats.length;
   }
   $('.count').textContent = '0 of ' + feats.length;
+  $$('[data-pad]').forEach(function (li) {
+    function go() { var a = $('.arena'); a.scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: 'center' }); setTimeout(function () { act(li.dataset.pad); }, RM ? 0 : 650); }
+    li.addEventListener('click', go); li.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+  });
 
   /* View in AR: the outside of Roam only, at real size */
   var arb = $('.arbtn'), mv = $('#roamar'), arMsg = $('.armsg'), arReady = false;
