@@ -192,7 +192,7 @@
           rr0 += ((RM ? 0.4 : -0.9 + p * 1.9) - rr0) * 0.08;
           roamApi.root.rotation.y = rr0 + Math.sin(t * 0.6) * 0.04;
           roamApi.root.position.y = -53;
-          roamApi.camera.position.set(0, 52, 430); roamApi.camera.lookAt(0, -12, 0);
+          roamApi.camera.position.set(0, 30, 468); roamApi.camera.lookAt(0, -4, 0);
           var b = rc.getBoundingClientRect(); roamApi.look.tx = clamp((mouse.x - b.left - b.width / 2) / b.width * 2, -1, 1); roamApi.look.ty = clamp((mouse.y - b.top - b.height / 2) / b.height * 2, -1, 1);
           roamApi.wheels.forEach(function (w) { w.rotation.x = p * 9; });
         };
