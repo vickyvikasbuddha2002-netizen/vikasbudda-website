@@ -47,6 +47,7 @@
     var key = new T.DirectionalLight(0xffffff, .9); key.position.set(-260, 520, 420); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.radius = 8;
     Object.assign(key.shadow.camera, { left: -180, right: 180, top: 180, bottom: -180, near: 10, far: 1600 }); S.add(key);
     var fill = new T.DirectionalLight(0xfff4e8, .35); fill.position.set(380, 160, 300); S.add(fill);
+    var rim = new T.DirectionalLight(0xffffff, .9); rim.position.set(-120, 260, -520); S.add(rim); var rim2 = new T.DirectionalLight(0xdfe6ff, .6); rim2.position.set(420, 120, -300); S.add(rim2);
     var ground = new T.Mesh(new T.PlaneGeometry(1400, 1400), new T.ShadowMaterial({ opacity: .16 })); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; S.add(ground);
     var sc = document.createElement('canvas'); sc.width = sc.height = 128; var sx = sc.getContext('2d'), gr = sx.createRadialGradient(64, 64, 2, 64, 64, 64);
     gr.addColorStop(0, 'rgba(0,0,0,.5)'); gr.addColorStop(.5, 'rgba(0,0,0,.2)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); sx.fillStyle = gr; sx.fillRect(0, 0, 128, 128);
@@ -70,7 +71,7 @@
     var camR = cyl(3.4, 3.4, 1.2, graph, 32); camR.rotation.x = Math.PI / 2; camR.position.set(0, 88.5, 61.3); body.add(camR);
     var camL = cyl(2, 2, 1.4, dark, 24); camL.rotation.x = Math.PI / 2; camL.position.set(0, 88.5, 61.6); body.add(camL);
     var pill = slab(26, 9, 1.4, 4.5, .6, glass); pill.position.set(0, 23, 60.3); body.add(pill);
-    [-6, 6].forEach(function (x) { var l = cyl(1.8, 1.8, 1.2, graph, 20); l.rotation.x = Math.PI / 2; l.position.set(x, 23, 61.1); body.add(l); });
+    [-6, 6].forEach(function (x) { var l = cyl(1.8, 1.8, 1.2, graph, 20); l.rotation.x = Math.PI / 2; l.position.set(x, 0, .8); pill.add(l); });
     var padM = slab(46, 34, 1.2, 7, .5, pad); padM.rotation.x = -Math.PI / 2; padM.position.set(0, 118.4, 11); body.add(padM);
     var led = new T.Mesh(new T.CircleGeometry(.9, 16), new T.MeshBasicMaterial({ color: 0xffffff })); led.rotation.x = -Math.PI / 2; led.position.set(0, 119.1, 24); body.add(led);
     var wheels = [];
@@ -82,6 +83,7 @@
       wheels.push(w);
     });
 
+    [gl, face, camR, camL, pill].forEach(function (m) { m.userData.z0 = m.position.z; });
     /* accessories */
     var acc = new T.Group(); acc.position.set(0, 119, 11); body.add(acc);
     var A = {};
@@ -152,10 +154,10 @@
     }
 
     /* pose */
-    var pose = { yaw: 0, x: 0, z: 0, tilt: 0, lift: 0 }, ptgt = { yaw: 0, x: 0, z: 0, tilt: 0, lift: 0 }, bounceT = -9, wiggleT = -9, spinT = -9, light = opt.light == null ? 1 : opt.light;
+    var pose = { yaw: 0, x: 0, z: 0, tilt: 0, lift: 0, ex: 0 }, ptgt = { yaw: 0, x: 0, z: 0, tilt: 0, lift: 0, ex: 0 }, bounceT = -9, wiggleT = -9, spinT = -9, light = opt.light == null ? 1 : opt.light;
     var accTgt = null, accCur = null, accK = 0;
     function setLight(k) {
-      light = k; hemi.intensity = .35 * k; key.intensity = .9 * k; fill.intensity = .35 * k; ground.material.opacity = .16 * k; contact.material.opacity = k;
+      light = k; hemi.intensity = .35 * k; key.intensity = .9 * k; fill.intensity = .35 * k; rim.intensity = .9 * k; rim2.intensity = .6 * k; ground.material.opacity = .16 * k; contact.material.opacity = k;
       mats.forEach(function (m) { m.envMapIntensity = m.userData.env * (0.02 + .98 * k); });
       led.material.color.setScalar(.3 + .7 * k);
     }
@@ -185,7 +187,7 @@
       var w = canvas.clientWidth, h = canvas.clientHeight;
       if (w !== w0 || h !== h0) { w0 = w; h0 = h; R.setSize(w, h, false); C.aspect = w / Math.max(1, h); C.updateProjectionMatrix(); }
       var f = frameView ? frameView(C.aspect) : { d: 560, y: 60, ty: 58 };
-      C.position.set(0, f.y + f.d * .18, f.d); C.lookAt(0, f.ty, 0);
+      C.position.set(f.ox || 0, f.y + f.d * .18, f.d); C.lookAt(f.ox || 0, f.ty, 0);
       wake = lerp(wake, wakeTgt, RM ? 1 : .06);
       nextBlink -= dt; if (nextBlink < 0) { blink = 1; nextBlink = 2.4 + Math.random() * 3.5; } blink = Math.max(0, blink - dt * 7);
       talk = clock < talkUntil ? 1 : Math.max(0, talk - dt * 4);
@@ -198,6 +200,9 @@
       bot.position.set(pose.x, pose.lift + bo, pose.z); bot.rotation.y = pose.yaw + wo + so; body.rotation.x = pose.tilt;
       var dz = (pose.z - pz) * Math.cos(pose.yaw) + (pose.x - px) * Math.sin(pose.yaw), dy = (pose.yaw - py) + (sp < 1.2 ? 0 : 0);
       wheels[0].rotation.x += dz / 27 + dy * 2.2; wheels[1].rotation.x += dz / 27 - dy * 2.2;
+      var ex = pose.ex; [gl, face, camR, camL, pill].forEach(function (m) { m.position.z = m.userData.z0 + ex * 70; });
+      padM.position.y = 118.4 + ex * 30; led.position.y = 119.1 + ex * 30; band.position.y = 7.5 - ex * 16; acc.visible = ex < .05;
+      wheels[0].position.x = -60.5 - ex * 46; wheels[1].position.x = 60.5 + ex * 46;
       contact.position.set(pose.x, .3, pose.z - 6); contact.scale.setScalar(1 + bo / 60);
       key.target = bot;
       if (accTgt !== accCur) { accK = Math.max(0, accK - dt * 6); if (accK === 0) { if (accCur) A[accCur].visible = false; accCur = accTgt; if (accCur) A[accCur].visible = true; } }

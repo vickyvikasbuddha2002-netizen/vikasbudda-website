@@ -37,29 +37,36 @@
 
   /* robot */
   var cv = $('#roam');
-  if (!window.THREE || !window.Roam2) { cv.style.display = 'none'; doc.body.classList.remove('dark'); return; }
+  if (!window.THREE || !window.Roam2) { cv.style.display = 'none'; return; }
   var R;
-  try { R = Roam2(cv, { reduced: RM, asleep: true, light: 0 }); } catch (e) { cv.style.display = 'none'; doc.body.classList.remove('dark'); return; }
-  var intro = $('.intro'), t1 = $('#t1'), t2 = $('#t2'), cue = $('#cue'), work = $('#work');
-  var introP = 0, D0 = [11, 11, 12], D1 = [242, 241, 238];
-  R.frame(function (a) { var d = Math.max(1120, 660 / a), u = 1 - ss(.25, .9, introP); return { d: d * (1 - .22 * u), y: 64, ty: 60 + 30 * u }; });
-  setTimeout(function () { R.wake(); chirp(2); }, 900);
+  try { R = Roam2(cv, { reduced: RM, asleep: true, light: 0 }); } catch (e) { cv.style.display = 'none'; return; }
+  var about = $('#about'), cue = $('#cue'), hz = $('.horizon'), heroOn = true;
+  var cam = { d: 1, x: .38, y: -.04 }, camT = { d: 1, x: .38, y: -.04 };
+  var VIEWS = { hero: [1, .36, -.04, .93, 0, -.55], step: [1, .42, 0, 1, 0, -.1], design: [.74, .38, .03, .82, 0, -.06], eng: [1.4, .42, 0, 1.5, 0, -.05], ctl: [1, .42, 0, 1.45, 0, .16], list: [1, .42, 0, 1.9, 0, -.66] };
+  function view(n) { var v = VIEWS[n] || VIEWS.step, m = innerWidth / innerHeight < .9; camT.d = m ? v[3] : v[0]; camT.x = m ? v[4] : v[1]; camT.y = m ? v[5] : v[2]; }
+  R.frame(function (a) {
+    var k = RM ? 1 : .05; cam.d += (camT.d - cam.d) * k; cam.x += (camT.x - cam.x) * k; cam.y += (camT.y - cam.y) * k;
+    var base = a < .9 ? 640 / a : Math.max(720, 520 / a), d = base * cam.d, hh = .194 * d;
+    return { d: d, y: 64, ty: 64 - cam.y * hh, ox: -cam.x * hh * a };
+  });
+  view('hero');
+  /* reveal: lights come up out of the dark, then it wakes */
+  (function () {
+    var t0 = performance.now(), dur = RM ? 1 : 2200;
+    (function up(now) { var u = clamp((now - t0) / dur, 0, 1); R.light(u * u * (3 - 2 * u)); if (u < 1) requestAnimationFrame(up); })(t0);
+    setTimeout(function () { R.wake(); R.mood('happy'); chirp(2); setTimeout(function () { if (heroOn) R.mood('calm'); }, 1600); }, RM ? 0 : 1500);
+  })();
+  R.pose({ yaw: -.45 });
 
   function onScroll() {
-    var vh = innerHeight, h = intro.offsetHeight - vh;
-    introP = clamp(scrollY / Math.max(1, h), 0, 1);
-    var k = ss(.28, .72, introP);
-    R.light(ss(.22, .7, introP));
-    doc.body.style.backgroundColor = 'rgb(' + mix(D0, D1, k).join(',') + ')';
-    doc.body.classList.toggle('dark', k < .5);
-    t1.style.opacity = 1 - ss(.12, .38, introP); t1.style.transform = 'translateY(' + (-introP * 60) + 'px)';
-    t2.style.opacity = ss(.55, .8, introP); t2.style.transform = 'translateY(' + (20 - 20 * ss(.55, .8, introP)) + 'px)'; t2.style.color = 'var(--ink)';
-    cue.style.opacity = 1 - ss(0, .12, introP);
-    if (!active) R.pose({ yaw: -.5 * ss(.3, .9, introP), z: 0, x: 0, tilt: 0 });
-    var wt = work.getBoundingClientRect().top;
-    cv.style.opacity = wt < -40 ? '0' : String(clamp(wt / (vh * .7), 0, 1));
+    var vh = innerHeight;
+    heroOn = scrollY < vh * .5;
+    if (heroOn && !active) { view('hero'); R.pose({ yaw: -.45 + scrollY / vh * .4, x: 0, z: 0, tilt: 0, ex: 0 }); }
+    cue.style.opacity = 1 - ss(0, vh * .15, scrollY);
+    var wt = about.getBoundingClientRect().top, o = wt < -40 ? 0 : clamp(wt / (vh * .7), 0, 1);
+    cv.style.opacity = String(o); hz.style.opacity = String(o);
   }
-  addEventListener('scroll', onScroll, { passive: true }); addEventListener('resize', onScroll); onScroll();
+  addEventListener('scroll', onScroll, { passive: true }); addEventListener('resize', function () { onScroll(); if (active) view(VIEW_OF[active.dataset.step] || 'step'); else view('hero'); });
 
   /* gaze */
   var lastMove = -9;
@@ -67,7 +74,7 @@
   setInterval(function () { if (performance.now() - lastMove > 2500) R.follow = false; }, 500);
 
   /* steps */
-  var active = null, capT, poses = { see: { yaw: -.25 }, knock: { yaw: 0 }, read: { yaw: .35 }, guard: { yaw: 0 }, talk: { yaw: -.2 }, acc: { yaw: -.55 }, mood: { yaw: .2 }, spec: { yaw: .9 } }, timers = [];
+  var active = null, capT, poses = { overview: { yaw: -.35 }, see: { yaw: -.15 }, knock: { yaw: 0 }, read: { yaw: .3 }, guard: { yaw: 0 }, talk: { yaw: -.2 }, mood: { yaw: .15 }, design: { yaw: .62 }, eng: { yaw: -.55, ex: 1 }, elec: { yaw: .35 }, spec: { yaw: .9 } }, timers = [];
   function later(f, ms) { timers.push(setTimeout(f, ms)); }
   function clearLater() { timers.forEach(clearTimeout); timers = []; }
   function cap(rm, en, el) {
@@ -79,13 +86,13 @@
     if (sec === active) return; clearLater();
     if (active) { active.classList.remove('on'); }
     active = sec;
-    if (!sec) { R.mood('calm'); R.accessory(null); return; }
+    if (!sec) { R.mood('calm'); R.pose({ ex: 0 }); onScroll(); return; }
     sec.classList.add('on', 'seen');
-    var st = sec.dataset.step; R.mood(sec.dataset.mood || 'calm'); R.pose(Object.assign({ x: 0, z: 0, tilt: 0, lift: 0 }, poses[st] || {}));
-    if (st !== 'acc') { R.accessory(null); $$('[data-acc]').forEach(function (b) { b.classList.remove('on'); }); }
-    $$('.pill.on', sec).forEach(function (b) { if (!b.dataset.acc && !b.dataset.moodSet) b.classList.remove('on'); });
+    var st = sec.dataset.step; R.mood(sec.dataset.mood || 'calm'); R.pose(Object.assign({ x: 0, z: 0, tilt: 0, lift: 0, ex: 0 }, poses[st] || {})); view(VIEW_OF[st] || 'step');
+    $$('.pill.on', sec).forEach(function (b) { if (!b.dataset.moodSet) b.classList.remove('on'); });
     $$('.cap', sec).forEach(function (c) { c.textContent = ''; });
   }
+  var VIEW_OF = { design: 'design', eng: 'eng', talk: 'ctl', read: 'ctl', mood: 'ctl', guard: 'ctl', knock: 'ctl', elec: 'list', spec: 'list' };
   var steps = $$('.step');
   function pick() { var vh = innerHeight, best = null, bd = 1e9; steps.forEach(function (s) { var r = s.getBoundingClientRect(), c = r.top + r.height / 2, d = Math.abs(c - vh / 2); if (r.top < vh * .6 && r.bottom > vh * .4 && d < bd) { bd = d; best = s; } }); setStep(best); }
   addEventListener('scroll', pick, { passive: true }); pick();
@@ -131,14 +138,11 @@
       later(function () { R.pose({ z: 0 }); R.mood('happy'); R.bounce(); cap('Bi-dwee!', 'Welcome back. One visitor at 2:14 pm. They looked at your snacks.'); }, 3600);
       later(function () { a.busy = false; R.mood('guard'); }, 7600);
     },
-    ar: function () { openModel('Roam', 'assets/roam.glb'); setTimeout(function () { try { if (mvm.canActivateAR) mvm.activateAR(); } catch (e) {} }, 400); }
+    hello: function () { R.mood('happy'); R.bounce(); cap('Om-vi!', 'Hi. Scroll down, I will show you around.'); later(function () { R.mood('calm'); }, 2200); },
+    ar: function () { openModel('Omvi', 'assets/omvi.glb'); setTimeout(function () { try { if (mvm.canActivateAR) mvm.activateAR(); } catch (e) {} }, 400); }
   };
   $$('[data-act]').forEach(function (b) { var a = acts[b.dataset.act]; if (a && b.dataset.act !== 'knock') b.addEventListener('click', function () { clearLater(); a(); }); });
   doc.addEventListener('dblclick', function (e) { if (e.target.closest('button,a,input,form')) return; knock(e.clientX < innerWidth / 2 ? -1 : 1); });
-
-  /* accessories */
-  var ACC = { plant: ['plant', -.5, 'Wee!', "A plant! I'll find it the sunniest spot on your desk."], phone: ['phone', -2.35, 'Bi-bi!', "Priya is calling. I'll turn the screen toward you."], flag: ['guard', -.35, 'Tok.', 'Desk taken. Back at 2:30.'], notes: ['curious', -.6, 'Ki-bi?', 'Someone left you a note on my tray.'], '': ['calm', -.55, 'Mm.', 'Back to plain Roam.'] };
-  $$('[data-acc]').forEach(function (b) { b.addEventListener('click', function () { var k = b.dataset.acc, a = ACC[k]; $$('[data-acc]').forEach(function (x) { x.classList.toggle('on', x === b && !!k); }); R.accessory(k || null); R.mood(a[0]); R.pose({ yaw: a[1] }); if (k) R.bounce(); cap(a[2], a[3]); }); });
 
   /* moods */
   $$('[data-mood-set]').forEach(function (b) { b.addEventListener('click', function () { var m = b.dataset.moodSet; $$('[data-mood-set]').forEach(function (x) { x.classList.toggle('on', x === b); }); R.mood(m); active.dataset.mood = m; if (m === 'happy' || m === 'love' || m === 'surprised') R.bounce(); else if (m === 'guard') R.wiggle(); chirp(m === 'sleepy' ? 1 : 2); }); });
@@ -149,10 +153,10 @@
     [/\b(hi|hello|hey|yo|hii+)\b/, 'happy', 'Bi-dwee!', 'Hi! I was hoping you would stop by.'],
     [/joke|funny|laugh/, 'happy', null, null],
     [/stress|tired|sad|anxious|overwhelm|bad day|upset/, 'sad', 'Oo-mm.', 'Deep breath with me. I can hold your visitors for ten minutes.'],
-    [/what can you do|help|feature|abilit/, 'curious', 'Bi-bi-doo?', 'I come when you knock, guard your desk, keep notes, mirror your posture and remind you to drink water.'],
+    [/what can you do|help|feature|abilit/, 'curious', 'Bi-bi-doo?', 'I come when you knock, guard your desk, mirror your posture and remind you to drink water.'],
     [/water|drink|thirst/, 'curious', 'Ki-oo?', 'Your bottle has not moved in an hour. Sip?'],
     [/love|cute|like you|adorable/, 'love', 'Mii-mii.', 'Stop it. My face is turning pink.'],
-    [/name|who are you/, 'proud', 'Ro-am!', 'I am Roam. I live on desks. Yours, ideally.'],
+    [/name|who are you/, 'proud', 'Om-vi!', 'I am Omvi. I live on desks. Yours, ideally.'],
     [/vikas|made you|built you|creator/, 'proud', 'Bi-dwee!', 'Vikas built me, from the shell to the wiring.'],
     [/focus|work|busy|meeting/, 'focus', 'Tok.', 'Focus mode on. I will shush anyone who comes by.'],
     [/sleep|night|bye|goodnight/, 'sleepy', 'Mmm-zz.', 'Goodnight. I will keep the desk warm.']

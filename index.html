@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f2f1ee">
-<title>Roam, an AI companion for your desk | Vikas Budda</title>
-<meta name="description" content="Roam is an AI companion robot for your desk, designed and built by Vikas Budda, mechanical design engineer.">
+<meta name="theme-color" content="#050506">
+<title>Omvi, a desk companion that moves with you | Vikas Budda</title>
+<meta name="description" content="Omvi is an AI desk companion robot, designed and built by Vikas Budda, mechanical design engineer.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Vikas Budda">
-<meta property="og:title" content="Roam, an AI companion for your desk">
-<meta property="og:description" content="Designed and built by Vikas Budda, mechanical design engineer.">
+<meta property="og:title" content="Omvi, a desk companion that moves with you">
+<meta property="og:description" content="A product design and engineering project by Vikas Budda.">
 <meta property="og:url" content="https://buddavikasportfolio.com/">
 <meta property="og:image" content="https://buddavikasportfolio.com/assets/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
@@ -18,87 +18,105 @@
 <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Sora:wght@300..700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/v2.css">
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4/dist/model-viewer.min.js"></script>
 </head>
-<body class="dark">
+<body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav">
-  <a class="brand" href="#top">Vikas Budda</a>
-  <nav aria-label="Main"><a href="#top">Roam</a><a href="#work">Work</a><a href="#contact">Contact</a></nav>
+  <a class="brand" href="#top">Omvi</a>
+  <nav aria-label="Main"><a href="#overview">Overview</a><a href="#abilities">Abilities</a><a href="#design">Design</a><a href="#engineering">Engineering</a><a href="#specs">Specs</a><a href="#about">About</a></nav>
   <button class="snd" type="button" aria-pressed="false">Sound off</button>
 </header>
 
-<canvas id="roam" aria-label="Roam, an AI companion robot, in 3D. Tap it to say hello."></canvas>
+<div class="horizon" aria-hidden="true"></div>
+<canvas id="roam" aria-label="Omvi, a desk companion robot, in 3D. Tap it to say hello."></canvas>
 
 <main id="main">
 
-<section class="intro" id="top" data-mood="calm">
+<section class="intro" id="top">
   <div class="pin">
-    <h1 class="mega" id="t1">Roam</h1>
-    <p class="lede" id="t2">An AI companion<br>for your desk.</p>
+    <div class="hero">
+      <p class="eyebrow">R01, a project by Vikas Budda</p>
+      <h1 class="mega">Omvi</h1>
+      <p class="sub1">A desk companion<br>that moves with you.</p>
+      <p class="sub2">A small robot that brings presence, attention and a bit of personality to your everyday workspace.</p>
+      <div class="pills left"><a class="pill light" href="#overview">Explore the project</a><button class="pill ghost" type="button" data-act="hello">Say hello</button></div>
+    </div>
     <p class="cue" id="cue">Scroll</p>
   </div>
 </section>
 
-<section class="step" data-step="see" data-mood="curious" data-follow="1">
-  <div class="txt"><h2>It sees you.</h2><p>Roam looks up when you sit down, and follows you around the desk with its eyes.</p></div>
-  <div class="ctl"><p class="hint" data-fine>Move your cursor. Roam is watching.</p><p class="hint" data-touch>Tap Roam to say hello.</p></div>
+<section class="step" id="overview" data-step="overview" data-mood="calm">
+  <div class="txt"><p class="eyebrow">01 Overview</p><h2>A calmer, smarter workspace.</h2><p>Omvi notices you, moves with you and responds. A companion for long workdays, not another screen.</p></div>
+</section>
+
+<section class="step" id="abilities" data-step="see" data-mood="curious" data-follow="1">
+  <div class="txt"><p class="eyebrow">02 Abilities</p><h2>Sees and understands.</h2><p>It looks up when you sit down and follows you around the desk with its eyes.</p></div>
+  <div class="ctl"><p class="hint" data-fine>Move your cursor. Omvi is watching.</p><p class="hint" data-touch>Tap Omvi to say hello.</p></div>
 </section>
 
 <section class="step" data-step="knock" data-mood="listen">
-  <div class="txt"><h2>Knock twice. It comes to you.</h2><p>No wake word in a quiet office. Two knocks on the desk, and Roam rolls over.</p></div>
+  <div class="txt"><p class="eyebrow">02 Abilities</p><h2>Moves with you.</h2><p>No wake word in a quiet office. Knock twice on the desk, and Omvi rolls over.</p></div>
   <div class="ctl"><button class="pill" data-act="knock">Knock knock</button><p class="cap" aria-live="polite"></p><p class="hint">Or double-tap anywhere on this screen.</p></div>
 </section>
 
-<section class="step" data-step="read" data-mood="calm">
-  <div class="txt"><h2>It reads the room.</h2><p>How you sit, how loud it gets, how long you have been at it.</p></div>
-  <div class="ctl"><div class="pills"><button class="pill" data-act="slouch">Slouch</button><button class="pill" data-act="situp">Sit up</button><button class="pill" data-act="loud">Get loud on a call</button><button class="pill" data-act="long">Work for 2 hours</button></div><p class="cap" aria-live="polite"></p></div>
-</section>
-
-<section class="step" data-step="guard" data-mood="guard" data-scan="1">
-  <div class="txt"><h2>Step away. It keeps watch.</h2><p>Roam guards your desk and tells you who stopped by. Counts and times, never photos.</p></div>
-  <div class="ctl"><button class="pill" data-act="visitor">Walk up to the desk</button><p class="cap" aria-live="polite"></p></div>
-</section>
-
 <section class="step" data-step="talk" data-mood="listen">
-  <div class="txt"><h2>Talk to it.</h2><p>Roam answers in its own language, with English underneath.</p></div>
+  <div class="txt"><p class="eyebrow">02 Abilities</p><h2>Talks and listens.</h2><p>Omvi answers in its own language, with English underneath.</p></div>
   <div class="ctl">
-    <div class="pills"><button class="pill" data-say="Hi Roam">Hi Roam</button><button class="pill" data-say="Tell me a joke">Tell me a joke</button><button class="pill" data-say="I'm stressed">I'm stressed</button><button class="pill" data-say="What can you do?">What can you do?</button></div>
-    <form class="ask"><label class="sr" for="q">Say something to Roam</label><input id="q" autocomplete="off" placeholder="Say something to Roam" maxlength="80"><button type="submit">Send</button></form>
+    <div class="pills left"><button class="pill" data-say="Hi Omvi">Hi Omvi</button><button class="pill" data-say="Tell me a joke">Tell me a joke</button><button class="pill" data-say="I'm stressed">I'm stressed</button><button class="pill" data-say="What can you do?">What can you do?</button></div>
+    <form class="ask"><label class="sr" for="q">Say something to Omvi</label><input id="q" autocomplete="off" placeholder="Say something to Omvi" maxlength="80"><button type="submit">Send</button></form>
     <p class="cap big" aria-live="polite"></p>
-    <p class="note">Scripted demo. The real Roam will reply through an AI model.</p>
+    <p class="note">Scripted demo. The real Omvi will reply through an AI model.</p>
   </div>
 </section>
 
-<section class="step" data-step="acc" data-mood="calm">
-  <div class="txt"><h2>Snap on a new job.</h2><p>Each accessory clicks onto the pad on top. Roam knows which one it is wearing.</p></div>
-  <div class="ctl"><div class="pills" data-group="acc"><button class="pill" data-acc="plant">Plant pod</button><button class="pill" data-acc="phone">Phone dock</button><button class="pill" data-acc="flag">Desk flag</button><button class="pill" data-acc="notes">Note tray</button><button class="pill" data-acc="">None</button></div><p class="cap" aria-live="polite"></p></div>
+<section class="step" data-step="read" data-mood="focus">
+  <div class="txt"><p class="eyebrow">02 Abilities</p><h2>Helps you focus.</h2><p>It notices how you sit, how loud the room gets and how long you have been at it.</p></div>
+  <div class="ctl"><div class="pills left"><button class="pill" data-act="slouch">Slouch</button><button class="pill" data-act="situp">Sit up</button><button class="pill" data-act="loud">Get loud on a call</button><button class="pill" data-act="long">Work for 2 hours</button></div><p class="cap" aria-live="polite"></p></div>
+</section>
+
+<section class="step" data-step="guard" data-mood="guard" data-scan="1">
+  <div class="txt"><p class="eyebrow">02 Abilities</p><h2>Keeps watch.</h2><p>Step away, and Omvi guards your desk. It tells you who stopped by. Counts and times, never photos.</p></div>
+  <div class="ctl"><button class="pill" data-act="visitor">Walk up to the desk</button><p class="cap" aria-live="polite"></p></div>
 </section>
 
 <section class="step" data-step="mood" data-mood="happy">
-  <div class="txt"><h2>A face that feels.</h2><p>A full-colour face, so every mood has its own light.</p></div>
-  <div class="ctl"><div class="pills" data-group="mood">
+  <div class="txt"><p class="eyebrow">02 Abilities</p><h2>A face that feels.</h2><p>A full-colour face, so every mood has its own light.</p></div>
+  <div class="ctl"><div class="pills left">
     <button class="pill" data-mood-set="calm"><i style="--c:#ffe2b8"></i>Calm</button><button class="pill" data-mood-set="happy"><i style="--c:#ffcf6e"></i>Happy</button><button class="pill" data-mood-set="curious"><i style="--c:#79e2ff"></i>Curious</button><button class="pill" data-mood-set="love"><i style="--c:#ff6b98"></i>Love</button><button class="pill" data-mood-set="focus"><i style="--c:#7cf2bd"></i>Focus</button><button class="pill" data-mood-set="sleepy"><i style="--c:#a493ff"></i>Sleepy</button><button class="pill" data-mood-set="sad"><i style="--c:#78a5ff"></i>Sad</button><button class="pill" data-mood-set="guard"><i style="--c:#ffa24a"></i>On guard</button><button class="pill" data-mood-set="surprised"><i style="--c:#f4f7ff"></i>Surprised</button>
   </div></div>
 </section>
 
-<section class="step spec" data-step="spec" data-mood="calm">
-  <div class="txt"><h2>Small enough to belong.</h2><p>Designed in Siemens NX around real, off-the-shelf parts.</p></div>
-  <div class="ctl">
-    <dl class="nums"><div><dt>132 mm</dt><dd>wide</dd></div><div><dt>2 in</dt><dd>colour face</dd></div><div><dt>ESP32-S3</dt><dd>brain, with camera</dd></div><div><dt>0</dt><dd>visible screws</dd></div></dl>
-    <button class="pill dark" data-act="ar">See it on your desk</button>
-  </div>
+<section class="step" id="design" data-step="design" data-mood="calm">
+  <div class="txt"><p class="eyebrow">03 Design</p><h2>Minimal form. Maximum presence.</h2><p>One soft sloped body, one glass face, wheels tucked into the sides. Calm on a desk, expressive when it needs to be.</p></div>
+</section>
+
+<section class="step" id="engineering" data-step="eng" data-mood="calm">
+  <div class="txt"><p class="eyebrow">04 Engineering</p><h2>Built with purpose.</h2><p>Designed in Siemens NX around real parts. Five shell parts, no visible screws.</p>
+    <ol class="parts"><li>Top touch pad</li><li>Face glass and display</li><li>Main shell</li><li>Drive wheels</li><li>Base</li></ol></div>
+</section>
+
+<section class="step" data-step="elec" data-mood="curious">
+  <div class="txt"><p class="eyebrow">05 Electronics</p><h2>Intelligence inside.</h2><p>Off-the-shelf parts, chosen so one person can build it.</p>
+    <dl class="kv"><div><dt>ESP32-S3</dt><dd>Main compute and camera</dd></div><div><dt>RP2040</dt><dd>Motors and sensors</dd></div><div><dt>Two microphones</dt><dd>Voice and knock direction</dd></div><div><dt>IMU and time-of-flight</dt><dd>Motion and distance</dd></div></dl></div>
+</section>
+
+<section class="step" id="specs" data-step="spec" data-mood="calm">
+  <div class="txt"><p class="eyebrow">06 Specs</p><h2>The details that matter.</h2>
+    <dl class="kv"><div><dt>Size</dt><dd>132 × 146 × 118 mm</dd></div><div><dt>Display</dt><dd>2-inch colour IPS, 240 × 320</dd></div><div><dt>Battery</dt><dd>One 18650 Li-ion, USB-C charging</dd></div><div><dt>Drive</dt><dd>Two N20 gear motors and casters</dd></div><div><dt>Shell</dt><dd>3D printed, sanded and painted</dd></div></dl>
+    <button class="pill light" data-act="ar">See it on your desk</button></div>
 </section>
 
 <div class="handoff" aria-hidden="true"></div>
 
-<section class="sheet" id="work">
+<section class="sheet" id="about">
   <div class="w">
-    <h2 class="big">Hi, I'm Vikas Budda.</h2>
-    <p class="lede2">A mechanical design engineer in Bengaluru. I design products in Siemens NX and build them by hand. Roam is the one I'm building now.</p>
+    <p class="eyebrow">07 About</p>
+    <h2 class="big">A product design and engineering project.</h2>
+    <p class="lede2">I'm Vikas Budda, a mechanical design engineer in Bengaluru. I design products in Siemens NX and build them by hand. Omvi is the one I'm building now.</p>
 
     <h3 class="sec">Other work</h3>
     <article class="proj">
@@ -127,9 +145,9 @@
   <div class="w">
     <h2 class="big">Let's build something.</h2>
     <a class="mail" href="mailto:vickyvikasbuddha2002@gmail.com">vickyvikasbuddha2002@gmail.com</a>
-    <div class="pills left"><button class="pill dark" data-copy="vickyvikasbuddha2002@gmail.com">Copy email</button><a class="pill" href="assets/vikas-budda-resume.pdf" target="_blank" rel="noopener">Download resume</a></div>
+    <div class="pills left"><button class="pill light" data-copy="vickyvikasbuddha2002@gmail.com">Copy email</button><a class="pill" href="assets/vikas-budda-resume.pdf" target="_blank" rel="noopener">Download resume</a></div>
   </div>
-  <footer class="w"><span>Vikas Budda</span><span>© <span id="year">2026</span></span></footer>
+  <footer class="w"><span>Omvi, a project by Vikas Budda</span><span>© <span id="year">2026</span></span></footer>
 </section>
 </main>
 
