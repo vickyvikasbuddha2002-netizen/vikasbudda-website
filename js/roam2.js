@@ -1,4 +1,4 @@
-/* Roam 2: sloped body, glass face with colour eyes, side wheel discs, accessory pad. */
+/* Omvi: sloped body, glass face with colour eyes, side wheel discs, accessory pad. */
 (function () {
   var T = THREE;
   function col(h) { return new T.Color(h).convertSRGBToLinear(); }
@@ -30,7 +30,7 @@
     var RM = opt.reduced;
     var R = new T.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true, preserveDrawingBuffer: !!opt.keep });
     R.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    R.outputEncoding = T.sRGBEncoding; R.toneMapping = T.ACESFilmicToneMapping; R.toneMappingExposure = 1.05;
+    R.outputEncoding = T.sRGBEncoding; R.toneMapping = T.ACESFilmicToneMapping; R.toneMappingExposure = .88;
     R.shadowMap.enabled = true; R.shadowMap.type = T.PCFSoftShadowMap; R.setClearColor(0, 0);
     var S = new T.Scene(), C = new T.PerspectiveCamera(22, 1, 10, 5000);
     (function () {
@@ -44,7 +44,7 @@
       var pm = new T.PMREMGenerator(R); S.environment = pm.fromScene(es, .04).texture; pm.dispose();
     })();
     var hemi = new T.HemisphereLight(0xffffff, 0xd8d4cc, .35); S.add(hemi);
-    var key = new T.DirectionalLight(0xffffff, .9); key.position.set(-260, 520, 420); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.radius = 8;
+    var key = new T.DirectionalLight(0xffffff, .9); key.position.set(-260, 520, 420); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.radius = 8;
     Object.assign(key.shadow.camera, { left: -180, right: 180, top: 180, bottom: -180, near: 10, far: 1600 }); S.add(key);
     var fill = new T.DirectionalLight(0xfff4e8, .35); fill.position.set(380, 160, 300); S.add(fill);
     var rim = new T.DirectionalLight(0xffffff, .9); rim.position.set(-120, 260, -520); S.add(rim); var rim2 = new T.DirectionalLight(0xdfe6ff, .6); rim2.position.set(420, 120, -300); S.add(rim2);
@@ -55,37 +55,44 @@
 
     var mats = [];
     function M(c, r, cc, extra) { var m = new T.MeshPhysicalMaterial(Object.assign({ color: col(c), roughness: r, clearcoat: cc || 0, clearcoatRoughness: .3 }, extra || {})); m.userData.env = m.envMapIntensity = 1; mats.push(m); return m; }
-    var shell = M(0xece9e3, .5, .25), base = M(0xd9d4ca, .55, .1), disc = M(0xe6e2db, .45, .3), tyre = M(0x18181a, .85), glass = M(0x050506, .04, 1, { clearcoatRoughness: .03 }), pad = M(0xf3f1ec, .38, .45), graph = M(0x2b2d31, .5, .1), dark = M(0x0c0c0e, .3, .6);
+    var shell = M(0xe4ddd1, .55, .1), base = M(0xcfc8bc, .6, .05), disc = M(0xe0d9cd, .5, .12), tyre = M(0x18181a, .85), glass = M(0x050506, .04, 1, { clearcoatRoughness: .03 }), pad = M(0xefeae2, .42, .3), graph = M(0x2b2d31, .5, .1), dark = M(0x0c0c0e, .3, .6);
 
     var bot = new T.Group(); S.add(bot);
     var body = new T.Group(); bot.add(body);
-    var p = new T.Shape(); p.moveTo(-46, 14); p.lineTo(53, 14); p.lineTo(53, 96); p.quadraticCurveTo(53, 111, 36, 111); p.lineTo(-12, 111); p.lineTo(-48, 42); p.quadraticCurveTo(-54, 26, -46, 14);
-    var bg = new T.ExtrudeGeometry(p, { depth: 102, bevelEnabled: true, bevelThickness: 7, bevelSize: 7, bevelSegments: 8, curveSegments: 28 }); bg.translate(0, 0, -51); bg.rotateY(-Math.PI / 2);
+    /* body: one soft shell, near-vertical face, rear rolling down to the wheels (offset 12 mm by the bevel) */
+    var p = new T.Shape(); p.moveTo(-40, 29); p.lineTo(40, 29); p.lineTo(36, 114); p.quadraticCurveTo(35, 128, 20, 128); p.lineTo(-4, 128);
+    p.bezierCurveTo(-32, 128, -50, 96, -50, 54); p.quadraticCurveTo(-50, 29, -40, 29);
+    var bg = new T.ExtrudeGeometry(p, { depth: 84, bevelEnabled: true, bevelThickness: 12, bevelSize: 12, bevelSegments: 14, curveSegments: 48 }); bg.translate(0, 0, -42); bg.rotateY(-Math.PI / 2); bg.computeVertexNormals();
+    shell.userData.env = .32; base.userData.env = .35; disc.userData.env = .38;
     var hull = new T.Mesh(bg, shell); hull.castShadow = hull.receiveShadow = true; body.add(hull);
-    var band = slab(112, 104, 13, 12, 3, base); band.rotation.x = -Math.PI / 2; band.position.set(0, 7.5, 5); body.add(band);
-    var gl = slab(82, 60, 1.6, 15, .7, glass); gl.position.set(0, 64, 60.3); body.add(gl);
+    var band = slab(96, 92, 13, 16, 4, base); band.rotation.x = -Math.PI / 2; band.position.set(0, 9.5, 0); body.add(band);
+    [-1, 1].forEach(function (s) { var c = cyl(5, 5, 6, tyre, 24); c.position.set(s * 28, 3, 34); body.add(c); });
+    /* face module: glass, screen, eyes, camera; leans back with the front */
+    var fg = new T.Group(); fg.position.set(0, 80, 49.6); fg.rotation.x = -.047; body.add(fg);
+    var gl = slab(82, 66, 1.6, 14, .7, glass); gl.position.z = .9; fg.add(gl);
+    var scr = slab(58, 46, .2, 3, 0, M(0x0d0e10, .55)); scr.position.set(0, -3, 1.75); fg.add(scr);
     var fc = document.createElement('canvas'); fc.width = 640; fc.height = 468; var fx = fc.getContext('2d');
     var off = document.createElement('canvas'); off.width = 640; off.height = 468; var ox = off.getContext('2d');
     var ftex = new T.CanvasTexture(fc); ftex.encoding = T.sRGBEncoding;
-    var face = new T.Mesh(new T.PlaneGeometry(80, 58.5), new T.MeshBasicMaterial({ map: ftex, transparent: true, depthWrite: false, toneMapped: false })); face.position.set(0, 64, 61.3); body.add(face);
-    var camR = cyl(3.4, 3.4, 1.2, graph, 32); camR.rotation.x = Math.PI / 2; camR.position.set(0, 88.5, 61.3); body.add(camR);
-    var camL = cyl(2, 2, 1.4, dark, 24); camL.rotation.x = Math.PI / 2; camL.position.set(0, 88.5, 61.6); body.add(camL);
-    var pill = slab(26, 9, 1.4, 4.5, .6, glass); pill.position.set(0, 23, 60.3); body.add(pill);
-    [-6, 6].forEach(function (x) { var l = cyl(1.8, 1.8, 1.2, graph, 20); l.rotation.x = Math.PI / 2; l.position.set(x, 0, .8); pill.add(l); });
-    var padM = slab(46, 34, 1.2, 7, .5, pad); padM.rotation.x = -Math.PI / 2; padM.position.set(0, 118.4, 11); body.add(padM);
-    var led = new T.Mesh(new T.CircleGeometry(.9, 16), new T.MeshBasicMaterial({ color: 0xffffff })); led.rotation.x = -Math.PI / 2; led.position.set(0, 119.1, 24); body.add(led);
-    var wheels = [];
+    var face = new T.Mesh(new T.PlaneGeometry(76, 55.6), new T.MeshBasicMaterial({ map: ftex, transparent: true, depthWrite: false, toneMapped: false })); face.position.set(0, -3, 1.9); fg.add(face);
+    var camR = cyl(3.4, 3.4, 1.2, graph, 32); camR.rotation.x = Math.PI / 2; camR.position.set(0, 27, 1.9); fg.add(camR);
+    var camL = cyl(2, 2, 1.4, dark, 24); camL.rotation.x = Math.PI / 2; camL.position.set(0, 27, 2.2); fg.add(camL);
+    var pill = slab(30, 10, 1.6, 5, .7, glass); pill.position.set(0, 32, 52.6); pill.rotation.x = -.047; body.add(pill);
+    [-7.5, 7.5].forEach(function (x) { var l = cyl(2.1, 2.1, 1.2, graph, 20); l.rotation.x = Math.PI / 2; l.position.set(x, 0, .8); pill.add(l); });
+    var padM = slab(44, 30, 1.2, 8, .5, pad); padM.rotation.x = -Math.PI / 2; padM.position.set(0, 140.4, 7); body.add(padM);
+    var led = new T.Mesh(new T.CircleGeometry(.9, 16), new T.MeshBasicMaterial({ color: 0xffffff })); led.rotation.x = -Math.PI / 2; led.position.set(0, 141.1, 18); body.add(led);
+    var wheels = [], WX = 55;
     [-1, 1].forEach(function (s) {
-      var w = new T.Group(); w.position.set(s * 60.5, 27, -24); bot.add(w);
-      var t = new T.Mesh(new T.TorusGeometry(23.5, 3.5, 20, 72), tyre); t.rotation.y = Math.PI / 2; t.castShadow = true; w.add(t);
-      var d = cyl(23.6, 23.6, 5.5, disc, 72); d.rotation.z = Math.PI / 2; w.add(d);
-      var cap = cyl(3, 3, 5.9, base, 24); cap.rotation.z = Math.PI / 2; w.add(cap);
+      var w = new T.Group(); w.position.set(s * WX, 30.5, -30); bot.add(w);
+      var t = new T.Mesh(new T.TorusGeometry(26.5, 4, 24, 96), tyre); t.rotation.y = Math.PI / 2; t.castShadow = true; w.add(t);
+      var d = cyl(27.4, 27.4, 7, disc, 96); d.rotation.z = Math.PI / 2; d.position.x = s * 1.2; w.add(d);
+      var lip = new T.Mesh(new T.TorusGeometry(27.2, .9, 12, 96), disc); lip.rotation.y = Math.PI / 2; lip.position.x = s * 4.7; w.add(lip);
       wheels.push(w);
     });
 
-    [gl, face, camR, camL, pill].forEach(function (m) { m.userData.z0 = m.position.z; });
+    [fg, pill].forEach(function (m) { m.userData.z0 = m.position.z; });
     /* accessories */
-    var acc = new T.Group(); acc.position.set(0, 119, 11); body.add(acc);
+    var acc = new T.Group(); acc.position.set(0, 141, 7); body.add(acc);
     var A = {};
     (function () {
       var g = new T.Group(); var pot = cyl(12, 10, 16, graph, 40); pot.position.y = 8; g.add(pot);
@@ -157,7 +164,7 @@
     var pose = { yaw: 0, x: 0, z: 0, tilt: 0, lift: 0, ex: 0 }, ptgt = { yaw: 0, x: 0, z: 0, tilt: 0, lift: 0, ex: 0 }, bounceT = -9, wiggleT = -9, spinT = -9, light = opt.light == null ? 1 : opt.light;
     var accTgt = null, accCur = null, accK = 0;
     function setLight(k) {
-      light = k; hemi.intensity = .35 * k; key.intensity = .9 * k; fill.intensity = .35 * k; rim.intensity = .9 * k; rim2.intensity = .6 * k; ground.material.opacity = .16 * k; contact.material.opacity = k;
+      light = k; hemi.intensity = .18 * k; key.intensity = 1.6 * k; fill.intensity = .22 * k; rim.intensity = .7 * k; rim2.intensity = .22 * k; ground.material.opacity = .16 * k; contact.material.opacity = k;
       mats.forEach(function (m) { m.envMapIntensity = m.userData.env * (0.02 + .98 * k); });
       led.material.color.setScalar(.3 + .7 * k);
     }
@@ -199,10 +206,10 @@
       var sp = clock - spinT, so = sp < 1.2 ? (function (u) { return u * u * (3 - 2 * u); })(sp / 1.2) * Math.PI * 2 : 0;
       bot.position.set(pose.x, pose.lift + bo, pose.z); bot.rotation.y = pose.yaw + wo + so; body.rotation.x = pose.tilt;
       var dz = (pose.z - pz) * Math.cos(pose.yaw) + (pose.x - px) * Math.sin(pose.yaw), dy = (pose.yaw - py) + (sp < 1.2 ? 0 : 0);
-      wheels[0].rotation.x += dz / 27 + dy * 2.2; wheels[1].rotation.x += dz / 27 - dy * 2.2;
-      var ex = pose.ex; [gl, face, camR, camL, pill].forEach(function (m) { m.position.z = m.userData.z0 + ex * 70; });
-      padM.position.y = 118.4 + ex * 30; led.position.y = 119.1 + ex * 30; band.position.y = 7.5 - ex * 16; acc.visible = ex < .05;
-      wheels[0].position.x = -60.5 - ex * 46; wheels[1].position.x = 60.5 + ex * 46;
+      wheels[0].rotation.x += dz / 30 + dy * 2.2; wheels[1].rotation.x += dz / 30 - dy * 2.2;
+      var ex = pose.ex; [fg, pill].forEach(function (m) { m.position.z = m.userData.z0 + ex * 70; });
+      padM.position.y = 140.4 + ex * 20; led.position.y = 141.1 + ex * 20; band.position.y = 9.5 - ex * 16; acc.visible = ex < .05;
+      wheels[0].position.x = -WX - ex * 46; wheels[1].position.x = WX + ex * 46;
       contact.position.set(pose.x, .3, pose.z - 6); contact.scale.setScalar(1 + bo / 60);
       key.target = bot;
       if (accTgt !== accCur) { accK = Math.max(0, accK - dt * 6); if (accK === 0) { if (accCur) A[accCur].visible = false; accCur = accTgt; if (accCur) A[accCur].visible = true; } }

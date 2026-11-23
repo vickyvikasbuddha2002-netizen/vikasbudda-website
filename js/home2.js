@@ -42,7 +42,7 @@
   try { R = Roam2(cv, { reduced: RM, asleep: true, light: 0 }); } catch (e) { cv.style.display = 'none'; return; }
   var about = $('#about'), cue = $('#cue'), hz = $('.horizon'), heroOn = true;
   var cam = { d: 1, x: .38, y: -.04 }, camT = { d: 1, x: .38, y: -.04 };
-  var VIEWS = { hero: [1, .36, -.04, .93, 0, -.55], step: [1, .42, 0, 1, 0, -.1], design: [.74, .38, .03, .82, 0, -.06], eng: [1.4, .42, 0, 1.5, 0, -.05], ctl: [1, .42, 0, 1.45, 0, .16], list: [1, .42, 0, 1.9, 0, -.66] };
+  var VIEWS = { hero: [1.08, .36, -.04, 1.05, 0, -.6], step: [1, .42, 0, 1, 0, -.1], design: [.74, .38, .03, .82, 0, -.06], eng: [1.5, .42, -.04, 1.6, 0, -.08], ctl: [1, .42, 0, 1.45, 0, .16], list: [1, .42, 0, 1.9, 0, -.66] };
   function view(n) { var v = VIEWS[n] || VIEWS.step, m = innerWidth / innerHeight < .9; camT.d = m ? v[3] : v[0]; camT.x = m ? v[4] : v[1]; camT.y = m ? v[5] : v[2]; }
   R.frame(function (a) {
     var k = RM ? 1 : .05; cam.d += (camT.d - cam.d) * k; cam.x += (camT.x - cam.x) * k; cam.y += (camT.y - cam.y) * k;
