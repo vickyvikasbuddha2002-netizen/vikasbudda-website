@@ -490,3 +490,4 @@ html.eyes input,html.eyes textarea{cursor:text!important}
 .rview .bubble{top:18px;bottom:auto;transform:translate(-50%,-8px)}
 .rview .bubble.on{transform:translate(-50%,0)}
 @media (max-width:700px){.rview .bubble{top:12px;bottom:auto}}
+@media (max-width:900px){.rows li[data-pad]:after{grid-column:auto}}
