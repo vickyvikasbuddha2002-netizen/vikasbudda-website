@@ -4,234 +4,158 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#050506">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/site.css">
+<title>Omvi, a desk companion that moves with you | Vikas Budda</title>
+<meta name="description" content="Omvi is an AI desk companion robot, designed and built by Vikas Budda, mechanical design engineer.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Vikas Budda">
-<meta property="og:title" content="Vikas Budda, Mechanical Design Engineer">
-<meta property="og:description" content="Mechanical design engineer in Bengaluru. Siemens NX, PMI and MBD, GD&T. Projects: Roam the desk robot and the Hydration Puck.">
+<meta property="og:title" content="Omvi, a desk companion that moves with you">
+<meta property="og:description" content="A product design and engineering project by Vikas Budda.">
 <meta property="og:url" content="https://buddavikasportfolio.com/">
 <meta property="og:image" content="https://buddavikasportfolio.com/assets/og.png">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Roam the robot next to the name Vikas Budda">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://buddavikasportfolio.com/assets/og.png">
 <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<script>try{if(sessionStorage.getItem('vbs'))document.documentElement.classList.add('ready','quick')}catch(e){}</script>
-<title>Vikas Budda, Mechanical Design Engineer</title>
-<meta name="description" content="Mechanical design engineer in Bengaluru. Siemens NX, PMI and MBD, GD&T, manufacturing drawings. Projects: Roam desk robot and Hydration Puck.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Sora:wght@300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/v2.css">
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script type="module" src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4/dist/model-viewer.min.js"></script>
 </head>
 <body>
-<div class="loader" aria-hidden="true"><div class="in"><div class="nm"><span>Vikas Budda</span><span>0%</span></div><div class="bar"><i></i></div></div></div>
 <a class="skip" href="#main">Skip to content</a>
-<div class="progress" aria-hidden="true"></div><div class="eyecur" aria-hidden="true"><i></i><i></i></div><div class="cglow" aria-hidden="true"></div>
-<header class="nav"><div class="bar">
-  <a class="brand" href="index.html">Vikas Budda</a>
-  <nav class="links" aria-label="Main"><a href="index.html#projects">Projects</a><a href="index.html#cad">CAD practice</a><a href="index.html#experience">Experience</a><a href="notes.html">Notes</a><a href="index.html#contact">Contact</a></nav>
-  <a class="btn sm pri" href="assets/vikas-budda-resume.pdf" target="_blank" rel="noopener">Resume</a>
-  <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">Menu</button>
-</div></header>
-<div class="menu" id="menu"><a href="index.html#projects">Projects</a><a href="index.html#cad">CAD practice</a><a href="index.html#experience">Experience</a><a href="notes.html">Notes</a><a href="index.html#contact">Contact</a><a class="small" href="assets/vikas-budda-resume.pdf" target="_blank" rel="noopener">Download resume</a></div>
+<header class="nav">
+  <a class="brand" href="#top">Omvi</a>
+  <nav aria-label="Main"><a href="#overview">Overview</a><a href="#abilities">Abilities</a><a href="#design">Design</a><a href="#engineering">Engineering</a><a href="#specs">Specs</a><a href="#about">About</a></nav>
+  <button class="snd" type="button" aria-pressed="false">Sound off</button>
+</header>
+
+<div class="horizon" aria-hidden="true"></div>
+<canvas id="roam" aria-label="Omvi, a desk companion robot, in 3D. Tap it to say hello."></canvas>
+
 <main id="main">
 
-<section class="hero" id="top">
-  <div class="grain"></div>
-  <div class="copy">
-    <h1 class="d split">Vikas Budda</h1>
-    <p class="tag" data-r style="--dl:.35s">Mechanical design engineer. Siemens NX, PMI and MBD, GD&amp;T.</p>
-    <div class="actions" data-r style="--dl:.5s">
-      <a class="btn pri" href="#projects">View projects <span class="ar">&rarr;</span></a>
-      <a class="btn" href="assets/vikas-budda-resume.pdf" target="_blank" rel="noopener">Download resume</a>
+<section class="intro" id="top">
+  <div class="pin">
+    <div class="hero">
+      <p class="eyebrow">R01, a project by Vikas Budda</p>
+      <h1 class="mega">Omvi</h1>
+      <p class="sub1">A desk companion<br>that moves with you.</p>
+      <p class="sub2">A small robot that brings presence, attention and a bit of personality to your everyday workspace.</p>
+      <div class="pills left"><a class="pill light" href="#overview">Explore the project</a><button class="pill ghost" type="button" data-act="hello">Say hello</button></div>
     </div>
-  </div>
-  <div class="stage" data-r="scale" style="--dl:.25s">
-    <div class="bubble" aria-live="polite"><span class="rm"></span><span class="en"></span></div>
-    <div class="halo"></div><canvas id="hero3d" aria-label="Roam, a small desk robot, in 3D"></canvas><div class="floor"></div>
-  </div>
-  <a class="cue" href="#projects" aria-label="Scroll to projects">SCROLL<i></i></a>
-</section>
-
-<div class="marquee" aria-hidden="true"><div class="t">
-  <span>Siemens NX</span><span>PMI and MBD</span><span>GD&amp;T</span><span>Manufacturing drawings</span><span>Teamcenter</span><span>CATIA V5</span><span>SolidWorks</span><span>3D printing</span>
-  <span>Siemens NX</span><span>PMI and MBD</span><span>GD&amp;T</span><span>Manufacturing drawings</span><span>Teamcenter</span><span>CATIA V5</span><span>SolidWorks</span><span>3D printing</span>
-</div></div>
-
-<section class="puck roamp" id="projects" aria-label="Project 01, Roam">
-  <div class="wrap">
-    <div>
-      <p class="kicker" data-r>Project 01</p>
-      <h2 class="d h2 split">Roam</h2>
-      <p class="sub" data-r style="--dl:.15s">A desk companion robot that knows its owner. It greets you by name, comes when you knock, guards your desk and wears accessories that give it new jobs.</p>
-      <span class="chip" data-r style="--dl:.25s"><i></i>Build in progress</span>
-      <div class="feats" data-stagger=".1">
-        <div><b data-count="37">0</b><span>Behaviours it can perform</span></div>
-        <div><b>Roamish</b><span>Its own language, with English captions</span></div>
-        <div><b>Knows you</b><span>Greets its owner by name, and misses them</span></div>
-      </div>
-      <div class="actions" data-r style="--dl:.2s">
-        <a class="btn pri" href="roam.html">Play with Roam <span class="ar">&rarr;</span></a>
-      </div>
-    </div>
-    <a class="view rview" href="roam.html" data-r="right" aria-label="Play with Roam">
-      <canvas id="roam3d" aria-label="Roam in 3D"></canvas>
-      <span class="tapme">Tap to play</span>
-      <div class="bubble" aria-live="polite"><span class="rm"></span><span class="en"></span></div>
-    </a>
+    <p class="cue" id="cue">Scroll</p>
   </div>
 </section>
 
-<section class="blog" id="build" aria-label="Roam build log">
-  <div class="wrap">
-    <div class="bhead">
-      <p class="kicker" data-r>Roam build log</p>
-      <h2 class="d h2 split">Now building.</h2>
-      <p class="sub" data-r style="--dl:.15s">Roam is a real robot I am building at my desk. This is where it stands today.</p>
-    </div>
-    <ol class="log"></ol>
+<section class="step" id="overview" data-step="overview" data-mood="calm">
+  <div class="txt"><p class="eyebrow">01 Overview</p><h2>A calmer, smarter workspace.</h2><p>Omvi notices you, moves with you and responds. A companion for long workdays, not another screen.</p></div>
+</section>
+
+<section class="step" id="abilities" data-step="see" data-mood="curious" data-follow="1">
+  <div class="txt"><p class="eyebrow">02 Abilities</p><h2>Sees and understands.</h2><p>It looks up when you sit down and follows you around the desk with its eyes.</p></div>
+  <div class="ctl"><p class="hint" data-fine>Move your cursor. Omvi is watching.</p><p class="hint" data-touch>Tap Omvi to say hello.</p></div>
+</section>
+
+<section class="step" data-step="knock" data-mood="listen">
+  <div class="txt"><p class="eyebrow">02 Abilities</p><h2>Moves with you.</h2><p>No wake word in a quiet office. Knock twice on the desk, and Omvi rolls over.</p></div>
+  <div class="ctl"><button class="pill" data-act="knock">Knock knock</button><p class="cap" aria-live="polite"></p><p class="hint">Or double-tap anywhere on this screen.</p></div>
+</section>
+
+<section class="step" data-step="talk" data-mood="listen">
+  <div class="txt"><p class="eyebrow">02 Abilities</p><h2>Talks and listens.</h2><p>Omvi answers in its own language, with English underneath.</p></div>
+  <div class="ctl">
+    <div class="pills left"><button class="pill" data-say="Hi Omvi">Hi Omvi</button><button class="pill" data-say="Tell me a joke">Tell me a joke</button><button class="pill" data-say="I'm stressed">I'm stressed</button><button class="pill" data-say="What can you do?">What can you do?</button></div>
+    <form class="ask"><label class="sr" for="q">Say something to Omvi</label><input id="q" autocomplete="off" placeholder="Say something to Omvi" maxlength="80"><button type="submit">Send</button></form>
+    <p class="cap big" aria-live="polite"></p>
+    <p class="note">Scripted demo. The real Omvi will reply through an AI model.</p>
   </div>
 </section>
 
-<section class="puck story" id="puck" aria-label="Project 02, Hydration Puck">
-  <div class="wrap">
-    <div class="stick"><div class="view">
-      <canvas id="puckmv" data-src="assets/hydration-puck.glb" camera-orbit="-60deg 62deg auto" aria-label="3D model of the Hydration Puck. Drag to turn it."></canvas>
-    </div></div>
-    <div class="chap">
-      <div class="intro">
-        <p class="kicker" data-r>Project 02</p>
-        <h2 class="d h2 split">Hydration Puck</h2>
-        <p class="sub" data-r style="--dl:.15s">A smart hydration tracker, designed in Siemens NX, wired and built by hand.</p>
+<section class="step" data-step="read" data-mood="focus">
+  <div class="txt"><p class="eyebrow">02 Abilities</p><h2>Helps you focus.</h2><p>It notices how you sit, how loud the room gets and how long you have been at it.</p></div>
+  <div class="ctl"><div class="pills left"><button class="pill" data-act="slouch">Slouch</button><button class="pill" data-act="situp">Sit up</button><button class="pill" data-act="loud">Get loud on a call</button><button class="pill" data-act="long">Work for 2 hours</button></div><p class="cap" aria-live="polite"></p></div>
+</section>
+
+<section class="step" data-step="guard" data-mood="guard" data-scan="1">
+  <div class="txt"><p class="eyebrow">02 Abilities</p><h2>Keeps watch.</h2><p>Step away, and Omvi guards your desk. It tells you who stopped by. Counts and times, never photos.</p></div>
+  <div class="ctl"><button class="pill" data-act="visitor">Walk up to the desk</button><p class="cap" aria-live="polite"></p></div>
+</section>
+
+<section class="step" data-step="mood" data-mood="happy">
+  <div class="txt"><p class="eyebrow">02 Abilities</p><h2>A face that feels.</h2><p>A full-colour face, so every mood has its own light.</p></div>
+  <div class="ctl"><div class="pills left">
+    <button class="pill" data-mood-set="calm"><i style="--c:#ffe2b8"></i>Calm</button><button class="pill" data-mood-set="happy"><i style="--c:#ffcf6e"></i>Happy</button><button class="pill" data-mood-set="curious"><i style="--c:#79e2ff"></i>Curious</button><button class="pill" data-mood-set="love"><i style="--c:#ff6b98"></i>Love</button><button class="pill" data-mood-set="focus"><i style="--c:#7cf2bd"></i>Focus</button><button class="pill" data-mood-set="sleepy"><i style="--c:#a493ff"></i>Sleepy</button><button class="pill" data-mood-set="sad"><i style="--c:#78a5ff"></i>Sad</button><button class="pill" data-mood-set="guard"><i style="--c:#ffa24a"></i>On guard</button><button class="pill" data-mood-set="surprised"><i style="--c:#f4f7ff"></i>Surprised</button>
+  </div></div>
+</section>
+
+<section class="step" id="design" data-step="design" data-mood="calm">
+  <div class="txt"><p class="eyebrow">03 Design</p><h2>Minimal form. Maximum presence.</h2><p>One soft sloped body, one glass face, wheels tucked into the sides. Calm on a desk, expressive when it needs to be.</p></div>
+</section>
+
+<section class="step" id="engineering" data-step="eng" data-mood="calm">
+  <div class="txt"><p class="eyebrow">04 Engineering</p><h2>Built with purpose.</h2><p>Designed in Siemens NX around real parts. Five shell parts, no visible screws.</p>
+    <ol class="parts"><li>Top touch pad</li><li>Face glass and display</li><li>Main shell</li><li>Drive wheels</li><li>Base</li></ol></div>
+</section>
+
+<section class="step" data-step="elec" data-mood="curious">
+  <div class="txt"><p class="eyebrow">05 Electronics</p><h2>Intelligence inside.</h2><p>Off-the-shelf parts, chosen so one person can build it.</p>
+    <dl class="kv"><div><dt>ESP32-S3</dt><dd>Main compute and camera</dd></div><div><dt>RP2040</dt><dd>Motors and sensors</dd></div><div><dt>Two microphones</dt><dd>Voice and knock direction</dd></div><div><dt>IMU and time-of-flight</dt><dd>Motion and distance</dd></div></dl></div>
+</section>
+
+<section class="step" id="specs" data-step="spec" data-mood="calm">
+  <div class="txt"><p class="eyebrow">06 Specs</p><h2>The details that matter.</h2>
+    <dl class="kv"><div><dt>Size</dt><dd>132 × 146 × 118 mm</dd></div><div><dt>Display</dt><dd>2-inch colour IPS, 240 × 320</dd></div><div><dt>Battery</dt><dd>One 18650 Li-ion, USB-C charging</dd></div><div><dt>Drive</dt><dd>Two N20 gear motors and casters</dd></div><div><dt>Shell</dt><dd>3D printed, sanded and painted</dd></div></dl>
+    <button class="pill light" data-act="ar">See it on your desk</button></div>
+</section>
+
+<div class="handoff" aria-hidden="true"></div>
+
+<section class="sheet" id="about">
+  <div class="w">
+    <p class="eyebrow">07 About</p>
+    <h2 class="big">A product design and engineering project.</h2>
+    <p class="lede2">I'm Vikas Budda, a mechanical design engineer in Bengaluru. I design products in Siemens NX and build them by hand. Omvi is the one I'm building now.</p>
+
+    <h3 class="sec">Other work</h3>
+    <article class="proj">
+      <div class="pv"><model-viewer src="assets/hydration-puck.glb" alt="3D model of the Hydration Puck" camera-controls disable-zoom auto-rotate rotation-per-second="14deg" interaction-prompt="none" environment-image="neutral" exposure="1.1" shadow-intensity="0.7" camera-orbit="-40deg 66deg auto" loading="lazy"></model-viewer></div>
+      <div class="pt">
+        <h4>Hydration Puck</h4>
+        <p>Put any bottle on it, and it counts every sip by weight. Designed in Siemens NX, printed on a Bambu Lab A1 and wired by hand.</p>
+        <a class="lnk" href="assets/hydration-puck.pdf" target="_blank" rel="noopener">Read the case study</a>
       </div>
-      <div class="pstep" data-orbit="-60deg 62deg auto"><span class="n">The problem</span><h3>People forget to drink water.</h3><p>Apps and wearables ask for too much. Most people already keep a bottle on the desk.</p></div>
-      <div class="pstep" data-orbit="25deg 72deg auto"><span class="n">The idea</span><h3>Turn any bottle into a smart one.</h3><p>Put the bottle on the puck. That is the whole setup.</p></div>
-      <div class="pstep" data-orbit="110deg 52deg auto"><span class="n">How it works</span><h3>Lift, sip, set it down.</h3><p>The puck weighs the bottle before and after. Lighter means a sip. Heavier means a refill, so nothing is counted.</p></div>
-      <div class="pstep" data-orbit="190deg 76deg auto"><span class="n">The build</span><h3>Designed in Siemens NX. Printed on a Bambu Lab A1. Wired by hand.</h3><p>Every enclosure part and internal mount was modelled for fit and printing, then assembled and tested.</p></div>
-      <div class="pstep" data-orbit="270deg 64deg auto"><span class="n">The result</span><h3>Every sip, logged.</h3><p>Daily intake, sips and achievements on its own screen, plus a phone dashboard over its own Wi-Fi.</p></div>
-      <div class="outro">
-        <div class="feats" data-stagger=".1">
-          <div><b>Siemens NX</b><span>Enclosure designed for fit and DFM</span></div>
-          <div><b>Electronics</b><span>Sensor and display integrated</span></div>
-          <div><b>Prototypes</b><span>Several 3D-printed rounds</span></div>
-        </div>
-        <div class="actions" data-r style="--dl:.2s">
-          <button class="btn pri" type="button" data-open-model="assets/hydration-puck.glb" data-title="Hydration Puck">Explore in 3D <span class="ar">&rarr;</span></button>
-          <a class="btn" href="assets/hydration-puck.pdf" target="_blank" rel="noopener">Read the case study</a>
-        </div>
-      </div>
-    </div>
+    </article>
+
+    <h3 class="sec">CAD practice</h3>
+    <ul class="rows" id="cad"></ul>
+
+    <h3 class="sec">Experience</h3>
+    <ul class="rows xp">
+      <li><div><b>Mechanical Engineer</b><span>Source Engineering Services and Technology</span></div><p>Parametric parts and assemblies in Siemens NX, PMI for model-based definition, manufacturing drawings with GD&amp;T, ECRs and ECNs in Teamcenter.</p><time>Dec 2025 to present</time></li>
+      <li><div><b>Design Engineer</b><span>Taal Tech</span></div><p>Aircraft interior components in CATIA V5 and SolidWorks, sheet metal and machined parts, drawings for production, Excel VBA that cut documentation time by 30%.</p><time>Jun 2023 to Sep 2025</time></li>
+    </ul>
+    <p class="tools">Siemens NX, PMI and MBD, GD&amp;T, Teamcenter, CATIA V5, SolidWorks, 3D printing</p>
+    <p class="more"><a class="lnk" href="notes.html">Engineering notes</a><a class="lnk" href="assets/vikas-budda-resume.pdf" target="_blank" rel="noopener">Resume</a></p>
   </div>
 </section>
 
-<section class="practice" id="cad">
-  <div class="wrap">
-    <div class="shead"><div><p class="kicker" data-r>Practice</p><h2 class="d h2 split">CAD practice</h2></div><p class="sub" data-r style="margin:0;max-width:30ch">Parts and assemblies I model to sharpen my skills. Drag to explore, tap to open in 3D.</p></div>
-    <div class="track" id="track"></div>
-    <div class="trackbar"><i></i></div>
-    <p class="legal">Shown to demonstrate personal skill. Rights to original components, concepts and proprietary data remain with their owners.</p>
+<section class="sheet contact" id="contact">
+  <div class="w">
+    <h2 class="big">Let's build something.</h2>
+    <a class="mail" href="mailto:vickyvikasbuddha2002@gmail.com">vickyvikasbuddha2002@gmail.com</a>
+    <div class="pills left"><button class="pill light" data-copy="vickyvikasbuddha2002@gmail.com">Copy email</button><a class="pill" href="assets/vikas-budda-resume.pdf" target="_blank" rel="noopener">Download resume</a></div>
   </div>
-</section>
-
-<section class="xp" id="experience">
-  <div class="wrap">
-    <div>
-      <p class="kicker" data-r>Career</p>
-      <h2 class="d h2 split" style="font-size:clamp(40px,5vw,72px)">Experience</h2>
-      <div class="tl">
-        <div class="rail"></div><div class="fill"></div>
-        <div class="job" data-r>
-          <h3>Mechanical Engineer</h3>
-          <p class="when">Dec 2025 to present</p>
-          <p class="org">Source Engineering Services and Technology, Bengaluru</p>
-          <ul>
-            <li>1:1 parametric parts and assemblies in Siemens NX, true to design intent.</li>
-            <li>PMI in NX for model-based definition: 3D dimensions, GD&amp;T, datums, finish.</li>
-            <li>Manufacturing drawings with full GD&amp;T and BOM tables, released to the shop.</li>
-            <li>Customer STEP files remastered into native parametric NX models.</li>
-            <li>BOM and DiaBOM updates, ECRs and ECNs with full traceability.</li>
-            <li>Special purpose machine taken from concept to layout in SolidWorks.</li>
-          </ul>
-          <div class="tags"><span>Siemens NX</span><span>PMI / MBD</span><span>GD&amp;T</span><span>Teamcenter</span><span>ECR / ECN</span></div>
-        </div>
-        <div class="job" data-r>
-          <h3>Design Engineer</h3>
-          <p class="when">Jun 2023 to Sep 2025</p>
-          <p class="org">Taal Tech, Bengaluru</p>
-          <ul>
-            <li>Aircraft interior components in CATIA V5 and SolidWorks, fit-checked to FAA standards.</li>
-            <li>Sheet metal and machined parts in Part Design and Generative Sheet Metal.</li>
-            <li>Manufacturing and assembly drawings with GD&amp;T for production.</li>
-            <li>Part data, revisions and configuration in Enovia SmarTeam.</li>
-            <li>Material, additive manufacturing and fire containment reports for FAA flammability.</li>
-            <li>Excel VBA automation that cut documentation time by 30%.</li>
-          </ul>
-          <div class="tags"><span>CATIA V5</span><span>SolidWorks</span><span>Sheet metal</span><span>SmarTeam</span><span>Excel VBA</span></div>
-        </div>
-      </div>
-    </div>
-    <div>
-      <p class="kicker" data-r>Toolkit</p>
-      <h2 class="d h2 split" style="font-size:clamp(40px,5vw,72px)">Skills</h2>
-      <dl class="spec" data-stagger=".06">
-        <div><dt>Primary CAD</dt><dd>Siemens NX: parametric parts, assemblies, drafting, PMI</dd></div>
-        <div><dt>Other CAD</dt><dd>SolidWorks, CATIA V5, AutoCAD, Blender</dd></div>
-        <div><dt>MBD and drawings</dt><dd>PMI, model-based definition, GD&amp;T to ASME Y14.5</dd></div>
-        <div><dt>PLM and BOM</dt><dd>Teamcenter, Enovia SmarTeam, 3DEXPERIENCE, ECR and ECN</dd></div>
-        <div><dt>Manufacturing</dt><dd>DFM, 3D printing on a Bambu Lab A1, ANSYS structural</dd></div>
-        <div><dt>Automation</dt><dd>NX macros, CATIA VBA, Excel VBA</dd></div>
-      </dl>
-      <div class="edu" data-r>
-        <h4>Education</h4>
-        <ul>
-          <li><span>B.Tech, Mechanical Engineering, NSRIT Visakhapatnam</span><span>2020 to 2023</span></li>
-          <li><span>Diploma, Mechanical Engineering, Sai Ganapathi Polytechnic</span><span>2017 to 2020</span></li>
-        </ul>
-      </div>
-      <div class="edu" data-r>
-        <h4>Certificates</h4>
-        <ul id="certs"></ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="notes" id="notes">
-  <div class="wrap">
-    <div class="shead"><div><p class="kicker" data-r>Writing</p><h2 class="d h2 split">Notes</h2></div><a class="link" href="notes.html" data-r>View all notes <span class="ar">&rarr;</span></a></div>
-    <div class="ngrid" id="ngrid" data-limit="3"></div>
-  </div>
-</section>
-
-<section class="cta" id="contact">
-  <div class="wrap">
-    <h2 class="d h2 split">Let's build something.</h2>
-    <a class="mail" href="mailto:vickyvikasbuddha2002@gmail.com" data-r>vickyvikasbuddha2002@gmail.com</a>
-    <p class="sub hsub" data-r>Open to mechanical design roles. Pick whatever is easiest for you.</p>
-    <div class="hire" data-stagger=".08">
-      <button class="hcard" type="button" data-copy="vickyvikasbuddha2002@gmail.com"><b>Copy email</b><span>vickyvikasbuddha2002@gmail.com</span></button>
-      <a class="hcard" href="assets/vikas-budda-resume.pdf" download="Vikas-Budda-Resume.pdf"><b>Download resume</b><span>One page PDF</span></a>
-      <a class="hcard" href="https://wa.me/916303375509?text=Hi%20Vikas%2C%20I%20saw%20your%20portfolio." target="_blank" rel="noopener"><b>WhatsApp</b><span>+91 63033 75509</span></a>
-      <a class="hcard" href="https://www.linkedin.com/in/vikas-budda" target="_blank" rel="noopener"><b>LinkedIn</b><span>in/vikas-budda</span></a>
-    </div>
-  </div>
-  <div class="horizon" aria-hidden="true"></div>
+  <footer class="w"><span>Omvi, a project by Vikas Budda</span><span>© <span id="year">2026</span></span></footer>
 </section>
 </main>
-<div class="toast" role="status" aria-live="polite"></div>
-<footer><div class="wrap"><span><b>Vikas Budda</b></span><span>Mechanical design engineer, Bengaluru</span><span>© <span id="year">2026</span> Vikas Budda</span></div></footer>
-<dialog class="viewer" id="viewer" aria-label="3D model viewer">
-  <header><h3></h3><button class="btn sm close" type="button">Close</button></header>
-  <model-viewer camera-controls auto-rotate rotation-per-second="12deg" environment-image="neutral" exposure="1.1" shadow-intensity="1"></model-viewer>
-  <span class="hint">Drag to rotate. Pinch or scroll to zoom.</span>
-</dialog>
-<script src="js/roam-model.js"></script>
-<script src="js/robot.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-<script src="js/puck3d.js"></script>
+
+<dialog class="mv" id="mv"><button class="x" type="button" aria-label="Close">Close</button><p class="mvt"></p><model-viewer id="mvm" camera-controls auto-rotate interaction-prompt="none" environment-image="neutral" exposure="1.1" shadow-intensity="0.8" ar ar-modes="webxr scene-viewer quick-look"></model-viewer></dialog>
+<div class="toast" role="status"></div>
+
 <script src="js/data.js"></script>
-<script src="js/site.js"></script>
+<script src="js/roam2.js"></script>
+<script src="js/home2.js"></script>
 </body>
 </html>
