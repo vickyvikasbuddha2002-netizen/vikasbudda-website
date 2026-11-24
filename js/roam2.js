@@ -59,40 +59,73 @@
 
     var bot = new T.Group(); S.add(bot);
     var body = new T.Group(); bot.add(body);
-    /* body: one soft shell, near-vertical face, rear rolling down to the wheels (offset 12 mm by the bevel) */
-    var p = new T.Shape(); p.moveTo(-40, 29); p.lineTo(40, 29); p.lineTo(36, 114); p.quadraticCurveTo(35, 128, 20, 128); p.lineTo(-4, 128);
-    p.bezierCurveTo(-32, 128, -50, 96, -50, 54); p.quadraticCurveTo(-50, 29, -40, 29);
-    var bg = new T.ExtrudeGeometry(p, { depth: 84, bevelEnabled: true, bevelThickness: 12, bevelSize: 12, bevelSegments: 14, curveSegments: 48 }); bg.translate(0, 0, -42); bg.rotateY(-Math.PI / 2); bg.computeVertexNormals();
+    /* body: a tapered pod. Rounded-rect sections lofted from a wide base to a narrower top,
+       face leaning back a little, back leaning in more, big rolled fillet into the top. */
+    var Y0 = 14, Y1 = 150, RT = 24, RB = 5;
+    function sec(y) {
+      var u = (y - Y0) / (Y1 - Y0), hw = 59 - 10 * u, zf = 58 - 6 * u, zb = -66 + 16 * u, r = 15 - 2 * u, ins = 0;
+      if (y > Y1 - RT) { var d = y - (Y1 - RT); ins = RT - Math.sqrt(Math.max(0, RT * RT - d * d)); }
+      if (y < Y0 + RB) { var e = Y0 + RB - y; ins = RB - Math.sqrt(Math.max(0, RB * RB - e * e)); }
+      var k = Math.max(.05, Math.min((hw - ins) / hw, ((zf - zb) / 2 - ins) / ((zf - zb) / 2)));
+      return { hw: hw - ins, zf: zf - ins, zb: zb + ins, r: r * k };
+    }
+    function ring(c, y) {
+      var K = 12, Mn = 10, pts = [], cs = [[c.hw - c.r, c.zf - c.r, 0], [-c.hw + c.r, c.zf - c.r, 1], [-c.hw + c.r, c.zb + c.r, 2], [c.hw - c.r, c.zb + c.r, 3]];
+      for (var i = 0; i < 4; i++) {
+        var q = cs[i], nq = cs[(i + 1) % 4];
+        for (var j = 0; j <= K; j++) { var t = (q[2] + j / K) * Math.PI / 2; pts.push(q[0] + Math.cos(t) * c.r, y, q[1] + Math.sin(t) * c.r); }
+        var t1 = (q[2] + 1) * Math.PI / 2, sx = q[0] + Math.cos(t1) * c.r, sz = q[1] + Math.sin(t1) * c.r, ex2 = nq[0] + Math.cos(t1) * c.r, ez = nq[1] + Math.sin(t1) * c.r;
+        for (var m = 1; m <= Mn; m++) { var f = m / (Mn + 1); pts.push(sx + (ex2 - sx) * f, y, sz + (ez - sz) * f); }
+      }
+      return pts;
+    }
+    var ys = [], i2;
+    for (i2 = 0; i2 <= 6; i2++) ys.push(Y0 + RB - RB * Math.cos(i2 / 6 * Math.PI / 2));
+    for (i2 = 1; i2 < 30; i2++) ys.push(Y0 + RB + (Y1 - RT - Y0 - RB) * i2 / 30);
+    for (i2 = 0; i2 <= 22; i2++) ys.push(Y1 - RT + RT * Math.sin(i2 / 22 * Math.PI / 2));
+    var pos = [], idx = [], NR = 0;
+    ys.forEach(function (y) { var r0 = ring(sec(y), y); NR = r0.length / 3; pos.push.apply(pos, r0); });
+    for (var a1 = 0; a1 < ys.length - 1; a1++) for (var b1 = 0; b1 < NR; b1++) {
+      var p0 = a1 * NR + b1, p1 = a1 * NR + (b1 + 1) % NR, p2 = p0 + NR, p3 = p1 + NR; idx.push(p0, p2, p1, p1, p2, p3);
+    }
+    var top = sec(Y1), cTop = pos.length / 3; pos.push(0, Y1, (top.zf + top.zb) / 2);
+    var lastR = (ys.length - 1) * NR; for (b1 = 0; b1 < NR; b1++) idx.push(lastR + b1, cTop, lastR + (b1 + 1) % NR);
+    var cBot = pos.length / 3; pos.push(0, Y0, -4); for (b1 = 0; b1 < NR; b1++) idx.push(b1, (b1 + 1) % NR, cBot);
+    var bg = new T.BufferGeometry(); bg.setAttribute('position', new T.Float32BufferAttribute(pos, 3)); bg.setIndex(idx); bg.computeVertexNormals();
     shell.userData.env = .32; base.userData.env = .35; disc.userData.env = .38;
     var hull = new T.Mesh(bg, shell); hull.castShadow = hull.receiveShadow = true; body.add(hull);
-    var band = slab(96, 92, 13, 16, 4, base); band.rotation.x = -Math.PI / 2; band.position.set(0, 9.5, 0); body.add(band);
-    [-1, 1].forEach(function (s) { var c = cyl(5, 5, 6, tyre, 24); c.position.set(s * 28, 3, 34); body.add(c); });
-    /* face module: glass, screen, eyes, camera; leans back with the front */
-    var fg = new T.Group(); fg.position.set(0, 80, 49.6); fg.rotation.x = -.047; body.add(fg);
-    var gl = slab(82, 66, 1.6, 14, .7, glass); gl.position.z = .9; fg.add(gl);
-    var scr = slab(58, 46, .2, 3, 0, M(0x0d0e10, .55)); scr.position.set(0, -3, 1.75); fg.add(scr);
+    var band = slab(110, 114, 11, 18, 3, base); band.rotation.x = -Math.PI / 2; band.position.set(0, 8.5, -3); body.add(band);
+    [-1, 1].forEach(function (s) { var c = cyl(5, 5, 6, tyre, 24); c.position.set(s * 30, 3, 40); body.add(c); });
+    /* face module: big glass, darker screen, eyes, camera; leans back with the face */
+    var LEAN = Math.atan(6 / 136), zAt = function (y) { return 58 - 6 * (y - Y0) / (Y1 - Y0); };
+    var fg = new T.Group(); fg.position.set(0, 87, zAt(87)); fg.rotation.x = -LEAN; body.add(fg);
+    var gl = slab(88, 76, 1.6, 15, .7, glass); gl.position.z = .9; fg.add(gl);
+    var scr = slab(58, 47, .2, 3, 0, M(0x101113, .55)); scr.position.set(0, -3, 1.75); fg.add(scr);
     var fc = document.createElement('canvas'); fc.width = 640; fc.height = 468; var fx = fc.getContext('2d');
     var off = document.createElement('canvas'); off.width = 640; off.height = 468; var ox = off.getContext('2d');
     var ftex = new T.CanvasTexture(fc); ftex.encoding = T.sRGBEncoding;
     var face = new T.Mesh(new T.PlaneGeometry(76, 55.6), new T.MeshBasicMaterial({ map: ftex, transparent: true, depthWrite: false, toneMapped: false })); face.position.set(0, -3, 1.9); fg.add(face);
-    var camR = cyl(3.4, 3.4, 1.2, graph, 32); camR.rotation.x = Math.PI / 2; camR.position.set(0, 27, 1.9); fg.add(camR);
-    var camL = cyl(2, 2, 1.4, dark, 24); camL.rotation.x = Math.PI / 2; camL.position.set(0, 27, 2.2); fg.add(camL);
-    var pill = slab(30, 10, 1.6, 5, .7, glass); pill.position.set(0, 32, 52.6); pill.rotation.x = -.047; body.add(pill);
-    [-7.5, 7.5].forEach(function (x) { var l = cyl(2.1, 2.1, 1.2, graph, 20); l.rotation.x = Math.PI / 2; l.position.set(x, 0, .8); pill.add(l); });
-    var padM = slab(44, 30, 1.2, 8, .5, pad); padM.rotation.x = -Math.PI / 2; padM.position.set(0, 140.4, 7); body.add(padM);
-    var led = new T.Mesh(new T.CircleGeometry(.9, 16), new T.MeshBasicMaterial({ color: 0xffffff })); led.rotation.x = -Math.PI / 2; led.position.set(0, 141.1, 18); body.add(led);
-    var wheels = [], WX = 55;
+    var camR = cyl(3.8, 3.8, 1.2, graph, 32); camR.rotation.x = Math.PI / 2; camR.position.set(0, 30.5, 1.9); fg.add(camR);
+    var camL = cyl(2.3, 2.3, 1.4, dark, 24); camL.rotation.x = Math.PI / 2; camL.position.set(0, 30.5, 2.2); fg.add(camL);
+    var pill = slab(28, 12, 1.6, 6, .7, glass); pill.position.set(0, 28, zAt(28) + .9); pill.rotation.x = -LEAN; body.add(pill);
+    [-7.5, 7.5].forEach(function (x) { var l = cyl(2.4, 2.4, 1.2, graph, 20); l.rotation.x = Math.PI / 2; l.position.set(x, 0, .8); pill.add(l); });
+    var padM = slab(46, 32, 1.2, 8, .5, pad); padM.rotation.x = -Math.PI / 2; padM.position.set(0, 150.4, 6); body.add(padM);
+    var led = new T.Mesh(new T.CircleGeometry(.9, 16), new T.MeshBasicMaterial({ color: 0xffffff })); led.rotation.x = -Math.PI / 2; led.position.set(0, 151.1, 18); body.add(led);
+    /* wheels at the rear, each in an arch grooved into the side */
+    var wheels = [], WX = 58.6, WY = 31.8, WZ = -36, TILT = Math.atan(10 / 136);
     [-1, 1].forEach(function (s) {
-      var w = new T.Group(); w.position.set(s * WX, 30.5, -30); bot.add(w);
-      var t = new T.Mesh(new T.TorusGeometry(26.5, 4, 24, 96), tyre); t.rotation.y = Math.PI / 2; t.castShadow = true; w.add(t);
-      var d = cyl(27.4, 27.4, 7, disc, 96); d.rotation.z = Math.PI / 2; d.position.x = s * 1.2; w.add(d);
-      var lip = new T.Mesh(new T.TorusGeometry(27.2, .9, 12, 96), disc); lip.rotation.y = Math.PI / 2; lip.position.x = s * 4.7; w.add(lip);
+      var w = new T.Group(); w.position.set(s * WX, WY, WZ); bot.add(w);
+      var t = new T.Mesh(new T.TorusGeometry(27.6, 4.2, 24, 96), tyre); t.rotation.y = Math.PI / 2; t.castShadow = true; w.add(t);
+      var d = cyl(28.2, 28.2, 6, disc, 96); d.rotation.z = Math.PI / 2; d.position.x = s * 1.6; w.add(d);
+      var lip = new T.Mesh(new T.TorusGeometry(28, .9, 12, 96), disc); lip.rotation.y = Math.PI / 2; lip.position.x = s * 4.6; w.add(lip);
       wheels.push(w);
+      var ag = new T.TorusGeometry(33.6, 1.7, 12, 96, 4.06); ag.rotateZ(-.46); ag.rotateY(Math.PI / 2);
+      var arch = new T.Mesh(ag, M(0x1d1d1f, .85)); arch.position.set(s * (sec(WY).hw - .5), WY, WZ); arch.rotation.z = s * TILT; body.add(arch);
     });
 
     [fg, pill].forEach(function (m) { m.userData.z0 = m.position.z; });
     /* accessories */
-    var acc = new T.Group(); acc.position.set(0, 141, 7); body.add(acc);
+    var acc = new T.Group(); acc.position.set(0, 151, 6); body.add(acc);
     var A = {};
     (function () {
       var g = new T.Group(); var pot = cyl(12, 10, 16, graph, 40); pot.position.y = 8; g.add(pot);
@@ -206,9 +239,9 @@
       var sp = clock - spinT, so = sp < 1.2 ? (function (u) { return u * u * (3 - 2 * u); })(sp / 1.2) * Math.PI * 2 : 0;
       bot.position.set(pose.x, pose.lift + bo, pose.z); bot.rotation.y = pose.yaw + wo + so; body.rotation.x = pose.tilt;
       var dz = (pose.z - pz) * Math.cos(pose.yaw) + (pose.x - px) * Math.sin(pose.yaw), dy = (pose.yaw - py) + (sp < 1.2 ? 0 : 0);
-      wheels[0].rotation.x += dz / 30 + dy * 2.2; wheels[1].rotation.x += dz / 30 - dy * 2.2;
+      wheels[0].rotation.x += dz / 32 + dy * 2.2; wheels[1].rotation.x += dz / 32 - dy * 2.2;
       var ex = pose.ex; [fg, pill].forEach(function (m) { m.position.z = m.userData.z0 + ex * 70; });
-      padM.position.y = 140.4 + ex * 20; led.position.y = 141.1 + ex * 20; band.position.y = 9.5 - ex * 16; acc.visible = ex < .05;
+      padM.position.y = 150.4 + ex * 20; led.position.y = 151.1 + ex * 20; band.position.y = 8.5 - ex * 16; acc.visible = ex < .05;
       wheels[0].position.x = -WX - ex * 46; wheels[1].position.x = WX + ex * 46;
       contact.position.set(pose.x, .3, pose.z - 6); contact.scale.setScalar(1 + bo / 60);
       key.target = bot;
