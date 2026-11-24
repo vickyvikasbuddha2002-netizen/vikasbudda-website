@@ -46,8 +46,8 @@
   function view(n) { var v = VIEWS[n] || VIEWS.step, m = innerWidth / innerHeight < .9; camT.d = m ? v[3] : v[0]; camT.x = m ? v[4] : v[1]; camT.y = m ? v[5] : v[2]; }
   R.frame(function (a) {
     var k = RM ? 1 : .05; cam.d += (camT.d - cam.d) * k; cam.x += (camT.x - cam.x) * k; cam.y += (camT.y - cam.y) * k;
-    var base = a < .9 ? 640 / a : Math.max(720, 520 / a), d = base * cam.d, hh = .194 * d;
-    return { d: d, y: 64, ty: 64 - cam.y * hh, ox: -cam.x * hh * a };
+    var base = a < .9 ? 520 / a : Math.max(580, 420 / a), d = base * cam.d, hh = .194 * d;
+    return { d: d, y: 40, ty: 58 - cam.y * hh, ox: -cam.x * hh * a };
   });
   view('hero');
   /* reveal: lights come up out of the dark, then it wakes */
