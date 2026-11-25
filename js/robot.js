@@ -34,19 +34,19 @@ window.RoamStage = (function () {
       try { var pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(es, 0.04).texture; pm.dispose(); } catch (e) {}
     })();
     scene.add(new THREE.HemisphereLight(0xdfe6ff, 0x05060a, 0.25));
-    var key = new THREE.DirectionalLight(0xffffff, 1.5); key.position.set(-240, 520, 420); scene.add(key);
-    var fill = new THREE.DirectionalLight(0xdfe6ff, 0.5); fill.position.set(320, 200, 300); scene.add(fill);
+    var key = new THREE.DirectionalLight(0xffffff, 0.95); key.position.set(-240, 520, 420); scene.add(key);
+    var fill = new THREE.DirectionalLight(0xdfe6ff, 0.3); fill.position.set(320, 200, 300); scene.add(fill);
     var rim = new THREE.PointLight(0x4a68ff, 3.2, 900, 1.5); rim.position.set(120, 140, -220); scene.add(rim);
     var rim2 = new THREE.PointLight(0x6f86ff, 1.2, 700, 1.6); rim2.position.set(-200, 60, -160); scene.add(rim2);
 
     /* Roam v2: a rounded head on a turning, tilting neck, above a soft wheeled body (terracotta or sage) */
     var PAL = { terracotta: 0xC9764A, sage: 0xA8B596 };
-    var mShell = new THREE.MeshPhysicalMaterial({ color: PAL.terracotta, roughness: 0.72, metalness: 0, clearcoat: 0.05, clearcoatRoughness: 0.6, envMapIntensity: 0.22 });
+    var mShell = new THREE.MeshStandardMaterial({ color: PAL.terracotta, roughness: 0.8, metalness: 0, envMapIntensity: 0.12 });
     var mTub = mShell; mShell.color.convertSRGBToLinear();
     var eye = document.createElement('canvas'); eye.width = 320; eye.height = 240; var eg = eye.getContext('2d'), eyeTex = new THREE.CanvasTexture(eye); eyeTex.encoding = THREE.sRGBEncoding;
     var mVisor = new THREE.MeshPhysicalMaterial({ color: 0x030304, roughness: 0.04, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.2, emissive: 0xffffff, emissiveMap: eyeTex, emissiveIntensity: 1.4 });
     var mDark = new THREE.MeshPhysicalMaterial({ color: 0x0b0b0c, roughness: 0.6, clearcoat: 0, envMapIntensity: 0.12 });
-    var mRubber = new THREE.MeshPhysicalMaterial({ color: 0x0c0c0d, roughness: 0.8, metalness: 0, envMapIntensity: 0.35 });
+    var mRubber = new THREE.MeshPhysicalMaterial({ color: 0x141315, roughness: 0.7, metalness: 0, envMapIntensity: 0.3 });
     var root = new THREE.Group(), GR = { base: new THREE.Group(), mid: new THREE.Group(), face: new THREE.Group(), shell: new THREE.Group(), glass: new THREE.Group() };
     Object.keys(GR).forEach(function (k) { root.add(GR[k]); }); scene.add(root);
     function rrS(w, h, r) { var sh = new THREE.Shape(), x = -w / 2, y = -h / 2; r = Math.min(r, w / 2, h / 2); sh.moveTo(x + r, y); sh.lineTo(x + w - r, y); sh.absarc(x + w - r, y + r, r, -Math.PI / 2, 0, false); sh.lineTo(x + w, y + h - r); sh.absarc(x + w - r, y + h - r, r, 0, Math.PI / 2, false); sh.lineTo(x + r, y + h); sh.absarc(x + r, y + h - r, r, Math.PI / 2, Math.PI, false); sh.lineTo(x, y + r); sh.absarc(x + r, y + r, r, Math.PI, Math.PI * 1.5, false); return sh; }
@@ -56,35 +56,42 @@ window.RoamStage = (function () {
       for (i = 0; i < n; i++) { var v = acc[key(i)].clone().normalize(); N[i * 3] = v.x; N[i * 3 + 1] = v.y; N[i * 3 + 2] = v.z; } g.setAttribute('normal', new THREE.BufferAttribute(N, 3)); }
     function arc(cx, cy, r, a0, a1, n) { var o = []; for (var i = 0; i <= n; i++) { var a = a0 + (a1 - a0) * i / n; o.push(new THREE.Vector2(cx + r * Math.cos(a), cy + r * Math.sin(a))); } return o; }
     function tread(m, q) { var tg = new THREE.BoxGeometry(0.5, q.h * 0.7, 1); for (var i = 0; i < 64; i++) { var a = i / 64 * Math.PI * 2, b = new THREE.Mesh(tg, mRubber); b.position.set(Math.cos(a) * (q.r + 0.12), 0, Math.sin(a) * (q.r + 0.12)); b.rotation.y = -a; m.add(b); } }
-    // body: soft rounded tub, slightly wider at the bottom
-    var bodyG = rbox(80, 44, 66, 15); var bp = bodyG.attributes.position;
-    for (var i = 0; i < bp.count; i++) { var yy = bp.getY(i), k = 1 + 0.06 * (-yy / 22); bp.setX(i, bp.getX(i) * k); bp.setZ(i, bp.getZ(i) * (1 + 0.04 * (-yy / 22))); }
+    // body: soft rounded tub, short, under a bigger head
+    var bodyG = rbox(80, 44, 70, 16); var bp = bodyG.attributes.position;
+    for (var i = 0; i < bp.count; i++) { var yy = bp.getY(i), k = 1 + 0.05 * (-yy / 22); bp.setX(i, bp.getX(i) * k); bp.setZ(i, bp.getZ(i) * (1 + 0.03 * (-yy / 22))); }
     smooth(bodyG);
-    var body = new THREE.Mesh(bodyG, mShell); body.position.y = 27; GR.base.add(body);
-    var bar = new THREE.Mesh(new THREE.ExtrudeGeometry(rrS(15, 2.6, 1.3), { depth: 0.6, bevelEnabled: false }), new THREE.MeshBasicMaterial({ color: 0xffffff })); bar.position.set(0, 24, 35.4); GR.base.add(bar);
+    var body = new THREE.Mesh(bodyG, mShell); body.position.y = 29; GR.base.add(body);
+    var plate = new THREE.Mesh(rbox(70, 4, 60, 2), mDark); plate.position.y = 7.5; GR.base.add(plate);
+    var bar = new THREE.Mesh(new THREE.ExtrudeGeometry(rrS(16, 2.6, 1.3), { depth: 0.6, bevelEnabled: false }), new THREE.MeshBasicMaterial({ color: 0xffffff })); bar.position.set(0, 26, 37.4); GR.base.add(bar);
     var wheels = [];
     [-1, 1].forEach(function (sd) {
-      var g = new THREE.Group(); g.position.set(sd * 40, 0, 10); GR.base.add(g);
-      var piv = new THREE.Group(); piv.position.set(0, 19, 0); g.add(piv); wheels.push(piv);
-      var q = { r: 19, h: 12 };
-      var tp = arc(q.r - 3, -q.h / 2 + 3, 3, -Math.PI / 2, 0, 6).concat(arc(q.r - 3, q.h / 2 - 3, 3, 0, Math.PI / 2, 6)); tp.unshift(new THREE.Vector2(q.r - 5, -q.h / 2)); tp.push(new THREE.Vector2(q.r - 5, q.h / 2));
-      var ty = new THREE.Mesh(new THREE.LatheGeometry(tp, 56), mRubber); ty.rotation.z = Math.PI / 2; tread(ty, q); piv.add(ty);
-      var hub = new THREE.Mesh(new THREE.CylinderGeometry(q.r - 4.5, q.r - 4.5, q.h - 1, 48), mDark); hub.rotation.z = Math.PI / 2; piv.add(hub);
-      var cap = new THREE.Mesh(new THREE.CylinderGeometry(q.r - 7, q.r - 7, 1, 48), new THREE.MeshPhysicalMaterial({ color: 0x1c1c1f, roughness: 0.3, clearcoat: 0.8, envMapIntensity: 0.8 })); cap.rotation.z = Math.PI / 2; cap.position.x = sd * (q.h / 2); piv.add(cap);
+      var g = new THREE.Group(); g.position.set(sd * 41, 0, 6); GR.base.add(g);
+      var piv = new THREE.Group(); piv.position.set(0, 25, 0); g.add(piv); wheels.push(piv);
+      var q = { r: 25, h: 15 };
+      var tp = arc(q.r - 4, -q.h / 2 + 4, 4, -Math.PI / 2, 0, 8).concat(arc(q.r - 4, q.h / 2 - 4, 4, 0, Math.PI / 2, 8)); tp.unshift(new THREE.Vector2(q.r - 6, -q.h / 2)); tp.push(new THREE.Vector2(q.r - 6, q.h / 2));
+      var ty = new THREE.Mesh(new THREE.LatheGeometry(tp, 64), mRubber); ty.rotation.z = Math.PI / 2; piv.add(ty);
+      var hub = new THREE.Mesh(new THREE.CylinderGeometry(q.r - 5.5, q.r - 5.5, q.h - 1.4, 56), mDark); hub.rotation.z = Math.PI / 2; piv.add(hub);
+      var cap = new THREE.Mesh(new THREE.CylinderGeometry(q.r - 8, q.r - 8, 1, 56), new THREE.MeshPhysicalMaterial({ color: 0x18181a, roughness: 0.35, clearcoat: 0.6, envMapIntensity: 0.4 })); cap.rotation.z = Math.PI / 2; cap.position.x = sd * (q.h / 2 - 0.2); piv.add(cap);
     });
-    // neck: rotating base ring + tilt joint (dark graphite)
-    var neck = new THREE.Mesh(new THREE.CylinderGeometry(15, 17, 7, 48), mDark); neck.position.y = 52.5; GR.mid.add(neck);
-    var ringT = new THREE.Mesh(new THREE.CylinderGeometry(18, 18, 2, 48), mDark); ringT.position.y = 49.5; GR.mid.add(ringT);
-    // head (shell, glass and face details share one pivot each so the head can turn and tilt as one)
-    function pivot(grp) { var hp = new THREE.Group(); hp.name = 'hp'; hp.position.set(0, 56, 2); grp.add(hp); return hp; }
+    // neck: low dark turntable ring (turns) with a hidden tilt joint above it
+    var neck = new THREE.Mesh(new THREE.CylinderGeometry(24, 25, 4, 56), mDark); neck.position.y = 53; GR.mid.add(neck);
+    // head: a soft, slightly pillowed cube, bigger than the body
+    function pivot(grp) { var hp = new THREE.Group(); hp.name = 'hp'; hp.position.set(0, 55, 0); grp.add(hp); return hp; }
     var hpS = pivot(GR.shell), hpG = pivot(GR.glass), hpF = pivot(GR.face);
-    var head = new THREE.Mesh(rbox(84, 66, 64, 17), mShell); head.position.set(0, 34, -2); hpS.add(head);
-    var bez = new THREE.Mesh(new THREE.ExtrudeGeometry(rrS(70, 54, 13), { depth: 1.2, bevelEnabled: true, bevelThickness: 1.2, bevelSize: 1.2, bevelSegments: 4, curveSegments: 12 }), mDark); bez.position.set(0, 34, 29.2); hpS.add(bez);
-    var vg = new THREE.ShapeGeometry(rrS(66, 50, 11), 16); var uv = vg.attributes.uv, vp = vg.attributes.position; for (i = 0; i < uv.count; i++) uv.setXY(i, vp.getX(i) / 66 + 0.5, vp.getY(i) / 50 + 0.5);
-    var vis = new THREE.Mesh(vg, mVisor); vis.position.set(0, 34, 31.8); hpG.add(vis);
-    var camd = new THREE.Mesh(new THREE.CircleGeometry(1.4, 24), new THREE.MeshPhysicalMaterial({ color: 0x1a1d24, roughness: 0.1, clearcoat: 1 })); camd.position.set(0, 55.5, 31.9); hpF.add(camd);
-    var btn = new THREE.Mesh(rbox(4, 13, 11, 1.6), mDark); btn.position.set(-42.6, 40, -6); hpF.add(btn);
-    root.position.y = -53; Object.keys(GR).forEach(function (k) { GR[k].scale.setScalar(0.8); });
+    var hg = rbox(92, 82, 86, 13); var hq = hg.attributes.position, HW = 46, HH = 41, HD = 43, KB = 0.045;
+    for (i = 0; i < hq.count; i++) { var x = hq.getX(i), y = hq.getY(i), z = hq.getZ(i), nx = x / HW, ny = y / HH, nz = z / HD;
+      hq.setX(i, x * (1 + KB * Math.max(0, 1 - ny * ny) * Math.max(0, 1 - nz * nz))); hq.setY(i, y * (1 + KB * Math.max(0, 1 - nx * nx) * Math.max(0, 1 - nz * nz)));
+      if (z < 0) hq.setZ(i, z * (1 + KB * Math.max(0, 1 - nx * nx) * Math.max(0, 1 - ny * ny))); }
+    smooth(hg);
+    var head = new THREE.Mesh(hg, mShell); head.position.set(0, 41, 0); hpS.add(head);
+    var lipS = rrS(76, 64, 16); lipS.holes.push((function () { var hs = rrS(66, 54, 13), path = new THREE.Path(); path.curves = hs.curves; return path; })());
+    var lip = new THREE.Mesh(new THREE.ExtrudeGeometry(lipS, { depth: 1.5, bevelEnabled: true, bevelThickness: 1.4, bevelSize: 1.4, bevelSegments: 6, curveSegments: 20 }), mShell); lip.position.set(0, 41, 42.6); hpS.add(lip);
+    var well = new THREE.Mesh(new THREE.ShapeGeometry(rrS(67, 55, 13), 20), new THREE.MeshBasicMaterial({ color: 0x050506 })); well.position.set(0, 41, 43.1); hpS.add(well);
+    var vg = new THREE.ShapeGeometry(rrS(64, 52, 12), 20); var uv = vg.attributes.uv, vp = vg.attributes.position; for (i = 0; i < uv.count; i++) uv.setXY(i, vp.getX(i) / 64 + 0.5, vp.getY(i) / 52 + 0.5);
+    var vis = new THREE.Mesh(vg, mVisor); vis.position.set(0, 41, 43.4); hpG.add(vis);
+    var camd = new THREE.Mesh(new THREE.CircleGeometry(1.3, 24), new THREE.MeshPhysicalMaterial({ color: 0x1a1d24, roughness: 0.1, clearcoat: 1 })); camd.position.set(0, 64, 43.5); hpF.add(camd);
+    [-1, 1].forEach(function (sd) { var btn = new THREE.Mesh(rbox(5, 15, 15, 2), mDark); btn.position.set(sd * 48.2, 46, 14); hpF.add(btn); });
+    root.position.y = -53; Object.keys(GR).forEach(function (k) { GR[k].scale.setScalar(0.74); });
     var HP = [hpS, hpG, hpF];
     function outside(g) {
       g.mid.visible = false; g.face.visible = false;
