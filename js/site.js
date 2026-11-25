@@ -211,6 +211,7 @@
     }
   }
   if (!heroApi) { var hs = $('#hero3d'); if (hs) hs.parentNode.classList.add('nogl'); }
+  Array.prototype.forEach.call(document.querySelectorAll('.sw'), function (b) { b.addEventListener('click', function () { var n = b.dataset.col; Array.prototype.forEach.call(document.querySelectorAll('.sw'), function (x) { var on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); }); [heroApi, roamApi].forEach(function (a) { if (a && a.setColor) a.setColor(n); }); }); });
 
   /* Hydration Puck story: each step turns the model */
   if (story) {
