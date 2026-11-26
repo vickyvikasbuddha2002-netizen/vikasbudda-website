@@ -158,7 +158,7 @@
           var tr = (RM ? 0.5 : Math.sin(t * 0.45) * 0.38 + 0.35) + mouse.nx * 0.35;
           hrot += (tr - hrot) * 0.05; heroApi.root.rotation.y = hrot;
           heroApi.root.position.y = -53;
-          var d = innerWidth < 700 ? 480 : 400;
+          var d = innerWidth < 700 ? 430 : 400;
           heroApi.camera.position.set(0, 40 + sy * 60, d + sy * 120); heroApi.camera.lookAt(0, -14 + sy * 30, 0);
           heroApi.look.tx = mouse.nx * 0.9; heroApi.look.ty = mouse.ny * 0.7;
         };

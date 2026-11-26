@@ -45,11 +45,16 @@
     R.root.position.set(S.x, -53 + S.lift, S.z);
     R.root.rotation.set(S.tilt * 0.6 - S.bob * 0.012, S.yaw + view, S.tilt);
     var dist = Math.hypot(S.x - lastX, S.z - lastZ); R.wheels.forEach(function (w) { w.rotation.x += dist / 26; }); lastX = S.x; lastZ = S.z;
-    var mob = cv.clientWidth < 700;
-    R.camera.position.set(0, 64, mob ? 600 : 470); R.camera.lookAt(0, -8, 0);
+    var mob = cv.clientWidth < 700; ZK += ((zoomOn ? 1 : 0) - ZK) * Math.min(1, dt * 4);
+    var dN = mob ? 470 : 420, dC = mob ? 285 : 205;
+    R.camera.position.set(0, 64 + (30 - 64) * ZK, dN + (dC - dN) * ZK); R.camera.lookAt(0, -8 + 33 * ZK, 0);
     if (idle) { var away = Date.now() - ptr.t > 3500; R.look.tx = away ? Math.sin(t * 0.7) * 0.15 : ptr.x; R.look.ty = away ? 0 : ptr.y; }
   };
   var ptr = { x: 0, y: 0, t: 0 };
+  /* close-up on the face, so scene details are readable */
+  var zoomOn = false, ZK = 0, zb = $('.zoom');
+  function zoom(on) { zoomOn = on; if (zb) { zb.setAttribute('aria-pressed', on); zb.textContent = on ? 'Whole robot' : 'Close-up'; } }
+  if (zb) zb.addEventListener('click', function () { zoom(!zoomOn); });
   function track(e) { var b = cv.getBoundingClientRect(); ptr.x = Math.max(-1, Math.min(1, (e.clientX - b.left) / b.width * 2 - 1)); ptr.y = Math.max(-1, Math.min(1, (e.clientY - b.top) / b.height * 2 - 1)); ptr.t = Date.now(); }
   window.addEventListener('pointermove', track, { passive: true }); window.addEventListener('pointerdown', track, { passive: true });
   var lastAct = Date.now();
@@ -150,7 +155,7 @@
   var feats = []; keys.forEach(function (k) { if (feats.indexOf(A[k].f) < 0) feats.push(A[k].f); });
   feats.forEach(function (f) { var s = document.createElement('span'); s.textContent = f; found.appendChild(s); });
   function act(k) {
-    var a = A[k]; ac(); lastAct = Date.now(); if (a.fn) { Q = []; cur = null; a.fn(); } else { chat.stop(); run(a.s); }
+    var a = A[k]; ac(); lastAct = Date.now(); zoom(false); $$('.fli').forEach(function (b) { b.classList.remove('on'); }); if (a.fn) { Q = []; cur = null; a.fn(); } else { chat.stop(); run(a.s); }
     $$('.pad').forEach(function (p) { p.classList.toggle('on', p.dataset.k === k); });
     $('.k', card).textContent = a.t; $('h3', card).textContent = a.f; $('p', card).textContent = a.d;
     card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash');
@@ -162,6 +167,42 @@
     function go() { var a = $('.arena'); a.scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: 'center' }); setTimeout(function () { act(li.dataset.pad); }, RM ? 0 : 650); }
     li.addEventListener('click', go); li.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
   });
+
+  /* every face and scene in the library, played on Roam's screen */
+  var fl = $('.facelib'), FL = R.faces || [];
+  if (fl && FL.length) {
+    var groups = [], gi = {};
+    FL.forEach(function (a, i) { var k = a.scene ? 'Scenes' : a.c; if (!gi[k]) { gi[k] = { k: k, items: [] }; groups.push(gi[k]); } gi[k].items.push(i); });
+    groups.sort(function (a, b) { return (b.k === 'Scenes') - (a.k === 'Scenes'); });
+    var nE = FL.filter(function (a) { return !a.scene; }).length;
+    $('.fl-count', fl).textContent = 'Every face Roam can make: ' + nE + ' eye animations and ' + (FL.length - nE) + ' scenes. Tap one to play it.';
+    var cats = $('.fl-cats', fl), box = $('.fl-list', fl), sel = groups[0].k, playing = -1;
+    var drawCats = function () {
+      cats.innerHTML = '';
+      groups.forEach(function (g) {
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'flc'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', g.k === sel);
+        b.appendChild(document.createTextNode(g.k)); var n = document.createElement('span'); n.textContent = g.items.length; b.appendChild(n);
+        b.addEventListener('click', function () { sel = g.k; drawCats(); drawList(); box.scrollLeft = 0; });
+        cats.appendChild(b);
+      });
+    };
+    var drawList = function () {
+      box.innerHTML = '';
+      gi[sel].items.forEach(function (i) {
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'fli' + (i === playing ? ' on' : ''); b.textContent = FL[i].n; b.dataset.i = i;
+        b.addEventListener('click', function () { playFace(i); });
+        box.appendChild(b);
+      });
+    };
+    var playFace = function (i) {
+      ac(); chat.stop(); Q = []; cur = null; lastAct = Date.now() + 15000; playing = i;
+      var it = R.play(i); if (!it) return;
+      zoom(true); moodName.textContent = 'Playing: ' + it.n;
+      $$('.fli', box).forEach(function (b) { b.classList.toggle('on', +b.dataset.i === i); });
+      $$('.pad').forEach(function (p) { p.classList.remove('on'); });
+    };
+    drawCats(); drawList();
+  }
 
   /* View in AR: the outside of Roam only, at real size */
   var arb = $('.arbtn'), mv = $('#roamar'), arMsg = $('.armsg'), arReady = false;

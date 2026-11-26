@@ -57,7 +57,13 @@
       <model-viewer id="roamar" src="assets/roam.glb" ar ar-modes="webxr scene-viewer quick-look" ar-scale="auto" ar-placement="floor" alt="Roam in your room" aria-hidden="true"></model-viewer>
       <span class="hint">Drag to turn it. Tap it to pat it.</span>
       <span class="moodtag">Feeling: Calm</span>
+      <button class="btn sm zoom" type="button" aria-pressed="false">Close-up</button>
     </div>
+    <section class="facelib" aria-label="Every face and scene">
+      <p class="fl-count"></p>
+      <div class="fl-cats" role="tablist" aria-label="Face groups"></div>
+      <div class="fl-list"></div>
+    </section>
     <div class="pads" data-r></div>
 
     <div class="learn">
@@ -122,9 +128,9 @@
     </section>
 
     <div class="specs" data-stagger=".08" aria-label="Roam in numbers">
-      <div data-glow><b>96 mm</b><span>Wide, small enough for any desk</span></div>
-      <div data-glow><b>30</b><span>Facial expressions</span></div>
-      <div data-glow><b>20</b><span>Hand gestures on its screen</span></div>
+      <div data-glow><b>100 mm</b><span>Wide, small enough for any desk</span></div>
+      <div data-glow><b>232</b><span>Eye animations</span></div>
+      <div data-glow><b>10</b><span>Full-screen scenes</span></div>
       <div data-glow><b>0</b><span>Screws you can see</span></div>
     </div>
 
@@ -147,6 +153,7 @@
 </main>
 <footer><div class="wrap"><span><b>Vikas Budda</b></span><span>Mechanical design engineer, Bengaluru</span><span>© <span id="year">2026</span> Vikas Budda</span></div></footer>
 <script src="js/roam-model.js"></script>
+<script src="js/face.js"></script>
 <script src="js/robot.js"></script>
 <script src="js/data.js"></script>
 <script src="js/site.js"></script>

@@ -495,3 +495,19 @@ html.eyes input,html.eyes textarea{cursor:text!important}
 @media (max-width:900px){.rows li[data-pad]:after{grid-column:auto}}
 
 .swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.sw{display:inline-flex;align-items:center;gap:8px;font:600 13px/1 var(--f-b);min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line2);background:transparent;color:var(--ink2);cursor:pointer}.sw i{width:14px;height:14px;border-radius:50%;display:inline-block}.sw.on{color:var(--ink);border-color:rgba(255,255,255,.45)}.sw:focus-visible{outline:2px solid var(--acc2);outline-offset:2px}
+
+/* face library under the play arena */
+.arena .zoom{position:absolute;right:16px;top:62px;z-index:4}
+.arena .zoom[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:#fff}
+.facelib{margin-top:14px}
+.fl-count{margin:0 0 10px;font-size:14px;color:var(--mute)}
+.fl-cats,.fl-list{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.fl-cats::-webkit-scrollbar,.fl-list::-webkit-scrollbar{display:none}
+.fl-list{margin-top:8px}
+.flc,.fli{flex:none;height:40px;padding:0 15px;border-radius:999px;border:1px solid var(--line2);background:var(--card);color:var(--ink);font:600 14px/1 var(--f-b);cursor:pointer;white-space:nowrap}
+.flc span{margin-left:6px;color:var(--mute);font-weight:500}
+.flc[aria-selected="true"]{border-color:rgba(240,143,92,.5);background:rgba(214,98,46,.14);color:var(--acc2)}
+.fli{height:44px;border-radius:12px;background:var(--card2)}
+.fli:hover{border-color:rgba(240,143,92,.4)}
+.fli.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.flc:focus-visible,.fli:focus-visible,.arena .zoom:focus-visible{outline:2px solid var(--acc2);outline-offset:2px}

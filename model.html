@@ -37,10 +37,12 @@ button:focus-visible{outline:2px solid #fff;outline-offset:2px}
     <button type="button" class="col on" data-col="terracotta"><i style="background:#B4522A"></i>Terracotta</button>
     <button type="button" class="col" data-col="sage"><i style="background:#A8B596"></i>Sage green</button>
     <button type="button" id="spin" class="on">Auto-turn</button>
+    <button type="button" id="face">Close-up</button>
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="js/roam-model.js"></script>
+<script src="js/face.js"></script>
 <script src="js/robot.js"></script>
 <script>
 {
@@ -50,18 +52,18 @@ else {
   const R = RoamStage.create(cv, { fov: 26, mirror: false });
   if (!R) hint.textContent = 'This browser could not start 3D graphics.';
   else {
-    const V = { th: -0.5, ph: 1.25, d: 430, vth: 0, vph: 0 }, T = { th: -0.5, ph: 1.25, d: 430 };
+    const V = { th: -0.5, ph: 1.25, d: 430, vth: 0, vph: 0 }, T = { th: -0.5, ph: 1.25, d: 430, ty: -6 };
     setTimeout(() => { T.d = V.d = fitD(); }, 0);
     let drag = null, auto = true, idle = 0, pinch = null;
     const target = new THREE.Vector3(0, -6, 0);
     R.headYaw = 0; R.headTilt = 0;
     let shadow = null; if (R.scene) R.scene.traverse(o => { if (o.isMesh && o.geometry && o.geometry.parameters && o.geometry.parameters.width === 190) shadow = o; });
-    const fitD = () => 430 * Math.max(1, 0.95 / (innerWidth / innerHeight));
+    const fitD = () => Math.max(1.55 * 103 / 0.462, 1.3 * 92 / (0.462 * innerWidth / innerHeight));
     R.update = function (dt, t) {
       R.root.position.y = -53; R.root.rotation.y = 0;
       idle += dt;
       if (!drag) { T.th += V.vth; T.ph += V.vph; V.vth *= 0.92; V.vph *= 0.92; if (auto && idle > 1.2) T.th += dt * 0.35; }
-      T.ph = Math.max(0.12, Math.min(Math.PI - 0.12, T.ph)); T.d = Math.max(220, Math.min(1100, T.d));
+      T.ph = Math.max(0.12, Math.min(Math.PI - 0.12, T.ph)); T.d = Math.max(120, Math.min(1100, T.d)); target.y += (T.ty - target.y) * 0.12;
       V.th += (T.th - V.th) * 0.15; V.ph += (T.ph - V.ph) * 0.15; V.d += (T.d - V.d) * 0.15;
       const s = Math.sin(V.ph);
       R.camera.position.set(target.x + V.d * s * Math.sin(V.th), target.y + V.d * Math.cos(V.ph), target.z + V.d * s * Math.cos(V.th));
@@ -69,9 +71,14 @@ else {
       R.headYaw = 0.35 * Math.sin(t * 0.5); R.headTilt = 0.12 * Math.sin(t * 0.37);
       R.look.tx = 0.6 * Math.sin(t * 0.7); R.look.ty = 0.3 * Math.sin(t * 0.5);
     };
-    const moods = ['happy', 'curious', 'love', 'surprised', 'wink', 'excited', 'calm'];
-    let mi = 0; R.setMood('calm');
-    setInterval(() => { R.setMood(moods[mi++ % moods.length]); }, 4200);
+    /* show off the face library: eye animations mixed with full-screen scenes */
+    const show = ['Happy', 'Morning coffee', 'Curious', 'Love eyes', 'Rainy day', 'Cheerful wink', 'Butterfly', 'Excited', 'Bright idea', 'Starstruck', 'Birthday cake', 'Sparkle eyes', 'Headphones', 'Giggle', 'Sneeze', 'Smitten', 'Goodnight', 'Hello wave'];
+    let mi = 0, faceT = 0;
+    const nextFace = () => { const it = R.play ? R.play(show[mi++ % show.length]) : null; clearTimeout(faceT); faceT = setTimeout(nextFace, 1000 * Math.max(4, (it ? it.d : 4) * (it && it.scene ? 1 : 1.6))); };
+    setTimeout(nextFace, 1200);
+    const fb = document.getElementById('face');
+    const closeUp = on => { fb.classList.toggle('on', on); if (on) { T.th = 0; T.ph = 1.52; T.d = Math.max(150, 1.12 * Math.max(52 / 0.462, 66 / (0.462 * innerWidth / innerHeight))); T.ty = 25; auto = false; sp.classList.remove('on'); } else { T.d = fitD(); T.ty = -6; } };
+    fb.onclick = () => closeUp(!fb.classList.contains('on'));
     const pts = new Map();
     cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); drag = { x: e.clientX, y: e.clientY }; idle = 0; hint.style.opacity = 0; if (pts.size === 2) { const [a, b] = [...pts.values()]; pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), z: T.d }; } });
     cv.addEventListener('pointermove', e => { if (!pts.has(e.pointerId)) return; pts.set(e.pointerId, { x: e.clientX, y: e.clientY }); idle = 0;
@@ -81,11 +88,11 @@ else {
     const up = e => { pts.delete(e.pointerId); if (pts.size < 2) pinch = null; if (!pts.size) drag = null; };
     cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
     cv.addEventListener('wheel', e => { e.preventDefault(); T.d *= Math.exp(e.deltaY * 0.0012); idle = 0; }, { passive: false });
-    const reset = () => { T.th = -0.5; T.ph = 1.25; T.d = fitD(); V.vth = V.vph = 0; idle = 0; };
+    const reset = () => { T.th = -0.5; T.ph = 1.25; T.d = fitD(); T.ty = -6; fb.classList.remove('on'); V.vth = V.vph = 0; idle = 0; };
     cv.addEventListener('dblclick', reset); document.getElementById('reset').onclick = reset;
     document.querySelectorAll('.col').forEach(b => b.onclick = () => { document.querySelectorAll('.col').forEach(x => x.classList.toggle('on', x === b)); R.setColor(b.dataset.col); });
     const sp = document.getElementById('spin'); sp.onclick = () => { auto = !auto; sp.classList.toggle('on', auto); };
-    cv.addEventListener('click', () => { R.setMood('happy'); if (R.gesture) R.gesture('wave'); });
+    cv.addEventListener('click', () => { if (R.gesture) R.gesture('wave'); });
   }
 }
 }

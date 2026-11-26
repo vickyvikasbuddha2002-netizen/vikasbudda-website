@@ -151,7 +151,7 @@ window.DATA = {
 window.DATA.roamlog = [
   { "status": "done", "title": "Character and behaviours", "text": "37 behaviours planned, from patting to sulking, plus its own sound language, Roamish." },
   { "status": "done", "title": "Industrial design", "text": "New design: a faceted terracotta head with chamfered edges and an octagonal screen, on a black turntable neck that turns and tilts, above a wider body with big wheels set into arched side pockets. No visible screws." },
-  { "status": "done", "title": "Face and personality", "text": "12 moods, 16 hand gestures drawn on its screen, a talking mouth and its own sound language, prototyped first right here on this site." },
+  { "status": "done", "title": "Face and personality", "text": "232 eye animations and 10 full-screen scenes in an ice-blue to lilac glow, plus its own sound language, prototyped first right here on this site." },
   { "status": "now", "title": "Electronics", "text": "Every part chosen and ordered. Soldering and first power-on come next." },
   { "status": "next", "title": "First assembly and drive test", "text": "Print the shell, put it together and make it roll across a desk on its own." },
   { "status": "next", "title": "Knows its owner", "text": "Recognise its owner's face, greet them by name and keep checking on them through the day." },
