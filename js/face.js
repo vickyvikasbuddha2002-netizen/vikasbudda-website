@@ -10,7 +10,7 @@ const oc = document.createElement('canvas'), octx = oc.getContext('2d');
 cv.width = oc.width = Math.round(320 * dpr); cv.height = oc.height = Math.round(240 * dpr);
 const LK = { x: 0, y: 0 };
 /* ---------- eye model ---------- */
-const STOPS=[[0,[188,218,240]],[.25,[226,236,247]],[.5,[238,234,247]],[.75,[230,220,242]],[1,[211,195,229]]];
+const STOPS=[[0,[140,242,250]],[.14,[171,238,250]],[.29,[200,234,250]],[.43,[220,228,250]],[.57,[229,220,249]],[.71,[228,205,248]],[.86,[223,186,246]],[1,[216,171,243]]];
 const DEF={x:0,y:0,w:72,h:70,r:9,rot:0,sx:1,sy:1,s:1,lid:0,slant:0,bot:0,a:1,tint:0,lw:11,ph:0,shape:'r',tc:'#ff9ec4'};
 const NUM=['x','y','w','h','r','rot','sx','sy','s','lid','slant','bot','a','tint','lw','ph'];
 const E={neutral:{},happy:{bot:.55},joy:{bot:.62,w:78},content:{bot:.42,lid:.18},sad:{lid:.22,slant:-.62,y:6,h:64},angry:{lid:.3,slant:.8},mad:{lid:.38,slant:1,w:76},annoyed:{lid:.44,slant:.25},
@@ -298,7 +298,7 @@ A('Greetings','Missed you',4,[[0,'sad'],[.35,'sad'],[.5,'love'],[.9,'love'],[1,'
 
 /* ---------- drawing ---------- */
 const hex=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];
-function grad(c,w,h,tint,tc){const g=c.createLinearGradient(-w/2,-h/2,w/2,h/2),T=hex(tc);for(const [p,c] of STOPS)g.addColorStop(p,`rgb(${c.map((v,i)=>Math.round(v+(T[i]-v)*tint)).join(',')})`);return g}
+function grad(c,w,h,tint,tc){const g=c.createLinearGradient(0,-h/2,0,h/2),T=hex(tc);for(const [p,c] of STOPS)g.addColorStop(p,`rgb(${c.map((v,i)=>Math.round(v+(T[i]-v)*tint)).join(',')})`);return g}
 function rrp(p,x,y,w,h,r){r=Math.max(0,Math.min(r,w/2,h/2));p.moveTo(x+r,y);p.arcTo(x+w,y,x+w,y+h,r);p.arcTo(x+w,y+h,x,y+h,r);p.arcTo(x,y+h,x,y,r);p.arcTo(x,y,x+w,y,r);p.closePath()}
 function heartP(p,cx,cy,w,h){const s=w/2,t=h/2;p.moveTo(cx,cy+t);p.bezierCurveTo(cx-s*1.1,cy+t*.15,cx-s*1.05,cy-t*1.05,cx-s*.45,cy-t*.95);p.bezierCurveTo(cx-s*.12,cy-t*.9,cx,cy-t*.55,cx,cy-t*.4);p.bezierCurveTo(cx,cy-t*.55,cx+s*.12,cy-t*.9,cx+s*.45,cy-t*.95);p.bezierCurveTo(cx+s*1.05,cy-t*1.05,cx+s*1.1,cy+t*.15,cx,cy+t);p.closePath()}
 function shapeOf(e){const w=e.w,h=e.h,p=new Path2D();switch(e.shape){
@@ -320,6 +320,10 @@ function shapeOf(e){const w=e.w,h=e.h,p=new Path2D();switch(e.shape){
  case 'spin':p.arc(0,0,Math.min(w,h)/2-e.lw/2,e.ph,e.ph+Math.PI*1.4);return{p,stroke:1};
  default:return{glyph:e.shape}}}
 const CX=[94,226];
+let DOTS=null;const PITCH=4;
+function dots(){if(DOTS&&DOTS.width===oc.width&&DOTS.height===oc.height)return DOTS;DOTS=document.createElement('canvas');DOTS.width=oc.width;DOTS.height=oc.height;const d=DOTS.getContext('2d'),r=PITCH*.26*dpr;
+ for(let y=PITCH/2;y<240;y+=PITCH)for(let x=PITCH/2;x<320;x+=PITCH){const X=x*dpr,Y=y*dpr,g=d.createRadialGradient(X,Y,0,X,Y,r*1.45);g.addColorStop(0,'rgba(255,255,255,.95)');g.addColorStop(.55,'rgba(255,255,255,.72)');g.addColorStop(1,'rgba(255,255,255,0)');d.fillStyle=g;d.fillRect(X-r*2,Y-r*2,r*4,r*4)}
+ return DOTS}
 function drawEye(e,side){if(e.a<=.01)return;const sx=e.sx*e.s,sy=e.sy*e.s;if(abs(sy)<.003||abs(sx)<.003)return;
  const c=octx,m=ctx.getTransform();c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,oc.width,oc.height);c.setTransform(m);
  c.save();c.translate(CX[side]+e.x,120+e.y);c.rotate(e.rot);if(side===1&&e.shape!=='check')c.scale(-1,1);c.scale(sx,sy);
@@ -332,7 +336,8 @@ function drawEye(e,side){if(e.a<=.01)return;const sx=e.sx*e.s,sy=e.sy*e.s;if(abs
    if(e.bot>.001){const ry=h*.58,cy=h/2+ry-e.bot*h*.82;c.beginPath();c.ellipse(0,cy,w*.62,ry,0,0,TAU);c.fill()}
    c.globalCompositeOperation='source-over'}}
  c.restore();
- ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=Math.min(1,e.a);ctx.shadowColor='rgba(205,195,250,.42)';ctx.shadowBlur=9*dpr;ctx.drawImage(oc,0,0);ctx.restore()}
+ c.save();c.setTransform(1,0,0,1,0,0);c.globalCompositeOperation='source-atop';c.drawImage(dots(),0,0);c.restore();
+ ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.globalAlpha=Math.min(1,e.a);ctx.shadowColor='rgba(190,215,250,.45)';ctx.shadowBlur=9*dpr;ctx.drawImage(oc,0,0);ctx.restore()}
 /* ---------- effects ---------- */
 const TEAR=a=>`rgba(169,214,247,${a})`,LAV=a=>`rgba(238,234,247,${a})`;
 function star4(x,y,r,c){ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(x,y-r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.quadraticCurveTo(x,y,x,y+r);ctx.quadraticCurveTo(x,y,x-r,y);ctx.quadraticCurveTo(x,y,x,y-r);ctx.fill()}
