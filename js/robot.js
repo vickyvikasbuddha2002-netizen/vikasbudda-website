@@ -23,75 +23,141 @@ window.RoamStage = (function () {
     // studio environment: dark room, one big soft top light, a cool blue side panel
     (function () {
       var es = new THREE.Scene();
-      es.add(new THREE.Mesh(new THREE.BoxGeometry(2000, 1400, 2000), new THREE.MeshBasicMaterial({ color: new THREE.Color(0.03, 0.03, 0.04), side: THREE.BackSide })));
+      es.add(new THREE.Mesh(new THREE.BoxGeometry(2000, 1400, 2000), new THREE.MeshBasicMaterial({ color: new THREE.Color(0.04, 0.032, 0.027), side: THREE.BackSide })));
       function panel(w, h, x, y, z, c, rx, ry) { var m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: c, side: THREE.DoubleSide })); m.position.set(x, y, z); m.rotation.set(rx || 0, ry || 0, 0); es.add(m); }
-      panel(1000, 800, 0, 690, 100, new THREE.Color(9, 9, 9.5), Math.PI / 2, 0);
-      panel(260, 1100, -990, 200, 260, new THREE.Color(7, 7, 7.4), 0, Math.PI / 2);
-      panel(260, 1100, 990, 200, 260, new THREE.Color(5, 5, 5.4), 0, -Math.PI / 2);
-      panel(500, 900, -700, 200, -900, new THREE.Color(0.8, 1.2, 6), 0, Math.PI / 4);
-      panel(1400, 220, 0, 300, 990, new THREE.Color(2.2, 2.2, 2.4), 0, Math.PI);
-      panel(2000, 2000, 0, -300, 0, new THREE.Color(0.02, 0.02, 0.03), -Math.PI / 2, 0);
+      panel(1000, 800, 0, 690, 100, new THREE.Color(6.6, 6.2, 5.8), Math.PI / 2, 0);
+      panel(260, 1100, -990, 200, 260, new THREE.Color(7.4, 6.8, 6.2), 0, Math.PI / 2);
+      panel(260, 1100, 990, 200, 260, new THREE.Color(4.6, 4.2, 3.9), 0, -Math.PI / 2);
+      panel(500, 900, -700, 200, -900, new THREE.Color(5, 2.6, 1.2), 0, Math.PI / 4);
+      panel(1400, 220, 0, 300, 990, new THREE.Color(2.4, 2.2, 2), 0, Math.PI);
+      panel(2000, 2000, 0, -300, 0, new THREE.Color(0.03, 0.022, 0.018), -Math.PI / 2, 0);
       try { var pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(es, 0.04).texture; pm.dispose(); } catch (e) {}
     })();
-    scene.add(new THREE.HemisphereLight(0xdfe6ff, 0x05060a, 0.25));
-    var key = new THREE.DirectionalLight(0xffffff, 0.95); key.position.set(-240, 520, 420); scene.add(key);
-    var fill = new THREE.DirectionalLight(0xdfe6ff, 0.3); fill.position.set(320, 200, 300); scene.add(fill);
-    var rim = new THREE.PointLight(0x4a68ff, 3.2, 900, 1.5); rim.position.set(120, 140, -220); scene.add(rim);
-    var rim2 = new THREE.PointLight(0x6f86ff, 1.2, 700, 1.6); rim2.position.set(-200, 60, -160); scene.add(rim2);
+    scene.add(new THREE.HemisphereLight(0xfff0e4, 0x0a0605, 0.3));
+    var key = new THREE.DirectionalLight(0xfff3e8, 0.9); key.position.set(-260, 520, 420); scene.add(key);
+    var fill = new THREE.DirectionalLight(0xffe4d0, 0.32); fill.position.set(320, 200, 300); scene.add(fill);
+    var rim = new THREE.PointLight(0xff9a5e, 2.6, 900, 1.5); rim.position.set(120, 140, -220); scene.add(rim);
+    var rim2 = new THREE.PointLight(0xffc29a, 1.1, 700, 1.6); rim2.position.set(-200, 60, -160); scene.add(rim2);
 
-    /* Roam v2: a rounded head on a turning, tilting neck, above a soft wheeled body (terracotta or sage) */
-    var PAL = { terracotta: 0xC9764A, sage: 0xA8B596 };
-    var mShell = new THREE.MeshStandardMaterial({ color: PAL.terracotta, roughness: 0.8, metalness: 0, envMapIntensity: 0.12 });
+    /* Roam v3: a faceted head on a black turntable neck, above a tapered body with big side wheels.
+       Built from flat planes so every edge is a crisp chamfer. Units are millimetres, head 100 wide. */
+    var PAL = { terracotta: 0xAE4B22, sage: 0xA8B596 };
+    var mShell = new THREE.MeshPhysicalMaterial({ color: PAL.terracotta, roughness: 0.7, metalness: 0, clearcoat: 0.06, clearcoatRoughness: 0.7, envMapIntensity: 0.22 });
     var mTub = mShell; mShell.color.convertSRGBToLinear();
     var eye = document.createElement('canvas'); eye.width = 320; eye.height = 240; var eg = eye.getContext('2d'), eyeTex = new THREE.CanvasTexture(eye); eyeTex.encoding = THREE.sRGBEncoding;
-    var mVisor = new THREE.MeshPhysicalMaterial({ color: 0x030304, roughness: 0.04, clearcoat: 1, clearcoatRoughness: 0.02, envMapIntensity: 1.2, emissive: 0xffffff, emissiveMap: eyeTex, emissiveIntensity: 1.4 });
-    var mDark = new THREE.MeshPhysicalMaterial({ color: 0x0b0b0c, roughness: 0.6, clearcoat: 0, envMapIntensity: 0.12 });
-    var mRubber = new THREE.MeshPhysicalMaterial({ color: 0x141315, roughness: 0.7, metalness: 0, envMapIntensity: 0.3 });
+    var mVisor = new THREE.MeshPhysicalMaterial({ color: 0x030303, roughness: 0.05, clearcoat: 1, clearcoatRoughness: 0.03, envMapIntensity: 1.1, emissive: 0xffffff, emissiveMap: eyeTex, emissiveIntensity: 1.0, toneMapped: false });
+    var mDark = new THREE.MeshPhysicalMaterial({ color: 0x0e0d0d, roughness: 0.62, clearcoat: 0, envMapIntensity: 0.1, side: THREE.DoubleSide });
+    var mRubber = new THREE.MeshPhysicalMaterial({ color: 0x0b0a0a, roughness: 0.72, metalness: 0, envMapIntensity: 0.1, side: THREE.DoubleSide });
+    var mFace = new THREE.MeshPhysicalMaterial({ color: 0x0d0c0c, roughness: 0.5, clearcoat: 0.25, clearcoatRoughness: 0.4, envMapIntensity: 0.14, side: THREE.DoubleSide });
+    var mGap = new THREE.MeshBasicMaterial({ color: 0x050403 });
+    var mGlow = new THREE.MeshBasicMaterial({ color: 0xffffff });
     var root = new THREE.Group(), GR = { base: new THREE.Group(), mid: new THREE.Group(), face: new THREE.Group(), shell: new THREE.Group(), glass: new THREE.Group() };
     Object.keys(GR).forEach(function (k) { root.add(GR[k]); }); scene.add(root);
     function rrS(w, h, r) { var sh = new THREE.Shape(), x = -w / 2, y = -h / 2; r = Math.min(r, w / 2, h / 2); sh.moveTo(x + r, y); sh.lineTo(x + w - r, y); sh.absarc(x + w - r, y + r, r, -Math.PI / 2, 0, false); sh.lineTo(x + w, y + h - r); sh.absarc(x + w - r, y + h - r, r, 0, Math.PI / 2, false); sh.lineTo(x + r, y + h); sh.absarc(x + r, y + h - r, r, Math.PI / 2, Math.PI, false); sh.lineTo(x, y + r); sh.absarc(x + r, y + r, r, Math.PI, Math.PI * 1.5, false); return sh; }
-    function rbox(w, h, d, r, inner) { var dd = Math.max(0.01, d - 2 * r); var g = new THREE.ExtrudeGeometry(rrS(w - 2 * r, h - 2 * r, inner || r * 0.6), { depth: dd, bevelEnabled: true, bevelThickness: r, bevelSize: r, bevelSegments: 14, curveSegments: 24 }); g.translate(0, 0, -dd / 2); smooth(g); return g; }
-    function smooth(g) { var P = g.attributes.position, n = P.count, acc = {}, N = new Float32Array(n * 3), a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), f = new THREE.Vector3(); var key = function (i) { return Math.round(P.getX(i) * 50) + ',' + Math.round(P.getY(i) * 50) + ',' + Math.round(P.getZ(i) * 50); };
-      for (var i = 0; i < n; i += 3) { a.fromBufferAttribute(P, i); b.fromBufferAttribute(P, i + 1); c.fromBufferAttribute(P, i + 2); f.subVectors(c, b).cross(a.clone().sub(b)); for (var j = 0; j < 3; j++) { var k = key(i + j); if (!acc[k]) acc[k] = new THREE.Vector3(); acc[k].add(f); } }
-      for (i = 0; i < n; i++) { var v = acc[key(i)].clone().normalize(); N[i * 3] = v.x; N[i * 3 + 1] = v.y; N[i * 3 + 2] = v.z; } g.setAttribute('normal', new THREE.BufferAttribute(N, 3)); }
+    function octS(w, h, c) { var sh = new THREE.Shape(), x = w / 2, y = h / 2; sh.moveTo(-x + c, -y); sh.lineTo(x - c, -y); sh.lineTo(x, -y + c); sh.lineTo(x, y - c); sh.lineTo(x - c, y); sh.lineTo(-x + c, y); sh.lineTo(-x, y - c); sh.lineTo(-x, -y + c); sh.closePath(); return sh; }
+    function rbox(w, h, d, r, inner) { var dd = Math.max(0.01, d - 2 * r); var g = new THREE.ExtrudeGeometry(rrS(w - 2 * r, h - 2 * r, inner || r * 0.6), { depth: dd, bevelEnabled: true, bevelThickness: r, bevelSize: r, bevelSegments: 4, curveSegments: 16 }); g.translate(0, 0, -dd / 2); return g; }
     function arc(cx, cy, r, a0, a1, n) { var o = []; for (var i = 0; i <= n; i++) { var a = a0 + (a1 - a0) * i / n; o.push(new THREE.Vector2(cx + r * Math.cos(a), cy + r * Math.sin(a))); } return o; }
-    function tread(m, q) { var tg = new THREE.BoxGeometry(0.5, q.h * 0.7, 1); for (var i = 0; i < 64; i++) { var a = i / 64 * Math.PI * 2, b = new THREE.Mesh(tg, mRubber); b.position.set(Math.cos(a) * (q.r + 0.12), 0, Math.sin(a) * (q.r + 0.12)); b.rotation.y = -a; m.add(b); } }
-    // body: soft rounded tub, short, under a bigger head
-    var bodyG = rbox(80, 44, 70, 16); var bp = bodyG.attributes.position;
-    for (var i = 0; i < bp.count; i++) { var yy = bp.getY(i), k = 1 + 0.05 * (-yy / 22); bp.setX(i, bp.getX(i) * k); bp.setZ(i, bp.getZ(i) * (1 + 0.03 * (-yy / 22))); }
-    smooth(bodyG);
-    var body = new THREE.Mesh(bodyG, mShell); body.position.y = 29; GR.base.add(body);
-    var plate = new THREE.Mesh(rbox(70, 4, 60, 2), mDark); plate.position.y = 7.5; GR.base.add(plate);
-    var bar = new THREE.Mesh(new THREE.ExtrudeGeometry(rrS(16, 2.6, 1.3), { depth: 0.6, bevelEnabled: false }), new THREE.MeshBasicMaterial({ color: 0xffffff })); bar.position.set(0, 26, 37.4); GR.base.add(bar);
+    /* a convex solid from half-spaces n.p <= d, drawn flat-shaded */
+    function facet(planes) {
+      var P = planes.map(function (q) { var l = Math.hypot(q[0], q[1], q[2]); return [q[0] / l, q[1] / l, q[2] / l, q[3] / l]; }), V = [], N = P.length, i, j, k;
+      function cr(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
+      for (i = 0; i < N; i++) for (j = i + 1; j < N; j++) for (k = j + 1; k < N; k++) {
+        var a = P[i], b = P[j], c = P[k], bc = cr(b, c), det = a[0] * bc[0] + a[1] * bc[1] + a[2] * bc[2]; if (Math.abs(det) < 1e-9) continue;
+        var ca = cr(c, a), ab = cr(a, b), p = [0, 1, 2].map(function (t) { return (a[3] * bc[t] + b[3] * ca[t] + c[3] * ab[t]) / det; });
+        if (P.every(function (q) { return q[0] * p[0] + q[1] * p[1] + q[2] * p[2] <= q[3] + 1e-6; }) && !V.some(function (v) { return Math.hypot(v[0] - p[0], v[1] - p[1], v[2] - p[2]) < 1e-4; })) V.push(p);
+      }
+      var pos = [], nor = [];
+      P.forEach(function (q) {
+        var on = V.filter(function (v) { return Math.abs(q[0] * v[0] + q[1] * v[1] + q[2] * v[2] - q[3]) < 1e-4; }); if (on.length < 3) return;
+        var c = [0, 1, 2].map(function (t) { return on.reduce(function (s, v) { return s + v[t]; }, 0) / on.length; });
+        var u = [on[0][0] - c[0], on[0][1] - c[1], on[0][2] - c[2]], ul = Math.hypot(u[0], u[1], u[2]); u = u.map(function (x) { return x / ul; }); var w = cr(q, u);
+        on.sort(function (A, B) { var da = [A[0] - c[0], A[1] - c[1], A[2] - c[2]], db = [B[0] - c[0], B[1] - c[1], B[2] - c[2]]; return Math.atan2(da[0] * w[0] + da[1] * w[1] + da[2] * w[2], da[0] * u[0] + da[1] * u[1] + da[2] * u[2]) - Math.atan2(db[0] * w[0] + db[1] * w[1] + db[2] * w[2], db[0] * u[0] + db[1] * u[1] + db[2] * u[2]); });
+        for (var t = 1; t < on.length - 1; t++) [on[0], on[t], on[t + 1]].forEach(function (v) { pos.push(v[0], v[1], v[2]); nor.push(q[0], q[1], q[2]); });
+      });
+      var g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); return g;
+    }
+    /* box from faces, every edge chamfered; ch(a, b) returns the chamfer between faces a and b (e.g. 'x+', 'z-') */
+    function cbox(x0, x1, y0, y1, z0, z1, ch, extra) {
+      var F = { 'x+': [1, 0, 0, x1], 'x-': [-1, 0, 0, -x0], 'y+': [0, 1, 0, y1], 'y-': [0, -1, 0, -y0], 'z+': [0, 0, 1, z1], 'z-': [0, 0, -1, -z0] }, K = Object.keys(F), pl = K.map(function (k) { return F[k]; });
+      for (var i = 0; i < 6; i++) for (var j = i + 1; j < 6; j++) { var a = K[i], b = K[j]; if (a[0] === b[0]) continue; var c = ch(a, b); if (c > 0) pl.push([F[a][0] + F[b][0], F[a][1] + F[b][1], F[a][2] + F[b][2], F[a][3] + F[b][3] - c]); }
+      return facet(pl.concat(extra || []));
+    }
+    function has(a, b, s) { return a === s || b === s; }
+    function onFace(mesh, x, y, z, ry, rx) { mesh.position.set(x, y, z); mesh.rotation.set(rx || 0, ry || 0, 0, 'YXZ'); return mesh; }
+
+    /* body: wider and deeper than the head, front and back lean in 12 degrees, black base tucked underneath */
+    var BX = 53, BZ = 60, BY0 = 13, BY1 = 80;
+    var BF = [0, 12, 56.5], BL = Math.hypot(BF[1], BF[2]), bn = [0, BF[1] / BL, BF[2] / BL], bd = bn[1] * BY0 + bn[2] * BZ;
+    function chm(A, B, c) { return [A[0] + B[0], A[1] + B[1], A[2] + B[2], A[3] + B[3] - c]; }
+    function frontAt(y) { return BZ - (y - BY0) * BF[1] / BF[2]; }
+    var FR = [0, bn[1], bn[2], bd], BK = [0, bn[1], -bn[2], bd], XP = [1, 0, 0, BX], XN = [-1, 0, 0, BX], TP = [0, 1, 0, BY1], BT = [0, -1, 0, -BY0];
+    /* lower bevel front and back: 12 tall, 5 deep */
+    var lz = frontAt(BY0 + 12) - (BZ - 5), LF = [0, -lz, 12, -lz * BY0 + 12 * (BZ - 5)], LB = [0, -lz, -12, LF[3]];
+    var BP = [FR, BK, XP, XN, TP, BT, LF, LB, chm(XP, FR, 7), chm(XN, FR, 7), chm(XP, BK, 7), chm(XN, BK, 7), chm(TP, FR, 9), chm(TP, BK, 9), chm(TP, XP, 5), chm(TP, XN, 5), chm(BT, XP, 1), chm(BT, XN, 1)];
+    /* wheel pockets: each side is a frame (two legs, a top band, chamfered corners) around a recess, the wheel sits inside */
+    var XI = 38, WR = 35, WK = BF[1] / BF[2], W0 = WR + 2.5, PT = 2 * WR + 3, PC = 93;
+    function neg(q) { return [-q[0], -q[1], -q[2], -q[3]]; }
+    var PF = [0, WK, 1, W0 + WR * WK], PB = [0, WK, -1, W0 + WR * WK];
+    function shellPart(extra) { var m = new THREE.Mesh(facet(BP.concat(extra)), mShell); GR.base.add(m); return m; }
+    var body = shellPart([[1, 0, 0, XI], [-1, 0, 0, XI]]);
+    var chB = function (a, b) { return a[0] === 'x' && b[0] === 'z' ? 9 : (has(a, b, 'y-') ? 2 : 0); };
+    function baseBox(extra) { GR.base.add(new THREE.Mesh(cbox(-BX + 2, BX - 2, 2.5, BY0 + 0.3, -(BZ - 7), BZ - 7, chB, extra), mDark)); }
+    baseBox([[1, 0, 0, XI], [-1, 0, 0, XI]]);
+    [-1, 1].forEach(function (sd) {
+      var SX = [-sd, 0, 0, -XI];
+      shellPart([SX, neg(PF)]); shellPart([SX, neg(PB)]); shellPart([SX, PF, PB, [0, -1, 0, -PT]]);
+      shellPart([SX, PF, PB, [0, 1, 0, PT], [0, -1, -1, -PC]]); shellPart([SX, PF, PB, [0, 1, 0, PT], [0, -1, 1, -PC]]);
+      baseBox([SX, neg(PF)]); baseBox([SX, neg(PB)]);
+      /* dark back wall of the pocket */
+      var zl = function (y) { return W0 + (WR - y) * WK; }, yc = (PC - W0 - WR * WK) / (1 - WK), ps = new THREE.Shape();
+      [[-zl(2.5), 2.5], [zl(2.5), 2.5], [zl(yc), yc], [PC - PT, PT], [PT - PC, PT], [-zl(yc), yc]].forEach(function (p, i) { if (i) ps.lineTo(p[0], p[1]); else ps.moveTo(p[0], p[1]); });
+      var pw = new THREE.Mesh(new THREE.ShapeGeometry(ps), mGap); pw.position.set(sd * (XI + 0.15), 0, 0); pw.rotation.y = sd * Math.PI / 2; GR.base.add(pw);
+    });
+    var slope = Math.atan2(bn[1], bn[2]);
+    var bar = onFace(new THREE.Mesh(new THREE.ShapeGeometry(rrS(30, 3.2, 1.6), 12), mGlow), 0, 44, frontAt(44) + 0.25, 0, -slope); GR.base.add(bar);
+    var gc = document.createElement('canvas'); gc.width = 128; gc.height = 32; var gx = gc.getContext('2d'), gg = gx.createRadialGradient(64, 16, 2, 64, 16, 64); gg.addColorStop(0, 'rgba(255,250,246,.16)'); gg.addColorStop(.25, 'rgba(255,236,224,.04)'); gg.addColorStop(1, 'rgba(255,200,170,0)'); gx.fillStyle = gg; gx.fillRect(0, 0, 128, 32);
+    var barGlow = onFace(new THREE.Mesh(new THREE.PlaneGeometry(38, 7), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(gc), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })), 0, 44, frontAt(44) + 0.4, 0, -slope); GR.base.add(barGlow);
+    // USB-C on the back, low down in a dark pocket
+    var usbY = 33, usbZ = -frontAt(usbY);
+    var pocketS = rrS(46, 15, 5); pocketS.holes.push(rrS(44.4, 13.4, 4.2)); GR.base.add(onFace(new THREE.Mesh(new THREE.ShapeGeometry(pocketS, 12), mGap), 0, usbY, usbZ - 0.2, Math.PI, -slope));
+    GR.base.add(onFace(new THREE.Mesh(new THREE.ShapeGeometry(rrS(9.4, 3.4, 1.7), 10), new THREE.MeshPhysicalMaterial({ color: 0x8a8582, roughness: 0.3, metalness: 0.8 })), 0, usbY, usbZ - 0.35, Math.PI, -slope));
+    GR.base.add(onFace(new THREE.Mesh(new THREE.ShapeGeometry(rrS(7.6, 1.8, 0.9), 10), mGap), 0, usbY, usbZ - 0.45, Math.PI, -slope));
     var wheels = [];
     [-1, 1].forEach(function (sd) {
-      var g = new THREE.Group(); g.position.set(sd * 41, 0, 6); GR.base.add(g);
-      var piv = new THREE.Group(); piv.position.set(0, 25, 0); g.add(piv); wheels.push(piv);
-      var q = { r: 25, h: 15 };
-      var tp = arc(q.r - 4, -q.h / 2 + 4, 4, -Math.PI / 2, 0, 8).concat(arc(q.r - 4, q.h / 2 - 4, 4, 0, Math.PI / 2, 8)); tp.unshift(new THREE.Vector2(q.r - 6, -q.h / 2)); tp.push(new THREE.Vector2(q.r - 6, q.h / 2));
-      var ty = new THREE.Mesh(new THREE.LatheGeometry(tp, 64), mRubber); ty.rotation.z = Math.PI / 2; piv.add(ty);
-      var hub = new THREE.Mesh(new THREE.CylinderGeometry(q.r - 5.5, q.r - 5.5, q.h - 1.4, 56), mDark); hub.rotation.z = Math.PI / 2; piv.add(hub);
-      var cap = new THREE.Mesh(new THREE.CylinderGeometry(q.r - 8, q.r - 8, 1, 56), new THREE.MeshPhysicalMaterial({ color: 0x18181a, roughness: 0.35, clearcoat: 0.6, envMapIntensity: 0.4 })); cap.rotation.z = Math.PI / 2; cap.position.x = sd * (q.h / 2 - 0.2); piv.add(cap);
+      var g = new THREE.Group(); g.position.set(sd * (BX + 6 - 9), 0, 0); GR.base.add(g);
+      var piv = new THREE.Group(); piv.position.set(0, WR, 0); g.add(piv); wheels.push(piv);
+      var R = WR, Wd = 18, tp = [new THREE.Vector2(20, -Wd / 2)].concat(arc(R - 3.2, -Wd / 2 + 3.2, 3.2, -Math.PI / 2, 0, 6), arc(R - 3.2, Wd / 2 - 3.2, 3.2, 0, Math.PI / 2, 6), [new THREE.Vector2(20, Wd / 2)]);
+      var ty = new THREE.Mesh(new THREE.LatheGeometry(tp, 72), mRubber); ty.rotation.z = Math.PI / 2; piv.add(ty);
+      var fp = [new THREE.Vector2(0, Wd / 2 + 0.9), new THREE.Vector2(20, Wd / 2 + 0.5), new THREE.Vector2(28, Wd / 2 - 0.2), new THREE.Vector2(30, Wd / 2 - 1.2)];
+      var fo = new THREE.Mesh(new THREE.LatheGeometry(fp, 72), mFace); fo.rotation.z = sd > 0 ? -Math.PI / 2 : Math.PI / 2; piv.add(fo);
+      var fi = new THREE.Mesh(new THREE.CylinderGeometry(29, 29, Wd - 2, 48), mRubber); fi.rotation.z = Math.PI / 2; piv.add(fi);
+      var ring = new THREE.Mesh(new THREE.TorusGeometry(27.8, 0.35, 6, 72), mGap); ring.rotation.y = Math.PI / 2; ring.position.x = sd * (Wd / 2 - 0.15); piv.add(ring);
+      [-1, 1].forEach(function (q) { var tk = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.9, 5), new THREE.MeshBasicMaterial({ color: 0x8c8784 })); tk.position.set(sd * (Wd / 2 + 0.7), 0, q * 21); piv.add(tk); });
+      var hub = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 0.6, 24), mDark); hub.rotation.z = Math.PI / 2; hub.position.x = sd * (Wd / 2 + 0.95); piv.add(hub);
+      var axle = new THREE.Mesh(new THREE.CylinderGeometry(3, 3, 4, 12), mDark); axle.rotation.z = Math.PI / 2; axle.position.x = -sd * 7; piv.add(axle);
     });
-    // neck: low dark turntable ring (turns) with a hidden tilt joint above it
-    var neck = new THREE.Mesh(new THREE.CylinderGeometry(24, 25, 4, 56), mDark); neck.position.y = 53; GR.mid.add(neck);
-    // head: a soft, slightly pillowed cube, bigger than the body
-    function pivot(grp) { var hp = new THREE.Group(); hp.name = 'hp'; hp.position.set(0, 55, 0); grp.add(hp); return hp; }
+    // neck: black turntable in a dark collar
+    function lathe(pts, m) { return new THREE.Mesh(new THREE.LatheGeometry(pts.map(function (p) { return new THREE.Vector2(p[0], p[1]); }), 72), m); }
+    GR.mid.add(lathe([[0, 79.9], [39, 79.9], [39, 80.4], [0, 80.4]], mGap));
+    GR.mid.add(lathe([[0, 80], [36.5, 80], [37, 80.5], [37, 86.6], [36.4, 87.2], [0, 87.2]], mDark));
+    GR.mid.add(lathe([[0, 87], [35.2, 87], [35.2, 89.4], [34.6, 90], [0, 90]], mDark));
+    // head: wide faceted box; big chamfers on the edges that run front to back
+    function pivot(grp) { var hp = new THREE.Group(); hp.name = 'hp'; hp.position.set(0, 90, 0); grp.add(hp); return hp; }
     var hpS = pivot(GR.shell), hpG = pivot(GR.glass), hpF = pivot(GR.face);
-    var hg = rbox(92, 82, 86, 13); var hq = hg.attributes.position, HW = 46, HH = 41, HD = 43, KB = 0.045;
-    for (i = 0; i < hq.count; i++) { var x = hq.getX(i), y = hq.getY(i), z = hq.getZ(i), nx = x / HW, ny = y / HH, nz = z / HD;
-      hq.setX(i, x * (1 + KB * Math.max(0, 1 - ny * ny) * Math.max(0, 1 - nz * nz))); hq.setY(i, y * (1 + KB * Math.max(0, 1 - nx * nx) * Math.max(0, 1 - nz * nz)));
-      if (z < 0) hq.setZ(i, z * (1 + KB * Math.max(0, 1 - nx * nx) * Math.max(0, 1 - ny * ny))); }
-    smooth(hg);
-    var head = new THREE.Mesh(hg, mShell); head.position.set(0, 41, 0); hpS.add(head);
-    var lipS = rrS(76, 64, 16); lipS.holes.push((function () { var hs = rrS(66, 54, 13), path = new THREE.Path(); path.curves = hs.curves; return path; })());
-    var lip = new THREE.Mesh(new THREE.ExtrudeGeometry(lipS, { depth: 1.5, bevelEnabled: true, bevelThickness: 1.4, bevelSize: 1.4, bevelSegments: 6, curveSegments: 20 }), mShell); lip.position.set(0, 41, 42.6); hpS.add(lip);
-    var well = new THREE.Mesh(new THREE.ShapeGeometry(rrS(67, 55, 13), 20), new THREE.MeshBasicMaterial({ color: 0x050506 })); well.position.set(0, 41, 43.1); hpS.add(well);
-    var vg = new THREE.ShapeGeometry(rrS(64, 52, 12), 20); var uv = vg.attributes.uv, vp = vg.attributes.position; for (i = 0; i < uv.count; i++) uv.setXY(i, vp.getX(i) / 64 + 0.5, vp.getY(i) / 52 + 0.5);
-    var vis = new THREE.Mesh(vg, mVisor); vis.position.set(0, 41, 43.4); hpG.add(vis);
-    var camd = new THREE.Mesh(new THREE.CircleGeometry(1.3, 24), new THREE.MeshPhysicalMaterial({ color: 0x1a1d24, roughness: 0.1, clearcoat: 1 })); camd.position.set(0, 64, 43.5); hpF.add(camd);
-    [-1, 1].forEach(function (sd) { var btn = new THREE.Mesh(rbox(5, 15, 15, 2), mDark); btn.position.set(sd * 48.2, 46, 14); hpF.add(btn); });
-    root.position.y = -53; Object.keys(GR).forEach(function (k) { GR[k].scale.setScalar(0.74); });
+    var headG = cbox(-50, 50, 0, 82, -46, 46, function (a, b) { var ax = a[0] + b[0]; if (ax === 'xy') return 11; if (has(a, b, 'z+')) return 4; return 9; });
+    var head = new THREE.Mesh(headG, mShell); hpS.add(head);
+    var HY = 41, SW = 86, SH = 68;
+    hpS.add(onFace(new THREE.Mesh(new THREE.ShapeGeometry(octS(SW + 2.6, SH + 2.6, 11.6)), mGap), 0, HY, 46.04));
+    var vg = new THREE.ExtrudeGeometry(octS(SW, SH, 11), { depth: 0.5, bevelEnabled: true, bevelThickness: 0.45, bevelSize: 0.45, bevelSegments: 2 });
+    var uv = vg.attributes.uv, vp = vg.attributes.position; for (var i = 0; i < uv.count; i++) uv.setXY(i, 0.5 + vp.getX(i) / (SH * 4 / 3), 0.5 + vp.getY(i) / SH);
+    var vis = new THREE.Mesh(vg, [mVisor, mFace]); vis.position.set(0, HY, 46.1 + 0.45); hpG.add(vis);
+    // side action button with its light line (robot's right side), mic slots on the left, vents at the back
+    var btn = new THREE.Mesh(new THREE.ExtrudeGeometry(rrS(20, 20, 3.4), { depth: 1.4, bevelEnabled: true, bevelThickness: 0.6, bevelSize: 0.6, bevelSegments: 2 }), mDark);
+    btn.rotation.y = -Math.PI / 2; btn.position.set(-50.6, 44, 4); hpF.add(btn);
+    var led = new THREE.Mesh(new THREE.ShapeGeometry(rrS(9, 1.3, 0.65), 8), mGlow); led.rotation.y = -Math.PI / 2; led.position.set(-52.7, 40, 4); hpF.add(led);
+    [0, 1, 2].forEach(function (q) { var s = new THREE.Mesh(new THREE.ShapeGeometry(rrS(1.4, 7, 0.7), 6), mGap); s.rotation.y = Math.PI / 2; s.position.set(50.04, 41, 32 + q * 3.4); hpF.add(s); });
+    [0, 1, 2, 3, 4].forEach(function (q) { var s = new THREE.Mesh(new THREE.ShapeGeometry(rrS(38, 2.6, 1.3), 8), mGap); s.rotation.y = Math.PI; s.position.set(0, 51 - q * 5.2, -46.04); hpS.add(s); });
+    root.position.y = -53; Object.keys(GR).forEach(function (k) { GR[k].scale.setScalar(0.6); });
     var HP = [hpS, hpG, hpF];
     function outside(g) {
       g.mid.visible = false; g.face.visible = false;
@@ -103,7 +169,7 @@ window.RoamStage = (function () {
     shadow.rotation.x = -Math.PI / 2; shadow.renderOrder = 2; scene.add(shadow);
     var mirror = null, mirGR = null, mirWheels = [];
     if (opts.mirror !== false) {
-      mirror = root.clone(true); mirror.traverse(function (o) { if (o.isMesh) { var m = o.material.clone(); m.transparent = true; m.opacity = 0.22; m.depthWrite = false; m.side = THREE.DoubleSide; if (m.emissiveIntensity) m.emissiveIntensity *= 0.7; o.material = m; o.renderOrder = -1; } });
+      mirror = root.clone(true); mirror.traverse(function (o) { if (o.isMesh) { var fade = function (m0) { var m = m0.clone(); m.transparent = true; m.opacity = 0.22; m.depthWrite = false; m.side = THREE.DoubleSide; if (m.emissiveIntensity) m.emissiveIntensity *= 0.7; return m; }; o.material = Array.isArray(o.material) ? o.material.map(fade) : fade(o.material); o.renderOrder = -1; } });
       mirror.scale.y = -1; scene.add(mirror);
       mirGR = {}; ['base', 'mid', 'face', 'shell', 'glass'].forEach(function (k, i) { mirGR[k] = mirror.children[i]; });
       outside(mirGR);
@@ -112,7 +178,8 @@ window.RoamStage = (function () {
 
     // eyes: one face engine, many moods
     var look = { x: 0, y: 0, tx: 0, ty: 0 }, blink = 0, nextBlink = 2, MOOD = { m: 'calm', t: 0 };
-    var COL = { calm: '#eee9ff', happy: '#eee9ff', love: '#ff7aa8', sleepy: '#6f86c9', surprised: '#a9c4ff', angry: '#ff6a4a', sad: '#7ea2ff', wink: '#eee9ff', dizzy: '#c39bff', scared: '#a9c4ff', listen: '#8fe8ff', proud: '#ffd36b', excited: '#ffd36b', amazed: '#ffd36b', laughing: '#eee9ff', curious: '#8fe8ff', cheeky: '#eee9ff', tired: '#6f86c9', bored: '#7a86a8', focused: '#8fe8ff', sick: '#8fe39a', overheated: '#ff5a4a', embarrassed: '#ff9ab8', grateful: '#eee9ff', heartbroken: '#ff7aa8', oops: '#a9c4ff', scanning: '#8fe8ff', attention: '#eee9ff', celebration: '#ffd36b', thinking: '#8fe8ff', processing: '#eee9ff', loading: '#eee9ff', charging: '#7dff9a', lowbattery: '#ff5a4a', connected: '#7dff9a' };
+    var EYEG = [[0, '#BCDAF0'], [0.25, '#E2ECF7'], [0.5, '#EEEAF7'], [0.75, '#E6DCF2'], [1, '#D3C3E5']];
+    var COL = { calm: '#eee9ff', happy: '#eee9ff', love: '#ff7aa8', sleepy: '#6f86c9', surprised: '#eee9ff', angry: '#ff6a4a', sad: '#7ea2ff', wink: '#eee9ff', dizzy: '#c39bff', scared: '#eee9ff', listen: '#eee9ff', proud: '#ffd36b', excited: '#ffd36b', amazed: '#ffd36b', laughing: '#eee9ff', curious: '#eee9ff', cheeky: '#eee9ff', tired: '#6f86c9', bored: '#7a86a8', focused: '#eee9ff', sick: '#8fe39a', overheated: '#ff5a4a', embarrassed: '#ff9ab8', grateful: '#eee9ff', heartbroken: '#ff7aa8', oops: '#eee9ff', scanning: '#eee9ff', attention: '#eee9ff', celebration: '#ffd36b', thinking: '#eee9ff', processing: '#eee9ff', loading: '#eee9ff', charging: '#7dff9a', lowbattery: '#ff5a4a', connected: '#7dff9a' };
     /* gestures: hands drawn on the face screen, plus a mouth when it talks */
     var G = null, TALK = 0, FX = [], lastT = 0, DT = 1 / 60, HA = 1;
     var GD = { victory: 2, fistpump: 2, hug: 2.4, dthumbs: 2, wave: 2.2, clap: 1.8, peek: 2.6, facepalm: 2.2, thumbs: 1.8, heart: 2.4, shrug: 1.8, think: 2.4, rub: 2.2, pointL: 1.8, pointR: 1.8, cheer: 2, yawn: 2.2, cover: 2, laugh: 2, dance: 2.4 };
@@ -193,9 +260,11 @@ window.RoamStage = (function () {
       eg.save(); eg.shadowColor = col; eg.shadowBlur = 16; eg.fillStyle = col; eg.strokeStyle = col; eg.lineCap = 'round'; eg.lineJoin = 'round';
       var ICON = { processing: 1, loading: 1, charging: 1, lowbattery: 1, connected: 1 };
       if (ICON[m]) { icon(m, W, H, t, col); }
+      var GRAD = col === COL.calm;
       [-1, 1].forEach(function (s, si) {
         if (ICON[m] || gs.hide.indexOf(si) >= 0) return;
-        var cx = W / 2 + s * 58 + look.x * 24 + gx, cy = H * 0.46 + look.y * 16 + gy, ew = 60, eh = 62 * b;
+        var cx = W / 2 + s * 58 + look.x * 24 + gx, cy = H * 0.46 + look.y * 16 + gy, ew = 52, eh = 52 * b;
+        if (GRAD) { var gq = eg.createLinearGradient(cx + s * 34, cy - 36, cx - s * 34, cy + 36); EYEG.forEach(function (st) { gq.addColorStop(st[0], st[1]); }); eg.fillStyle = gq; eg.strokeStyle = gq; eg.shadowColor = 'rgba(205,195,250,.8)'; }
         if (m === 'scared') { cx += Math.sin(t * 60) * 2; ew = 40; eh = 44 * b; }
         if (m === 'excited' || m === 'amazed') { var ks = 1 + 0.1 * Math.sin(t * (m === 'amazed' ? 6 : 10)); star(cx, cy, 36 * ks, 12 * ks, m === 'amazed' ? t : 0); eg.fill(); return; }
         if (m === 'laughing' || (m === 'cheeky' && s < 0)) { eg.lineWidth = 14; eg.beginPath(); eg.moveTo(cx + s * 16, cy - 20); eg.lineTo(cx - s * 16, cy); eg.lineTo(cx + s * 16, cy + 20); eg.stroke(); return; }
@@ -212,12 +281,12 @@ window.RoamStage = (function () {
         if (m === 'sleepy') { eg.lineWidth = 14; eg.beginPath(); eg.moveTo(cx - 24, cy + 10); eg.quadraticCurveTo(cx, cy + 22, cx + 24, cy + 10); eg.stroke(); return; }
         if (m === 'surprised') { eg.beginPath(); eg.arc(cx, cy, 34 * Math.max(0.2, b), 0, 6.283); eg.fill(); return; }
         if (m === 'dizzy') { eg.lineWidth = 8; eg.beginPath(); for (var i = 0; i < 60; i++) { var a = i / 60 * 12 + t * 6 * s, r = i / 60 * 30; eg[i ? 'lineTo' : 'moveTo'](cx + Math.cos(a) * r, cy + Math.sin(a) * r); } eg.stroke(); return; }
-        rr(cx - ew / 2, cy - eh / 2, ew, Math.max(4, eh), Math.min(12, eh / 2)); eg.fill();
+        rr(cx - ew / 2, cy - eh / 2, ew, Math.max(4, eh), Math.min(9, eh / 2)); eg.fill();
         if (m === 'focused' || m === 'overheated') { eg.save(); eg.shadowBlur = 0; eg.fillStyle = '#000'; eg.beginPath(); var dr = s * 0.6; eg.moveTo(cx - 40, cy - 52 + dr * 20); eg.lineTo(cx + 40, cy - 52 - dr * 20); eg.lineTo(cx + 40, cy - 22 - dr * 20); eg.lineTo(cx - 40, cy - 22 + dr * 20); eg.fill(); eg.restore(); }
         if (m === 'thinking') { eg.save(); eg.shadowBlur = 0; eg.fillStyle = '#000'; eg.fillRect(cx - 30, cy - 50, 60, 42); eg.restore(); }
         if (m === 'angry' || m === 'sad') { eg.save(); eg.shadowBlur = 0; eg.fillStyle = '#000'; eg.beginPath(); var dir = (m === 'angry' ? 1 : -1) * s; eg.moveTo(cx - 40, cy - 66 + dir * 24); eg.lineTo(cx + 40, cy - 66 - dir * 24); eg.lineTo(cx + 40, cy - 28 - dir * 24); eg.lineTo(cx - 40, cy - 28 + dir * 24); eg.fill(); eg.restore(); }
-        if (m === 'calm' || m === 'listen' || m === 'curious' || m === 'attention' || m === 'oops') { eg.save(); eg.shadowBlur = 0; eg.fillStyle = 'rgba(255,255,255,.75)'; rr(cx - ew / 2 + 8, cy - eh / 2 + 8, 12, Math.max(2, eh * 0.28), 6); eg.fill(); eg.restore(); }
       });
+      eg.fillStyle = col; eg.strokeStyle = col; eg.shadowColor = col;
       // little extras that make it feel alive
       var mx = W / 2 + look.x * 18 + gx * 0.6, my = H * 0.8 + look.y * 6;
       if (m === 'love' || (G && G.n === 'peek')) { eg.save(); eg.shadowBlur = 20; eg.shadowColor = '#ff7aa8'; eg.fillStyle = 'rgba(255,122,168,.38)'; [-1, 1].forEach(function (s) { eg.beginPath(); eg.ellipse(W / 2 + s * 104 + look.x * 24, H * 0.68, 22, 11, 0, 0, 6.283); eg.fill(); }); eg.restore(); }
@@ -295,11 +364,11 @@ window.RoamStage = (function () {
     api.resize = resize;
     api.exportGLB = function (cb) {
       if (!THREE.GLTFExporter) return cb(null);
-      var keep = { m: MOOD.m, b: blink, x: look.x, y: look.y }; MOOD.m = 'happy'; blink = 0; look.x = look.y = 0; drawEyes(api.t);
+      var keep = { m: MOOD.m, b: blink, x: look.x, y: look.y }; MOOD.m = 'calm'; blink = 0; look.x = look.y = 0; drawEyes(api.t);
       var c = root.clone(true), g = {}; ['base', 'mid', 'face', 'shell', 'glass'].forEach(function (k, i) { g[k] = c.children[i]; g[k].position.set(0, 0, 0); });
-      outside(g); c.position.set(0, 0, 0); c.rotation.set(0, 0, 0);
+      c.traverse(function (o) { if (o.isMesh && o.material && o.material.blending === THREE.AdditiveBlending) o.visible = false; }); c.position.set(0, 0, 0); c.rotation.set(0, 0, 0);
       var dead = []; c.traverse(function (o) { if (!o.visible) dead.push(o); }); dead.forEach(function (o) { if (o.parent) o.parent.remove(o); });
-      var w = new THREE.Group(); c.scale.setScalar(0.001); w.add(c); w.updateMatrixWorld(true);
+      var w = new THREE.Group(); c.scale.setScalar(0.0016); /* head 96 mm wide */ w.add(c); w.updateMatrixWorld(true);
       var bb = new THREE.Box3().setFromObject(c); c.position.y = -bb.min.y;
       try {
         new THREE.GLTFExporter().parse(w, function (r) { MOOD.m = keep.m; blink = keep.b; cb(new Blob([r], { type: 'model/gltf-binary' })); }, { binary: true });

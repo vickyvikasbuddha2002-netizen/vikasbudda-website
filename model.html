@@ -9,22 +9,22 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-html,body{margin:0;height:100%;background:#17181b;color:#f2f1ee;font:400 15px/1.4 Inter,system-ui,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
-.bg{position:fixed;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 42%,#3b3c42 0%,#26272c 45%,#141518 100%)}
+html,body{margin:0;height:100%;background:#15110f;color:#f5ede6;font:400 15px/1.4 Inter,system-ui,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+.bg{position:fixed;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 42%,#45382f 0%,#2a221e 45%,#100d0b 100%)}
 canvas{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;display:block;touch-action:none;cursor:grab}
 canvas:active{cursor:grabbing}
 .top{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:max(18px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) 0 max(20px,env(safe-area-inset-left));pointer-events:none}
 .top>*{pointer-events:auto}
-.back{color:#c9c9cf;text-decoration:none;font-weight:600;font-size:14px;min-height:44px;display:inline-flex;align-items:center}
+.back{color:#d6c9bf;text-decoration:none;font-weight:600;font-size:14px;min-height:44px;display:inline-flex;align-items:center}
 .name{font:700 18px/1 Inter,sans-serif;letter-spacing:-.01em}
 .bot{position:fixed;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;gap:12px;padding:0 16px max(20px,env(safe-area-inset-bottom));pointer-events:none}
 .bot>*{pointer-events:auto}
 .chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-button{font:600 14px Inter,sans-serif;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(20,20,23,.55);color:#e9e9ee;cursor:pointer;display:inline-flex;align-items:center;gap:8px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-button.on{background:#f2f1ee;color:#111;border-color:#f2f1ee}
+button{font:600 14px Inter,sans-serif;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.16);background:rgba(24,18,15,.55);color:#f0e6de;cursor:pointer;display:inline-flex;align-items:center;gap:8px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+button.on{background:#f5ede6;color:#111;border-color:#f5ede6}
 button i{width:14px;height:14px;border-radius:50%}
 button:focus-visible{outline:2px solid #fff;outline-offset:2px}
-.hint{font-size:13px;color:#a2a2aa;transition:opacity .6s}
+.hint{font-size:13px;color:#b3a397;transition:opacity .6s}
 </style>
 </head>
 <body>
@@ -34,7 +34,7 @@ button:focus-visible{outline:2px solid #fff;outline-offset:2px}
 <div class="bot">
   <p class="hint" id="hint">Drag to turn. Scroll or pinch to zoom. Double-tap to reset.</p>
   <div class="chips" role="group" aria-label="Colour and mood">
-    <button type="button" class="col on" data-col="terracotta"><i style="background:#C9764A"></i>Terracotta</button>
+    <button type="button" class="col on" data-col="terracotta"><i style="background:#B4522A"></i>Terracotta</button>
     <button type="button" class="col" data-col="sage"><i style="background:#A8B596"></i>Sage green</button>
     <button type="button" id="spin" class="on">Auto-turn</button>
   </div>
