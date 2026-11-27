@@ -72,7 +72,7 @@ else {
       R.look.tx = 0.6 * Math.sin(t * 0.7); R.look.ty = 0.3 * Math.sin(t * 0.5);
     };
     /* show off the face library: eye animations mixed with full-screen scenes */
-    const show = ['Happy', 'Morning coffee', 'Curious', 'Love eyes', 'Rainy day', 'Cheerful wink', 'Butterfly', 'Excited', 'Bright idea', 'Starstruck', 'Birthday cake', 'Sparkle eyes', 'Headphones', 'Giggle', 'Sneeze', 'Smitten', 'Goodnight', 'Hello wave'];
+    const show = ['Happy', 'Rainbow', 'Curious', 'Love eyes', 'Aquarium', 'Cheerful wink', 'Balloons', 'Excited', 'Fireworks', 'Sparkle eyes', 'Ice cream', 'Giggle', 'Flower pot', 'Smitten', 'Disco', 'Planets', 'Paint splash', 'Sunset', 'Sweet dreams', 'Hello'];
     let mi = 0, faceT = 0;
     const nextFace = () => { const it = R.play ? R.play(show[mi++ % show.length]) : null; clearTimeout(faceT); faceT = setTimeout(nextFace, 1000 * Math.max(4, (it ? it.d : 4) * (it && it.scene ? 1 : 1.6))); };
     setTimeout(nextFace, 1200);
