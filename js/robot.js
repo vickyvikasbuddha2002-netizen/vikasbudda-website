@@ -244,7 +244,7 @@ window.RoamStage = (function () {
       var c = root.clone(true), g = {}; ['base', 'mid', 'face', 'shell', 'glass'].forEach(function (k, i) { g[k] = c.children[i]; g[k].position.set(0, 0, 0); });
       c.traverse(function (o) { if (o.isMesh && o.material && o.material.blending === THREE.AdditiveBlending) o.visible = false; }); c.position.set(0, 0, 0); c.rotation.set(0, 0, 0);
       var dead = []; c.traverse(function (o) { if (!o.visible) dead.push(o); }); dead.forEach(function (o) { if (o.parent) o.parent.remove(o); });
-      var w = new THREE.Group(); c.scale.setScalar(1 / 600); /* head 100 mm wide, room for a 3.5 inch screen */ w.add(c); w.updateMatrixWorld(true);
+      var w = new THREE.Group(); c.scale.setScalar(1 / 750); /* head 80 mm wide, as in the CAD */ w.add(c); w.updateMatrixWorld(true);
       var bb = new THREE.Box3().setFromObject(c); c.position.y = -bb.min.y;
       try {
         new THREE.GLTFExporter().parse(w, function (r) { cb(new Blob([r], { type: 'model/gltf-binary' })); }, { binary: true });
