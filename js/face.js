@@ -319,14 +319,15 @@ function shapeOf(e){const w=e.w,h=e.h,p=new Path2D();switch(e.shape){
  case 'spiral':{for(let i=0;i<=90;i++){const k=i/90,a=k*TAU*2.6,q=k*Math.min(w,h)/2;i?p.lineTo(q*cos(a),q*sin(a)):p.moveTo(0,0)}return{p,stroke:1}}
  case 'spin':p.arc(0,0,Math.min(w,h)/2-e.lw/2,e.ph,e.ph+Math.PI*1.4);return{p,stroke:1};
  default:return{glyph:e.shape}}}
-const CX=[94,226];
+const CX=[94,226],CXK=[105.6,214.4];let EK=.69;
+const EX=(side,x)=>EK<1?CXK[side]+x*EK:CX[side]+x;
 let DOTS=null;const PITCH=4;
 function dots(){if(DOTS&&DOTS.width===oc.width&&DOTS.height===oc.height)return DOTS;DOTS=document.createElement('canvas');DOTS.width=oc.width;DOTS.height=oc.height;const d=DOTS.getContext('2d'),r=PITCH*.26*dpr;
  for(let y=PITCH/2;y<240;y+=PITCH)for(let x=PITCH/2;x<320;x+=PITCH){const X=x*dpr,Y=y*dpr,g=d.createRadialGradient(X,Y,0,X,Y,r*1.45);g.addColorStop(0,'rgba(255,255,255,.95)');g.addColorStop(.55,'rgba(255,255,255,.72)');g.addColorStop(1,'rgba(255,255,255,0)');d.fillStyle=g;d.fillRect(X-r*2,Y-r*2,r*4,r*4)}
  return DOTS}
 function drawEye(e,side){if(e.a<=.01)return;const sx=e.sx*e.s,sy=e.sy*e.s;if(abs(sy)<.003||abs(sx)<.003)return;
  const c=octx,m=ctx.getTransform();c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,oc.width,oc.height);c.setTransform(m);
- c.save();c.translate(CX[side]+e.x,120+e.y);c.rotate(e.rot);if(side===1&&e.shape!=='check')c.scale(-1,1);c.scale(sx,sy);
+ c.save();c.translate(EX(side,e.x),120+e.y*EK);c.rotate(e.rot);c.scale(EK,EK);if(side===1&&e.shape!=='check')c.scale(-1,1);c.scale(sx,sy);
  const S=shapeOf(e),G=grad(c,e.w,e.h,e.tint,e.tc);
  if(S.glyph){if(side===1)c.scale(-1,1);c.fillStyle=G;c.font=`700 ${e.h}px Outfit,system-ui,sans-serif`;c.textAlign='center';c.textBaseline='middle';c.fillText(S.glyph,0,0)}
  else if(S.stroke){c.strokeStyle=G;c.lineWidth=e.lw;c.lineCap='round';c.lineJoin='round';c.stroke(S.p)}
@@ -344,7 +345,7 @@ function star4(x,y,r,c){ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(x,y-r);ctx.qu
 function drop(x,y,s,c){ctx.fillStyle=c;ctx.beginPath();ctx.moveTo(x,y-s*1.5);ctx.bezierCurveTo(x+s*.9,y-s*.2,x+s,y+s,x,y+s);ctx.bezierCurveTo(x-s,y+s,x-s*.9,y-s*.2,x,y-s*1.5);ctx.fill()}
 function heartAt(x,y,s,c){const p=new Path2D();heartP(p,x,y,s*2,s*1.85);ctx.fillStyle=c;ctx.fill(p)}
 function glyph(g,x,y,sz,c){ctx.fillStyle=c;ctx.font=`700 ${sz}px Outfit,system-ui,sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(g,x,y)}
-const eyeSz=e=>[abs(e.w*e.sx*e.s),abs(e.h*e.sy*e.s)];
+const eyeSz=e=>[abs(e.w*e.sx*e.s*EK),abs(e.h*e.sy*e.s*EK)];
 const FX={
  sparkle(st,u,t){[[44,60],[276,52],[160,34],[56,192],[282,186],[160,212]].forEach(([x,y],i)=>{const k=(sin(t*4.2+i*1.9)+1)/2;star4(x,y,2+7*k,LAV(.25+.75*k))})},
  glint(st){[[st.c.L,st.L,-1],[st.c.R,st.R,1]].forEach(([c,e,sd])=>{if(e.a<.2||e.shape==='line')return;const [w,h]=eyeSz(e);if(h<20)return;ctx.fillStyle='rgba(255,255,255,.95)';ctx.beginPath();ctx.arc(c[0]+sd*w*.2,c[1]-h*.2,5*e.s,0,TAU);ctx.fill();ctx.beginPath();ctx.arc(c[0]-sd*w*.12,c[1]+h*.18,2.4*e.s,0,TAU);ctx.fill()})},
@@ -378,7 +379,7 @@ const FX={
 const h1=x=>{const s=sin(x)*43758.5453;return s-Math.floor(s)};
 function render(st){ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#000';ctx.fillRect(0,0,cv.width,cv.height);ctx.setTransform(dpr,0,0,dpr,0,0);ctx.translate(LK.x,LK.y);
  ctx.save();ctx.translate(160,120);ctx.rotate(st.g.rot);ctx.scale(st.g.s*st.g.sx,st.g.s);ctx.translate(-160+st.g.x,-120+st.g.y);
- st.c={L:[94+st.L.x,120+st.L.y],R:[226+st.R.x,120+st.R.y]};
+ st.c={L:[EX(0,st.L.x),120+st.L.y*EK],R:[EX(1,st.R.x),120+st.R.y*EK]};
  drawEye(st.L,0);drawEye(st.R,1);
  for(const [n,o] of st.fx){if(o.from!==undefined&&st.u<o.from)continue;if(o.to!==undefined&&st.u>o.to)continue;ctx.save();FX[n]&&FX[n](st,st.u,st.t,o);ctx.restore()}
  ctx.restore();ctx.setTransform(1,0,0,1,0,0);
@@ -630,7 +631,7 @@ const byName = {}; ALL.forEach(a => { byName[a.n] = a; });
 return {
   list: ALL,
   get: n => byName[n],
-  draw: function (it, t, lx, ly) { LK.x = lx || 0; LK.y = ly || 0; try { if (it.scene) renderScene(it, t); else render(state(it, t)); } catch (e) { } }
+  draw: function (it, t, lx, ly) { LK.x = lx || 0; LK.y = ly || 0; try { if (it.scene) { EK = 1; renderScene(it, t); } else { EK = .69; render(state(it, t)); } } catch (e) { } }
 };
 }
 window.RoamFace = { create: create };

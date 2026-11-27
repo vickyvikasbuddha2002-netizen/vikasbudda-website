@@ -203,7 +203,7 @@ window.RoamStage = (function () {
         if (MOOD.m === 'calm') { calmT += dt; if (cur.t >= cur.it.d * (cur.it.scene ? 1 : 1 + Math.floor(Math.random() * 2))) { cur.it = nextIdle(); cur.t = 0; } } else calmT = 0;
         it = cur.it; tt = cur.t;
       }
-      FACE.draw(it, tt, it.scene ? 0 : look.x * 22, it.scene ? 0 : look.y * 14);
+      FACE.draw(it, tt, it.scene ? 0 : look.x * 15, it.scene ? 0 : look.y * 9);
       var c2 = eye.getContext('2d'); c2.setTransform(1, 0, 0, 1, 0, 0); c2.strokeStyle = '#000'; c2.lineWidth = 6; c2.strokeRect(0, 0, eye.width, eye.height);
       eyeTex.needsUpdate = true;
     }
