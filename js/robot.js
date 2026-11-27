@@ -144,19 +144,19 @@ window.RoamStage = (function () {
     // head: wide faceted box; big chamfers on the edges that run front to back
     function pivot(grp) { var hp = new THREE.Group(); hp.name = 'hp'; hp.position.set(0, 90, 0); grp.add(hp); return hp; }
     var hpS = pivot(GR.shell), hpG = pivot(GR.glass), hpF = pivot(GR.face);
-    var headG = cbox(-50, 50, 0, 82, -46, 46, function (a, b) { var ax = a[0] + b[0]; if (ax === 'xy') return 11; if (has(a, b, 'z+')) return 4; return 9; });
+    var headG = cbox(-50, 50, 0, 75, -46, 46, function (a, b) { var ax = a[0] + b[0]; if (ax === 'xy') return 9; if (has(a, b, 'z+')) return 4; return 9; });
     var head = new THREE.Mesh(headG, mShell); hpS.add(head);
-    var HY = 41, SW = 86, SH = 68;
-    hpS.add(onFace(new THREE.Mesh(new THREE.ShapeGeometry(octS(SW + 2.6, SH + 2.6, 11.6)), mGap), 0, HY, 46.04));
-    var vg = new THREE.ExtrudeGeometry(octS(SW, SH, 11), { depth: 0.5, bevelEnabled: true, bevelThickness: 0.45, bevelSize: 0.45, bevelSegments: 2 });
-    var uv = vg.attributes.uv, vp = vg.attributes.position; for (var i = 0; i < uv.count; i++) uv.setXY(i, 0.5 + vp.getX(i) / (SH * 4 / 3), 0.5 + vp.getY(i) / SH);
+    var HY = 37.5, SW = 75, SH = 56; /* CAD: head 80 x 60 mm, window 60 x 45 mm, lit area = 2.8 inch screen (57.6 x 43.2 mm) */
+    hpS.add(onFace(new THREE.Mesh(new THREE.ShapeGeometry(octS(SW + 2.6, SH + 2.6, 8.6)), mGap), 0, HY, 46.04));
+    var vg = new THREE.ExtrudeGeometry(octS(SW, SH, 8), { depth: 0.5, bevelEnabled: true, bevelThickness: 0.45, bevelSize: 0.45, bevelSegments: 2 });
+    var uv = vg.attributes.uv, vp = vg.attributes.position; for (var i = 0; i < uv.count; i++) uv.setXY(i, 0.5 + vp.getX(i) / 72, 0.5 + vp.getY(i) / 54);
     var vis = new THREE.Mesh(vg, [mVisor, mFace]); vis.position.set(0, HY, 46.1 + 0.45); hpG.add(vis);
     // side action button with its light line (robot's right side), mic slots on the left, vents at the back
     var btn = new THREE.Mesh(new THREE.ExtrudeGeometry(rrS(20, 20, 3.4), { depth: 1.4, bevelEnabled: true, bevelThickness: 0.6, bevelSize: 0.6, bevelSegments: 2 }), mDark);
-    btn.rotation.y = -Math.PI / 2; btn.position.set(-50.6, 44, 4); hpF.add(btn);
-    var led = new THREE.Mesh(new THREE.ShapeGeometry(rrS(9, 1.3, 0.65), 8), mGlow); led.rotation.y = -Math.PI / 2; led.position.set(-52.7, 40, 4); hpF.add(led);
+    btn.rotation.y = -Math.PI / 2; btn.position.set(-50.6, 40, 4); hpF.add(btn);
+    var led = new THREE.Mesh(new THREE.ShapeGeometry(rrS(9, 1.3, 0.65), 8), mGlow); led.rotation.y = -Math.PI / 2; led.position.set(-52.7, 36.5, 4); hpF.add(led);
     [0, 1, 2].forEach(function (q) { var s = new THREE.Mesh(new THREE.ShapeGeometry(rrS(1.4, 7, 0.7), 6), mGap); s.rotation.y = Math.PI / 2; s.position.set(50.04, 41, 32 + q * 3.4); hpF.add(s); });
-    [0, 1, 2, 3, 4].forEach(function (q) { var s = new THREE.Mesh(new THREE.ShapeGeometry(rrS(38, 2.6, 1.3), 8), mGap); s.rotation.y = Math.PI; s.position.set(0, 51 - q * 5.2, -46.04); hpS.add(s); });
+    [0, 1, 2, 3, 4].forEach(function (q) { var s = new THREE.Mesh(new THREE.ShapeGeometry(rrS(38, 2.6, 1.3), 8), mGap); s.rotation.y = Math.PI; s.position.set(0, 47 - q * 5, -46.04); hpS.add(s); });
     root.position.y = -53; Object.keys(GR).forEach(function (k) { GR[k].scale.setScalar(0.6); });
     var HP = [hpS, hpG, hpF];
     function outside(g) {
@@ -204,6 +204,7 @@ window.RoamStage = (function () {
         it = cur.it; tt = cur.t;
       }
       FACE.draw(it, tt, it.scene ? 0 : look.x * 22, it.scene ? 0 : look.y * 14);
+      var c2 = eye.getContext('2d'); c2.setTransform(1, 0, 0, 1, 0, 0); c2.strokeStyle = '#000'; c2.lineWidth = 6; c2.strokeRect(0, 0, eye.width, eye.height);
       eyeTex.needsUpdate = true;
     }
 
@@ -240,7 +241,7 @@ window.RoamStage = (function () {
     api.resize = resize;
     api.exportGLB = function (cb) {
       if (!THREE.GLTFExporter) return cb(null);
-      if (FACE) { FACE.draw(pick('Calm breathing') || FACE.list[0], 0, 0, 0); eyeTex.needsUpdate = true; }
+      if (FACE) { FACE.draw(pick('Calm breathing') || FACE.list[0], 0, 0, 0); var c3 = eye.getContext('2d'); c3.setTransform(1, 0, 0, 1, 0, 0); c3.strokeStyle = '#000'; c3.lineWidth = 6; c3.strokeRect(0, 0, eye.width, eye.height); eyeTex.needsUpdate = true; }
       var c = root.clone(true), g = {}; ['base', 'mid', 'face', 'shell', 'glass'].forEach(function (k, i) { g[k] = c.children[i]; g[k].position.set(0, 0, 0); });
       c.traverse(function (o) { if (o.isMesh && o.material && o.material.blending === THREE.AdditiveBlending) o.visible = false; }); c.position.set(0, 0, 0); c.rotation.set(0, 0, 0);
       var dead = []; c.traverse(function (o) { if (!o.visible) dead.push(o); }); dead.forEach(function (o) { if (o.parent) o.parent.remove(o); });
