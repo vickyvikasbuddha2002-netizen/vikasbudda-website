@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/roam.html", "destination": "/vix.html", "permanent": true },
+    { "source": "/roam", "destination": "/vix.html", "permanent": true }
+  ]
+}

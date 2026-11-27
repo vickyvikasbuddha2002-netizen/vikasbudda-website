@@ -1,7 +1,7 @@
 :root{
   --bg:#110e0c;--bg2:#171310;--card:#1c1714;--card2:#231c18;--line:rgba(255,232,214,.08);--line2:rgba(255,232,214,.15);
   --ink:#f5ede6;--ink2:#bba99d;--mute:#968579;--acc:#b9501f;--acc2:#f08f5c;--glow:rgba(214,98,46,.5);
-  /* Roam's palette: terracotta shell, charcoal parts, gradient eyes */
+  /* VIX's palette: terracotta shell, charcoal parts, gradient eyes */
   --shell:#b4522a;--char:#141110;--eye1:#8cf2fa;--eye2:#dce4fa;--eye3:#d8abf3;
   --f-d:"Archivo",ui-sans-serif,system-ui,sans-serif;--f-b:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;
   --ease:cubic-bezier(.16,1,.3,1);--pad:clamp(20px,4vw,56px);
@@ -361,7 +361,7 @@ dialog.viewer .hint{position:absolute;left:24px;bottom:18px;font-size:13px;color
 .arena:after{height:22%;background:linear-gradient(to bottom,rgba(18,14,12,0),rgba(18,14,12,.9))}
 .stage .floor{z-index:3}.arena .hint,.arena .moodtag{z-index:4}.tapme{z-index:4}
 
-/* subtitles sit under Roam, over the reflection, never over the face */
+/* subtitles sit under VIX, over the reflection, never over the face */
 .bubble{top:auto;bottom:46px;transform:translate(-50%,8px);padding:10px 16px;border-radius:14px;background:rgba(20,16,13,.72);max-width:min(520px,90%)}
 .bubble.on{transform:translate(-50%,0)}
 .bubble .rm{font-size:11px;margin-bottom:4px}
@@ -388,7 +388,7 @@ dialog.viewer .hint{position:absolute;left:24px;bottom:18px;font-size:13px;color
 .quick .loader{transition:none;display:none}
 @media (prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
 
-/* ---------- Roam build log ---------- */
+/* ---------- VIX build log ---------- */
 .blog{padding:6vh 0 10vh}
 .blog .wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:60px;align-items:start}
 .log{list-style:none;margin:0;padding:0 0 0 30px;position:relative}
@@ -442,7 +442,7 @@ dialog.viewer .hint{position:absolute;left:24px;bottom:18px;font-size:13px;color
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);padding:12px 20px;border-radius:999px;background:var(--acc);color:#fff;font:600 15px/1 var(--f-b);box-shadow:0 10px 40px var(--glow);opacity:0;pointer-events:none;transition:opacity .3s,transform .5s var(--ease);z-index:150}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
-/* ---------- Roam's eyes cursor (mouse only) ---------- */
+/* ---------- VIX's eyes cursor (mouse only) ---------- */
 .eyecur{position:fixed;left:0;top:0;z-index:300;pointer-events:none;display:flex;gap:6px;margin:-9px 0 0 -10px;opacity:0;transition:opacity .25s}
 .eyecur.on{opacity:1}
 .eyecur i{display:block;width:7px;height:18px;border-radius:5px;background:linear-gradient(135deg,var(--eye1),var(--eye2) 50%,var(--eye3));box-shadow:0 0 10px rgba(205,195,250,.8),0 0 2px #fff inset;transition:height .12s,transform .12s,border-radius .2s,background .2s,width .2s}
@@ -483,7 +483,7 @@ html.eyes input,html.eyes textarea{cursor:text!important}
 .rows li[data-pad]:after{content:"Try it";font:600 13px var(--f-b);color:var(--mute);grid-column:2;transition:color .3s}
 .rows li[data-pad]:hover:after{color:#fff}
 
-/* product views: bigger Roam, full reflection fading out, subtitles above the head */
+/* product views: bigger VIX, full reflection fading out, subtitles above the head */
 .puck .view canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;cursor:grab;touch-action:pan-y}
 .puck .view canvas:active{cursor:grabbing}
 .rview{aspect-ratio:4/5}

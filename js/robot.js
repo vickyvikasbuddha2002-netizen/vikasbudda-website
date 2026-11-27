@@ -1,4 +1,4 @@
-/* Roam, built from the packaging study (ROAMB), rendered with three.js. Two stages: hero and exploded. */
+/* VIX, built from the packaging study (ROAMB), rendered with three.js. Two stages: hero and exploded. */
 window.RoamStage = (function () {
   var THREE = window.THREE;
   function unb64(s, T) { var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return new T(u.buffer); }
@@ -39,7 +39,7 @@ window.RoamStage = (function () {
     var rim = new THREE.PointLight(0xff9a5e, 2.6, 900, 1.5); rim.position.set(120, 140, -220); scene.add(rim);
     var rim2 = new THREE.PointLight(0xffc29a, 1.1, 700, 1.6); rim2.position.set(-200, 60, -160); scene.add(rim2);
 
-    /* Roam v3: a faceted head on a black turntable neck, above a tapered body with big side wheels.
+    /* VIX v3: a faceted head on a black turntable neck, above a tapered body with big side wheels.
        Built from flat planes so every edge is a crisp chamfer. Units are millimetres, head 100 wide. */
     var PAL = { terracotta: 0xAE4B22, sage: 0xA8B596 };
     var mShell = new THREE.MeshPhysicalMaterial({ color: PAL.terracotta, roughness: 0.7, metalness: 0, clearcoat: 0.06, clearcoatRoughness: 0.7, envMapIntensity: 0.22 });
@@ -253,7 +253,7 @@ window.RoamStage = (function () {
     };
     return api;
   }
-  /* always-on small talk: Roam keeps watching you, asking things and telling bad jokes */
+  /* always-on small talk: VIX keeps watching you, asking things and telling bad jokes */
   var JOKES = [
     [['listen', 'Why did the robot go on holiday?', ['bi', 'oo', 'ki']], ['proud', 'It needed to recharge.', ['zip', 'nya']]],
     [['proud', 'I tried to eat a clock once.', ['oo', 'nya', 'bi']], ['wink', 'Very time consuming.', ['ki', 'tok', 'tok']]],

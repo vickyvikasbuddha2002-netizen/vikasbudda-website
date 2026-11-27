@@ -1,4 +1,4 @@
-/* Roam's face: 224 eye animations and 10 scenes, drawn on a 320 x 240 canvas.
+/* VIX's face: 224 eye animations and 10 scenes, drawn on a 320 x 240 canvas.
    The same engine as the expression library; every robot on the site uses it for its screen. */
 (function () {
 'use strict';
@@ -424,7 +424,7 @@ function EYP(p,o={}){const s=o.s??.7,gap=o.gap??132*s,x=o.x??160,y=o.y??112,lk=o
 const EY=(spec,o)=>EYP(res(spec),o);
 const blinks=(u,ts,len=.03)=>{let k=1;for(const b of ts){const d=abs(u-b);if(d<len)k=Math.min(k,.06+.94*ease(d/len))}return k};
 function tiltA(x,y,r,fn){ctx.save();ctx.translate(x,y);ctx.rotate(r);ctx.translate(-x,-y);fn();ctx.restore()}
-/* Roam's hands: soft mittens in the eye material. gap cuts a clean outline so the hand reads in front of a prop */
+/* VIX's hands: soft mittens in the eye material. gap cuts a clean outline so the hand reads in front of a prop */
 function MITT(c,x,y,o={}){const pose=o.pose||'open',s=o.s||1;c.save();c.translate(x,y);c.rotate(o.r||0);c.scale(o.flip?-s:s,s);
  const G=lum(c,-16,-20,16,18,o.tint||0,o.tc);
  if(pose==='open'){if(o.gap)cut(c,k=>{rrp(k,-14.6,-20.6,30.2,39.2,13.5);k.ellipse(-14.5,5,8.4,12.4,-.55,0,TAU)},0);c.fillStyle=G;fillRR(c,-12,-18,25,34,11);cut(c,k=>{k.moveTo(-3.6,-19);k.lineTo(-3.6,-8);k.moveTo(4.6,-19);k.lineTo(4.6,-8)},2.3);

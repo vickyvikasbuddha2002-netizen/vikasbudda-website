@@ -147,7 +147,7 @@ window.DATA = {
  ]
 };
 
-/* Roam build log. Newest status at the bottom. status: done, now, next */
+/* VIX build log. Newest status at the bottom. status: done, now, next */
 window.DATA.roamlog = [
   { "status": "done", "title": "Character and behaviours", "text": "37 behaviours planned, from patting to sulking, plus its own sound language, Roamish." },
   { "status": "done", "title": "Industrial design", "text": "New design: a faceted terracotta head with chamfered edges and an octagonal screen, on a black turntable neck that turns and tilts, above a wider body with big wheels set into arched side pockets. No visible screws." },
@@ -157,7 +157,7 @@ window.DATA.roamlog = [
   { "status": "next", "title": "Knows its owner", "text": "Recognise its owner's face, greet them by name and keep checking on them through the day." },
   { "status": "next", "title": "Desk guard", "text": "Keep watch while its owner is away and report who stopped by. Counts and times only, no photos." },
   { "status": "next", "title": "Office jobs", "text": "Focus shield, message keeper, the Hydration Puck link and an end of day recap." },
-  { "status": "next", "title": "Accessories", "text": "Plant pod, phone dock, desk flag and note tray. Roam recognises each one and takes on a new job." },
+  { "status": "next", "title": "Accessories", "text": "Plant pod, phone dock, desk flag and note tray. VIX recognises each one and takes on a new job." },
   { "status": "next", "title": "Quiet-office behaviours", "text": "Comes when you knock, posture mirror, volume reminder and rubber-duck mode." },
   { "status": "next", "title": "Learning over time", "text": "Teach it to remember routines and slowly grow its own personality." }
 ];

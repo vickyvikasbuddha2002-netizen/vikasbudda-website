@@ -145,7 +145,7 @@
     pmv.setAttribute('camera-orbit', (-60 + p * 160).toFixed(1) + 'deg ' + (62 + p * 10).toFixed(1) + 'deg auto');
   }
 
-  /* 3D: hero and the exploded Roam */
+  /* 3D: hero and the exploded VIX */
   var heroApi = null, roamApi = null, roamSec = $('.roam');
   if (window.THREE && window.ROAMB && window.RoamStage) {
     var hc = $('#hero3d');
@@ -222,7 +222,7 @@
     steps.forEach(function (s) { if (sio) sio.observe(s); else s.classList.add('on'); });
   }
 
-  /* Roam build log */
+  /* VIX build log */
   var log = $('.log');
   if (log && D && D.roamlog) {
     var LBL = { done: 'Done', now: 'In progress', next: 'Next' };
@@ -245,7 +245,7 @@
     });
   });
 
-  /* Roam's eyes as the cursor (mouse only) */
+  /* VIX's eyes as the cursor (mouse only) */
   var ec = $('.eyecur');
   if (ec && FINE && !RM) {
     doc.documentElement.classList.add('eyes');

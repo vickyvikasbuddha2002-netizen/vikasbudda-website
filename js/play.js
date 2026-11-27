@@ -5,7 +5,7 @@
   var R = RoamStage.create(cv, { fov: 22 }); if (!R) { $('.arena .hint').textContent = 'This browser could not start 3D graphics.'; return; }
   var THREE = window.THREE;
 
-  /* Roamish: chirps you can hear, captions you can read */
+  /* VIX's chirp language: chirps you can hear, captions you can read */
   var AC = null, sound = true;
   function ac() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } return AC; }
   var SY = { bi: [880, 1180, .09], dwee: [560, 1250, .2], doo: [420, 300, .16], ki: [1500, 1700, .06], mii: [1000, 1080, .18], zip: [700, 1900, .08], oo: [380, 460, .2], wub: [220, 160, .2], tok: [1200, 900, .04], nya: [900, 640, .14], pah: [520, 420, .08], vrr: [160, 150, .22] };
@@ -85,63 +85,63 @@
 
   /* what you can do to it, and what each one shows */
   var A = {
-    pat: { t: 'Pat its head', f: 'Feels touch', d: 'Roam feels a touch on its head. A pat makes its day, and over time it learns that you are the one who pats it.',
+    pat: { t: 'Pat its head', f: 'Feels touch', d: 'VIX feels a touch on its head. A pat makes its day, and over time it learns that you are the one who pats it.',
       s: [{ mood: 'surprised', d: .15, to: { bob: -4 } }, { mood: 'love', g: 'heart', say: [['mii', 'mii', 'dwee'], 'This is nice. Do it again.'], d: .25, to: { bob: 3 } }, { d: .3, to: { yaw: .25, bob: 0 } }, { d: .3, to: { yaw: -.25 } }, { d: .3, to: { yaw: 0 } }, { d: 1.2 }, { mood: 'calm', d: .1 }] },
-    home: { t: 'Come home', f: 'Knows its owner', d: 'Roam recognises your face with its camera. It greets you, rolls over to meet you, and acts a little hurt if you were gone all day.',
+    home: { t: 'Come home', f: 'Knows its owner', d: 'VIX recognises your face with its camera. It greets you, rolls over to meet you, and acts a little hurt if you were gone all day.',
       s: [{ mood: 'scanning', d: .8 }, { mood: 'excited', g: 'cheer', say: [['bi', 'dwee', 'bi'], 'There you are!'], d: .6, to: { z: 60 } }, { d: .2, to: { bob: 4 } }, { d: .2, to: { bob: 0 } }, { mood: 'sad', say: [['oo', 'doo'], 'You were gone all day.'], d: 1.8, to: { yaw: .5 } }, { mood: 'love', g: 'hug', say: [['mii', 'dwee'], 'Fine. I missed you.'], d: 1.4, to: { yaw: 0 } }, { mood: 'calm', d: .6, to: { z: 0 } }] },
-    wave: { t: 'Wave at it', f: 'Sees you', d: 'Roam can see you. It spots a waving hand, tells your face from a stranger, and waves back with its whole body.',
+    wave: { t: 'Wave at it', f: 'Sees you', d: 'VIX can see you. It spots a waving hand, tells your face from a stranger, and waves back with its whole body.',
       s: [{ mood: 'listen', d: .3 }, { mood: 'happy', g: 'wave', say: [['bi', 'dwee'], 'Hello! Waving back.'], d: .22, to: { yaw: .35, tilt: .06 } }, { d: .22, to: { yaw: -.35, tilt: -.06 } }, { d: .22, to: { yaw: .35, tilt: .06 } }, { d: .22, to: { yaw: -.35, tilt: -.06 } }, { d: .3, to: { yaw: 0, tilt: 0 } }, { d: .9 }, { mood: 'calm', d: .1 }] },
-    clapL: { t: 'Clap on the left', f: 'Hears direction', d: 'Roam can tell which side a sound came from. Clap and it turns to look.',
+    clapL: { t: 'Clap on the left', f: 'Hears direction', d: 'VIX can tell which side a sound came from. Clap and it turns to look.',
       s: [{ mood: 'surprised', d: .15, to: { bob: 4 } }, { mood: 'listen', g: 'pointL', say: [['dwee', 'ki'], 'Hm? Over there?'], d: .55, to: { yaw: -1.1, bob: 0 }, fn: function () { R.look.tx = -1; } }, { d: 1.3 }, { mood: 'calm', d: .6, to: { yaw: 0 } }] },
-    clapR: { t: 'Clap on the right', f: 'Hears direction', d: 'Roam can tell which side a sound came from. Clap and it turns to look.',
+    clapR: { t: 'Clap on the right', f: 'Hears direction', d: 'VIX can tell which side a sound came from. Clap and it turns to look.',
       s: [{ mood: 'surprised', d: .15, to: { bob: 4 } }, { mood: 'listen', g: 'pointR', say: [['dwee', 'ki'], 'Hm? Over there?'], d: .55, to: { yaw: 1.1, bob: 0 }, fn: function () { R.look.tx = 1; } }, { d: 1.3 }, { mood: 'calm', d: .6, to: { yaw: 0 } }] },
-    name: { t: 'Say "Roam"', f: 'Knows its name', d: 'Roam listens for its own name on the device itself, no internet needed. Call it and it turns to you, ready.',
+    name: { t: 'Say "VIX"', f: 'Knows its name', d: 'VIX listens for its own name on the device itself, no internet needed. Call it and it turns to you, ready.',
       s: [{ mood: 'surprised', d: .2, to: { bob: 5 } }, { d: .2, to: { bob: 0 } }, { mood: 'listen', g: 'wave', say: [['bi', 'zip'], 'Yes? I am here.'], d: .4, to: { yaw: 0, tilt: .08 } }, { d: 1.6 }, { mood: 'happy', d: .3, to: { tilt: 0 } }, { d: .8 }, { mood: 'calm', d: .1 }] },
     lift: { t: 'Pick it up', f: 'Knows when it is lifted', d: 'It feels the moment its wheels leave the desk, stops the motors straight away, and makes its feelings clear.',
       s: [{ mood: 'scared', g: 'cover', say: [['zip', 'dwee', 'ki'], 'Whoa! I did not agree to this.'], d: .5, to: { lift: 90 } }, { d: .35, to: { tilt: .12 } }, { d: .35, to: { tilt: -.12 } }, { mood: 'dizzy', d: .35, to: { tilt: 0 } }, { d: .7, to: { lift: 0 } }, { mood: 'angry', g: 'shrug', say: [['vrr', 'pah', 'tok'], 'Hmph.'], d: 1.2 }, { mood: 'calm', d: .1 }] },
-    edge: { t: 'Drive to the edge', f: 'Never falls off', d: 'Roam watches the desk as it drives. The moment the desk ends, it stops, backs away and remembers where the edge is.',
+    edge: { t: 'Drive to the edge', f: 'Never falls off', d: 'VIX watches the desk as it drives. The moment the desk ends, it stops, backs away and remembers where the edge is.',
       s: [{ mood: 'happy', d: .3 }, { d: 1.2, to: { z: 120 } }, { mood: 'scared', g: 'cover', say: [['vrr', 'tok', 'tok'], 'Cliff! Not going there.'], d: .12, to: { tilt: .1, bob: 3 } }, { d: .2, to: { tilt: 0, bob: 0 } }, { d: .9, to: { z: 30 } }, { mood: 'proud', g: 'dthumbs', d: 1 }, { mood: 'calm', d: .7, to: { z: 0 } }] },
-    ignore: { t: 'Ignore it', f: 'Has feelings', d: 'Roam has moods that rise and fall. Ignore it for hours and it sulks a little, then forgives you when you come back.',
+    ignore: { t: 'Ignore it', f: 'Has feelings', d: 'VIX has moods that rise and fall. Ignore it for hours and it sulks a little, then forgives you when you come back.',
       s: [{ mood: 'heartbroken', say: [['wub', 'doo'], 'Ignored. Again.'], d: .7, to: { yaw: 2.6 } }, { d: .5, to: { z: -40 } }, { d: 1.6 }, { mood: 'calm', d: .6, to: { yaw: 0, z: 0 } }, { mood: 'excited', g: 'hug', say: [['bi', 'dwee'], 'Oh, you are back!'], d: .6 }, { d: 1.2 }, { mood: 'calm', d: .1 }] },
-    guard: { t: 'Step away from your desk', f: 'Guards your desk', d: 'When you leave for a meeting, Roam turns to face your chair and keeps watch. Anyone who walks up gets a stare, and when you are back it tells you who came by. It keeps only counts and times, never photos.',
+    guard: { t: 'Step away from your desk', f: 'Guards your desk', d: 'When you leave for a meeting, VIX turns to face your chair and keeps watch. Anyone who walks up gets a stare, and when you are back it tells you who came by. It keeps only counts and times, never photos.',
       s: [{ mood: 'focused', say: [['tok', 'tok'], 'Guard mode. Go, I have this.'], d: 1.6 }, { mood: 'scanning', d: 1.1, to: { yaw: .6 } }, { d: 1.1, to: { yaw: -.6 } }, { mood: 'angry', g: 'pointR', say: [['vrr', 'pah'], 'Not your desk. I am watching you.'], d: 2.2, to: { yaw: 0, tilt: .06 } }, { mood: 'excited', g: 'cheer', say: [['bi', 'dwee', 'ki'], 'You are back! Two visitors. One looked at your snacks.'], d: 3.2, to: { tilt: 0 } }, { mood: 'proud', g: 'dthumbs', d: 1.2 }, { mood: 'calm', d: .1 }] },
-    focus: { t: 'Turn on focus mode', f: 'Shields your focus', d: 'Hold its head and Roam guards your focus. It turns to face the aisle with a do not disturb face, and anyone who walks up is asked, politely, to come back later or leave a message.',
+    focus: { t: 'Turn on focus mode', f: 'Shields your focus', d: 'Hold its head and VIX guards your focus. It turns to face the aisle with a do not disturb face, and anyone who walks up is asked, politely, to come back later or leave a message.',
       s: [{ mood: 'focused', g: 'think', say: [['tok', 'bi'], 'Focus mode. I will handle visitors.'], d: 1.8 }, { mood: 'scanning', d: 1, to: { yaw: 2.4 } }, { mood: 'attention', g: 'cover', say: [['pah', 'tok'], 'Shh. My human is focusing. Come back at four?'], d: 2.8 }, { mood: 'calm', d: .8, to: { yaw: 0 } }, { mood: 'proud', g: 'dthumbs', d: 1 }, { mood: 'calm', d: .1 }] },
-    message: { t: 'Stop by while they are out', f: 'Takes messages', d: 'If someone visits while you are away, Roam offers to take a short voice message and plays it back the moment you return.',
+    message: { t: 'Stop by while they are out', f: 'Takes messages', d: 'If someone visits while you are away, VIX offers to take a short voice message and plays it back the moment you return.',
       s: [{ mood: 'listen', say: [['bi', 'doo'], 'They are out. Want to leave a message?'], d: 2.2 }, { mood: 'processing', d: 1.4, to: { tilt: .05 } }, { mood: 'happy', g: 'thumbs', say: [['bi', 'dwee'], 'Got it. I will tell them.'], d: 1.8, to: { tilt: 0 } }, { mood: 'excited', g: 'wave', say: [['bi', 'ki', 'bi'], 'Welcome back! You have one message.'], d: 2.4 }, { mood: 'calm', d: .1 }] },
-    work: { t: 'Work for two hours', f: 'Checks on you', d: 'Roam keeps an eye on you while you work. After a long stretch it rolls over, peeks at you and suggests a break.',
+    work: { t: 'Work for two hours', f: 'Checks on you', d: 'VIX keeps an eye on you while you work. After a long stretch it rolls over, peeks at you and suggests a break.',
       s: [{ mood: 'focused', d: 1.2 }, { mood: 'curious', d: .9, to: { z: 50, tilt: .06 } }, { g: 'peek', say: [['ki', 'doo', 'ki'], 'Still working? Take a break.'], d: 2.4 }, { mood: 'happy', g: 'thumbs', say: [['bi', 'dwee'], 'Water first. Then me.'], d: 1.6, to: { tilt: 0 } }, { mood: 'calm', d: .6, to: { z: 0 } }] },
-    water: { t: 'Forget to drink water', f: 'Works with the Puck', d: 'Roam talks to the Hydration Puck, my other project. If your bottle has not moved in an hour, Roam rolls over and reminds you to drink.',
+    water: { t: 'Forget to drink water', f: 'Works with the Puck', d: 'VIX talks to the Hydration Puck, my other project. If your bottle has not moved in an hour, VIX rolls over and reminds you to drink.',
       s: [{ mood: 'thinking', d: 1 }, { mood: 'curious', d: .8, to: { z: 50 } }, { g: 'pointR', say: [['ki', 'oo', 'ki'], 'Your bottle has not moved in an hour.'], d: 2.4 }, { mood: 'happy', g: 'thumbs', say: [['bi', 'dwee'], 'Drink some water. I will wait.'], d: 2 }, { mood: 'calm', d: .6, to: { z: 0 } }] },
-    laugh: { t: 'Laugh out loud', f: 'Laughs with you', d: 'Roam hears you laugh and joins in, even when it has no idea what was funny.',
+    laugh: { t: 'Laugh out loud', f: 'Laughs with you', d: 'VIX hears you laugh and joins in, even when it has no idea what was funny.',
       s: [{ mood: 'surprised', d: .2 }, { mood: 'laughing', g: 'laugh', say: [['ki', 'bi', 'ki', 'bi', 'ki'], 'Ha ha! What are we laughing at?'], d: .15, to: { bob: 4 } }, { d: .15, to: { bob: 0 } }, { d: .15, to: { bob: 4 } }, { d: .15, to: { bob: 0 } }, { d: 1.4 }, { mood: 'calm', d: .1 }] },
     joke: { t: 'Ask for a joke', f: 'Has a personality', d: 'It has a sense of humour, mostly bad. It tells the joke, laughs alone, then pretends it never happened.', fn: function () { lastAct = 0; chat.joke(); },
       s: [{ mood: 'proud', say: [['oo', 'ki', 'nya', 'bi'], 'I would tell you a UDP joke, but you might not get it.'], d: 2.6 }, { mood: 'happy', say: [['ki', 'bi', 'ki', 'bi'], 'Ha ha!'], d: .15, to: { bob: 4 } }, { d: .15, to: { bob: 0 } }, { d: .15, to: { bob: 4 } }, { d: .15, to: { bob: 0 } }, { mood: 'wink', d: 1 }, { mood: 'calm', d: .1 }] },
-    nice: { t: 'Say something nice', f: 'Gets shy', d: 'Roam blushes, hides behind its hands, then peeks out. Compliments go straight to its memory.',
+    nice: { t: 'Say something nice', f: 'Gets shy', d: 'VIX blushes, hides behind its hands, then peeks out. Compliments go straight to its memory.',
       s: [{ mood: 'embarrassed', g: 'peek', say: [['mii', 'mii'], 'Stop it. You are making me blush.'], d: .4, to: { tilt: .06 } }, { d: 2.2 }, { mood: 'happy', d: .4, to: { tilt: 0 } }, { mood: 'calm', d: .1 }] },
-    music: { t: 'Play some music', f: 'Dances to a beat', d: 'Roam hears the beat through its microphone and moves to it, wheels and all.',
+    music: { t: 'Play some music', f: 'Dances to a beat', d: 'VIX hears the beat through its microphone and moves to it, wheels and all.',
       s: [{ mood: 'surprised', d: .3 }, { mood: 'celebration', g: 'dance', say: [['bi', 'bi', 'dwee'], 'Is that music? I have moves.'], d: .25, to: { yaw: .4, tilt: .05 } }, { d: .25, to: { yaw: -.4, tilt: -.05 } }, { d: .25, to: { yaw: .4, tilt: .05 } }, { d: .25, to: { yaw: -.4, tilt: -.05 } }, { d: .25, to: { yaw: .4, tilt: .05 } }, { d: .25, to: { yaw: -.4, tilt: -.05 } }, { d: .3, to: { yaw: 0, tilt: 0 } }, { mood: 'excited', g: 'fistpump', d: 1.2 }, { mood: 'calm', d: .1 }] },
-    battery: { t: 'Let the battery run low', f: 'Asks for a charge', d: 'When its battery runs low, Roam shows it on its face and asks for a charge. On the charger it watches itself fill up.',
+    battery: { t: 'Let the battery run low', f: 'Asks for a charge', d: 'When its battery runs low, VIX shows it on its face and asks for a charge. On the charger it watches itself fill up.',
       s: [{ mood: 'lowbattery', say: [['oo', 'doo'], 'Running low. Feed me?'], d: 2.2, to: { tilt: .04 } }, { mood: 'charging', say: [['bi', 'dwee'], 'Ahh. Charging.'], d: 2.4, to: { tilt: 0 } }, { mood: 'excited', g: 'fistpump', say: [['bi', 'bi', 'dwee'], 'Full power!'], d: 1.6 }, { mood: 'calm', d: .1 }] },
     night: { t: 'Say goodnight', f: 'Sleeps when you do', d: 'Hold the top of its head and it says goodnight, closes its eyes and powers down. A touch wakes it again.',
       s: [{ mood: 'sleepy', g: 'yawn', say: [['oo', 'wub'], 'Goodnight.'], d: 1, to: { bob: -3, tilt: .04 } }, { d: 2.6 }, { mood: 'loading', d: 1.2, to: { bob: 0, tilt: 0 } }, { mood: 'happy', g: 'cheer', say: [['bi', 'dwee'], 'Morning!'], d: .8 }, { mood: 'calm', d: .1 }] },
-    posture: { t: 'Slouch at your desk', f: 'Posture mirror', d: 'Roam copies how you sit. Slouch and it droops with you; sit up and it perks up. A gentle nudge that never nags.',
+    posture: { t: 'Slouch at your desk', f: 'Posture mirror', d: 'VIX copies how you sit. Slouch and it droops with you; sit up and it perks up. A gentle nudge that never nags.',
       s: [{ mood: 'sad', say: [['oo', 'doo'], 'You are slouching. So am I.'], d: 2.2, to: { tilt: -.08, bob: -3 } }, { mood: 'proud', g: 'cheer', say: [['bi', 'dwee'], 'Sit tall. There we go.'], d: 2, to: { tilt: 0, bob: 2 } }, { mood: 'calm', d: .4, to: { bob: 0 } }] },
-    tap: { t: 'Knock twice on the desk', f: 'Comes when you knock', d: 'No talking needed in a quiet office. Knock twice anywhere on your desk and Roam turns toward the sound and rolls over.',
+    tap: { t: 'Knock twice on the desk', f: 'Comes when you knock', d: 'No talking needed in a quiet office. Knock twice anywhere on your desk and VIX turns toward the sound and rolls over.',
       s: [{ mood: 'listen', d: .7 }, { mood: 'attention', say: [['tok', 'tok'], 'Knock knock? Coming!'], d: 1.3, to: { yaw: .6 } }, { mood: 'excited', d: 1, to: { z: 60, yaw: 0 } }, { mood: 'happy', g: 'wave', say: [['bi', 'dwee'], 'You called?'], d: 1.6 }, { mood: 'calm', d: .6, to: { z: 0 } }] },
-    shh: { t: 'Get loud on a call', f: 'Keeps the office calm', d: 'In an open office, Roam notices when your voice gets loud and shows a small, polite reminder to bring it down.',
+    shh: { t: 'Get loud on a call', f: 'Keeps the office calm', d: 'In an open office, VIX notices when your voice gets loud and shows a small, polite reminder to bring it down.',
       s: [{ mood: 'surprised', d: .4 }, { mood: 'focused', g: 'cover', say: [['shh'], 'A little softer. People are working.'], d: 2.4 }, { mood: 'happy', g: 'thumbs', d: 1.2 }, { mood: 'calm', d: .1 }] },
-    duck: { t: 'Explain a bug out loud', f: 'Rubber-duck mode', d: 'The classic engineering trick. Explain your problem to Roam; it listens, nods and asks why. Saying it out loud often solves it.',
+    duck: { t: 'Explain a bug out loud', f: 'Rubber-duck mode', d: 'The classic engineering trick. Explain your problem to VIX; it listens, nods and asks why. Saying it out loud often solves it.',
       s: [{ mood: 'listen', say: [['mm', 'hm'], 'Tell me the problem.'], d: 2 }, { mood: 'thinking', g: 'think', d: 1.4 }, { mood: 'curious', say: [['ki', 'oo'], 'Why does it do that?'], d: 2 }, { mood: 'amazed', g: 'victory', say: [['bi', 'wee'], 'You solved it. I helped.'], d: 2.2 }, { mood: 'calm', d: .1 }] },
-    plant: { t: 'Snap on the plant pod', f: 'Plant-sitter', d: 'With the plant pod on, Roam looks after a tiny succulent. It finds the brightest spot on your desk, parks there, and reminds you to water it.',
+    plant: { t: 'Snap on the plant pod', f: 'Plant-sitter', d: 'With the plant pod on, VIX looks after a tiny succulent. It finds the brightest spot on your desk, parks there, and reminds you to water it.',
       s: [{ mood: 'scanning', say: [['oo', 'bi'], 'A plant! It needs sunlight.'], d: 2, to: { yaw: .7 } }, { mood: 'focused', d: 1, to: { z: 50, yaw: -.4 } }, { mood: 'proud', say: [['bi', 'dwee'], 'Brightest spot on the desk.'], d: 2, to: { yaw: 0 } }, { mood: 'sad', say: [['oo'], 'It looks thirsty. Water it today.'], d: 2 }, { mood: 'calm', d: .6, to: { z: 0 } }] },
-    phone: { t: 'Dock your phone', f: 'Reads your notifications', d: 'Your phone rests on Roam\'s sloped back. Calls and messages come through as expressions: important ones get its attention, spam gets a bored look.',
+    phone: { t: 'Dock your phone', f: 'Reads your notifications', d: 'Your phone rests on VIX\'s sloped back. Calls and messages come through as expressions: important ones get its attention, spam gets a bored look.',
       s: [{ mood: 'attention', say: [['bi', 'bi'], 'Your manager is calling.'], d: 2, to: { z: 40 } }, { mood: 'bored', say: [['meh'], 'That one is spam.'], d: 2, to: { yaw: -.6 } }, { mood: 'calm', d: .6, to: { z: 0, yaw: 0 } }] },
-    flag: { t: 'Clip on the desk flag', f: 'Holds your desk', d: 'For shared offices. While you are away, Roam parks in the middle of your desk and shows when you will be back.',
+    flag: { t: 'Clip on the desk flag', f: 'Holds your desk', d: 'For shared offices. While you are away, VIX parks in the middle of your desk and shows when you will be back.',
       s: [{ mood: 'focused', say: [['tok'], 'Desk taken. Back at 2:30.'], d: 2.4, to: { z: 30 } }, { mood: 'angry', g: 'pointR', say: [['pah'], 'This seat is reserved.'], d: 2 }, { mood: 'calm', d: .6, to: { z: 0 } }] },
-    notes: { t: 'Leave a note on Roam', f: 'Keeps notes', d: 'Colleagues can leave a sticky note on Roam\'s tray. When you sit down, it tells you there is something waiting.',
+    notes: { t: 'Leave a note on VIX', f: 'Keeps notes', d: 'Colleagues can leave a sticky note on VIX\'s tray. When you sit down, it tells you there is something waiting.',
       s: [{ mood: 'curious', say: [['ki', 'bi'], 'Someone left you a note.'], d: 2 }, { mood: 'happy', g: 'pointL', say: [['bi', 'dwee'], 'It is on my tray. Read it.'], d: 2 }, { mood: 'calm', d: .1 }] },
-    recap: { t: 'Pack up for the day', f: 'Sums up your day', d: 'When you pack up, Roam gives you a short recap of your day, from focus time to visitors, messages and water, then says goodnight.',
+    recap: { t: 'Pack up for the day', f: 'Sums up your day', d: 'When you pack up, VIX gives you a short recap of your day, from focus time to visitors, messages and water, then says goodnight.',
       s: [{ mood: 'proud', say: [['bi', 'nya', 'bi'], 'Today: three hours of focus.'], d: 2.2 }, { mood: 'happy', say: [['ki', 'bi'], 'Two visitors, one message, six sips of water.'], d: 2.4 }, { mood: 'love', g: 'wave', say: [['mii', 'dwee'], 'Good day. See you tomorrow.'], d: 2.2 }, { mood: 'sleepy', g: 'yawn', d: 1.6, to: { bob: -3 } }, { mood: 'calm', d: .4, to: { bob: 0 } }] }
   };
   var keys = Object.keys(A), seen = {}, pads = $('.pads'), card = $('.lcard'), found = $('.found');
@@ -168,14 +168,14 @@
     li.addEventListener('click', go); li.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
   });
 
-  /* every face and scene in the library, played on Roam's screen */
+  /* every face and scene in the library, played on VIX's screen */
   var fl = $('.facelib'), FL = R.faces || [];
   if (fl && FL.length) {
     var groups = [], gi = {};
     FL.forEach(function (a, i) { var k = a.scene ? 'Scenes' : a.c; if (!gi[k]) { gi[k] = { k: k, items: [] }; groups.push(gi[k]); } gi[k].items.push(i); });
     groups.sort(function (a, b) { return (b.k === 'Scenes') - (a.k === 'Scenes'); });
     var nE = FL.filter(function (a) { return !a.scene; }).length;
-    $('.fl-count', fl).textContent = 'Every face Roam can make: ' + nE + ' eye animations and ' + (FL.length - nE) + ' scenes. Tap one to play it.';
+    $('.fl-count', fl).textContent = 'Every face VIX can make: ' + nE + ' eye animations and ' + (FL.length - nE) + ' scenes. Tap one to play it.';
     var cats = $('.fl-cats', fl), box = $('.fl-list', fl), sel = groups[0].k, playing = -1;
     var drawCats = function () {
       cats.innerHTML = '';
@@ -204,14 +204,14 @@
     drawCats(); drawList();
   }
 
-  /* View in AR: the outside of Roam only, at real size */
+  /* View in AR: the outside of VIX only, at real size */
   var arb = $('.arbtn'), mv = $('#roamar'), arMsg = $('.armsg'), arReady = false;
   if (arb && mv) {
     mv.addEventListener('load', function () { arReady = true; arb.classList.add('ready'); });
     if (mv.loaded) { arReady = true; arb.classList.add('ready'); }
     arb.addEventListener('click', function () {
       if (arReady && mv.canActivateAR) { mv.activateAR(); return; }
-      arMsg.textContent = arReady ? 'AR needs a phone. Open this page in Safari on iPhone or Chrome on Android.' : 'Getting Roam ready. Try again in a second.';
+      arMsg.textContent = arReady ? 'AR needs a phone. Open this page in Safari on iPhone or Chrome on Android.' : 'Getting VIX ready. Try again in a second.';
       arMsg.classList.add('on'); clearTimeout(arMsg.t); arMsg.t = setTimeout(function () { arMsg.classList.remove('on'); }, 3600);
     });
   }

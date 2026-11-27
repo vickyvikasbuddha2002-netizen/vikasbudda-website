@@ -1,4 +1,4 @@
-/* Hydration Puck stage: same studio light and floor reflection as Roam.
+/* Hydration Puck stage: same studio light and floor reflection as VIX.
    Reads its camera from the canvas's camera-orbit attribute ("θdeg φdeg auto"), so the story scroll drives it. */
 (function () {
   var cv = document.getElementById('puckmv');
